@@ -18,6 +18,8 @@ import Authmiddleware from "../src/routes/admin/route.jsx";
 
 // layouts Format
 import VerticalLayout from "@components/admin/VerticalLayout/";
+import HorizontalLayout from "@components/admin/HorizontalLayout/";
+import NonAuthLayout from "@components/admin/NonAuthLayout";
 
 // Import scss
 import "@assets/admin/scss/theme.scss";
@@ -56,6 +58,9 @@ const App = (props) => {
   function getLayout(layoutType) {
     let layoutCls = VerticalLayout;
     switch (layoutType) {
+      case "horizontal":
+        layoutCls = HorizontalLayout;
+        break;
       default:
         layoutCls = VerticalLayout;
         break;

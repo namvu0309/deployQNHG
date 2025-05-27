@@ -27,7 +27,9 @@ import bgimg1 from "@assets/admin/images/sidebar/img1.jpg";
 import bgimg2 from "@assets/admin/images/sidebar/img2.jpg";
 import bgimg3 from "@assets/admin/images/sidebar/img3.jpg";
 import bgimg4 from "@assets/admin/images/sidebar/img4.jpg";
-
+import layout1 from "@assets/admin/images/layouts/layout-1.jpg";
+import layout2 from "@assets/admin/images/layouts/layout-2.jpg";
+import layout3 from "@assets/admin/images/layouts/layout-3.jpg";
 //constants
 import {
   layoutTypes,
