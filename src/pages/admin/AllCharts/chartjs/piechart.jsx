@@ -1,6 +1,6 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
-import getChartColorsArray from "@components/admin/Common/ChartsDynamicColor";
+import getChartColorsArray from "@components/admin/ui/ChartsDynamicColor";
 import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
 

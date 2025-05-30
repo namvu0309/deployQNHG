@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import { Row, Col, Card, CardBody, Container } from "reactstrap";
 
 import { Rating } from "react-simple-star-rating";

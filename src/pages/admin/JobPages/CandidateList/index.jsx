@@ -11,11 +11,11 @@ import {
 } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import List from "./List";
 import Select from "react-select";
-import Spinners from "@components/admin/Common/Spinner";
-import { handleSearchData } from "@components/admin/Common/searchFile";
+import Spinners from "@components/admin/ui/Spinner";
+import { handleSearchData } from "@components/admin/ui/searchFile";
 import "flatpickr/dist/themes/material_blue.css";
 import FlatPickr from "react-flatpickr";
 import { experienceData, jobListCandidate, jobType } from "@common/admin/data";

@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Row, Col, CardBody, CardTitle, Container } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 import avtar2 from "@assets/admin/images/users/avatar-2.jpg";
 import avtar5 from "@assets/admin/images/users/avatar-5.jpg";

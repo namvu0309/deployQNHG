@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from "react";
 import PropTypes from "prop-types";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 
 import { Badge, Button, Card, CardBody } from "reactstrap";
 import EcommerceOrdersModal from "../Ecommerce/EcommerceOrders/EcommerceOrdersModal";
 
-import TableContainer from "@components/admin/Common/TableContainer";
+import TableContainer from "@components/admin/ui/TableContainer";
 import { latestTransaction } from "@common/admin/data";
 import { Link } from "react-router-dom";
 

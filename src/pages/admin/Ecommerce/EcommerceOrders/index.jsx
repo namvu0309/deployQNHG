@@ -3,14 +3,14 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { isEmpty } from "lodash";
 import "bootstrap/dist/css/bootstrap.min.css";
-import TableContainer from "@components/admin/Common/TableContainer";
+import TableContainer from "@components/admin/ui/TableContainer";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import Spinners from "@components/admin/Common/Spinner";
+import Spinners from "@components/admin/ui/Spinner";
 
 //import components
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
-import DeleteModal from "@components/admin/Common/DeleteModal";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
+import DeleteModal from "@components/admin/ui/DeleteModal";
 
 import {
   getOrders as onGetOrders,

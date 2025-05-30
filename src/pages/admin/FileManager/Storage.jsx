@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Card, CardBody } from "reactstrap";
 import ReactApexChart from "react-apexcharts";
-import getChartColorsArray from "@components/admin/Common/ChartsDynamicColor";
+import getChartColorsArray from "@components/admin/ui/ChartsDynamicColor";
 import { storageData } from "@common/admin/data";
 
 const Storage = ({ dataColors }) => {

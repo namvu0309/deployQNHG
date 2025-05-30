@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 import { isEmpty } from "lodash";
 import { Col, Container, Row } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 import { getProjectDetail as onGetProjectDetail } from "@store/admin/projects/actions";
 import ProjectDetail from "./projectDetail";

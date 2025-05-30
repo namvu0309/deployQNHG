@@ -15,7 +15,7 @@ import {
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const FormRepeater = () => {
   document.title =

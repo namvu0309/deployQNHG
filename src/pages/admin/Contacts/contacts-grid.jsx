@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 import { Col, Container, Row } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 //Import Card
 import CardContact from "./card-contact";
@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 
 import { getUsers as onGetUsers } from "@store/admin/contacts/actions";
-import Spinners from "@components/admin/Common/Spinner";
+import Spinners from "@components/admin/ui/Spinner";
 
 const ContactsGrid = () => {
   //meta title

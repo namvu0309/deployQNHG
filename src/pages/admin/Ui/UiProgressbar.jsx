@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardBody, Col, Container, Progress, Row } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const UiProgressbar = () => {
   //meta title

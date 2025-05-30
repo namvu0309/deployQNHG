@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import withRouter from "@components/admin/Common/withRouter";
-import TableContainer from "@components/admin/Common/TableContainer";
-import Spinners from "@components/admin/Common/Spinner";
+import withRouter from "@components/admin/ui/withRouter";
+import TableContainer from "@components/admin/ui/TableContainer";
+import Spinners from "@components/admin/ui/Spinner";
 import {
   Card,
   CardBody,
@@ -29,8 +29,8 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
-import DeleteModal from "@components/admin/Common/DeleteModal";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
+import DeleteModal from "@components/admin/ui/DeleteModal";
 
 import {
   getUsers as onGetUsers,

@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 //Import Flatepicker
 import "flatpickr/dist/themes/material_blue.css";

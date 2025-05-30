@@ -18,9 +18,9 @@ import {
 } from "reactstrap";
 import classnames from "classnames";
 import { connect } from "react-redux";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 
-import TableContainer from "@components/admin/Common/TableContainer";
+import TableContainer from "@components/admin/ui/TableContainer";
 
 // flatpickr
 import "flatpickr/dist/themes/material_blue.css";
@@ -29,10 +29,10 @@ import FlatPickr from "react-flatpickr";
 import "@assets/admin/scss/datatables.scss";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import { getCryptoOrders } from "@store/admin/crypto/actions";
-import { handleSearchData } from "@components/admin/Common/searchFile";
-import Spinners from "@components/admin/Common/Spinner";
+import { handleSearchData } from "@components/admin/ui/searchFile";
+import Spinners from "@components/admin/ui/Spinner";
 
 const CryptoOrders = (props) => {
   //meta title

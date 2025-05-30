@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Card, CardBody, Col, Row } from "reactstrap";
 import ReactApexChart from "react-apexcharts";
-import getChartColorsArray from "@components/admin/Common/ChartsDynamicColor";
+import getChartColorsArray from "@components/admin/ui/ChartsDynamicColor";
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 import { dashboardBlogVisitorData } from "@store/admin/actions";

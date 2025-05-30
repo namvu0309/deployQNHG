@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Container, Row } from "reactstrap";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 //Import Cards
 import CardProject from "./card-project";
-import Spinners from "@components/admin/Common/Spinner";
-import Paginations from "@components/admin/Common/Pagination";
+import Spinners from "@components/admin/ui/Spinner";
+import Paginations from "@components/admin/ui/Pagination";
 
 import { getProjects as onGetProjects } from "@store/admin/actions";
 

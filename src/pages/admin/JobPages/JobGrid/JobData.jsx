@@ -13,8 +13,8 @@ import {
   Form,
 } from "reactstrap";
 import { Link } from "react-router-dom";
-import Spinners from "@components/admin/Common/Spinner";
-import Paginations from "@components/admin/Common/Pagination";
+import Spinners from "@components/admin/ui/Spinner";
+import Paginations from "@components/admin/ui/Pagination";
 
 // format number
 import { PatternFormat } from "react-number-format";

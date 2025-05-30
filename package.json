@@ -20,6 +20,7 @@
     "@fullcalendar/react": "^6.1.15",
     "@hello-pangea/dnd": "^17.0.0",
     "@react-google-maps/api": "^2.19.3",
+    "@tailwindcss/vite": "^4.1.8",
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/react-table": "^8.20.5",
     "@testing-library/jest-dom": "^6.5.0",
@@ -83,6 +84,7 @@
     "simplebar-react": "^3.2.6",
     "styled-components": "^6.1.13",
     "swiper": "^11.1.14",
+    "tailwindcss": "^4.1.8",
     "toastr": "^2.1.4",
     "yet-another-react-lightbox": "^3.21.6",
     "yup": "^1.4.0"

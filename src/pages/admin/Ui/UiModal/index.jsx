@@ -11,7 +11,7 @@ import {
 } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import BasicModal from "./BasicModal";
 import DefaultFullscreen from "./DefaultFullscreen";
 import OptionalSizes from "./OptionalSizes";

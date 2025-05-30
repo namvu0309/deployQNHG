@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 import { Card, CardBody, Col, Container, Row, Table } from "reactstrap";
 import { isEmpty, map } from "lodash";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 //Import Image
 import logoDark from "@assets/admin/images/logo-dark.png";

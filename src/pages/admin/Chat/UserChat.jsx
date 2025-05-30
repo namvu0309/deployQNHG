@@ -25,7 +25,7 @@ import {
   addMessage as onAddMessage,
   deleteMessage as onDeleteMessage,
 } from "@store/admin/actions";
-import Spinners from "@components/admin/Common/Spinner";
+import Spinners from "@components/admin/ui/Spinner";
 
 const UserChat = ({
   Chat_Box_Username,

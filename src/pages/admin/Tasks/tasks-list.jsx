@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 import { Card, CardBody, CardTitle, Col, Container, Row } from "reactstrap";
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import ReactApexChart from "react-apexcharts";
 
 import { getTasks as onGetTasks } from "@store/admin/tasks/actions";

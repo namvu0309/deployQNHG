@@ -35,7 +35,7 @@ import ActivityComp from "./ActivityComp";
 import TopCities from "./TopCities";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 import { withTranslation } from "react-i18next";
 

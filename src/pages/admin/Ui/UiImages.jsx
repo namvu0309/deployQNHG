@@ -11,7 +11,7 @@ import avatar4 from "@assets/admin/images/users/avatar-4.jpg";
 import avatar5 from "@assets/admin/images/users/avatar-5.jpg";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const UiImages = () => {
   //meta title

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
-import withRouter from "../Common/withRouter";
+import withRouter from "../ui/withRouter";
 import {
   changeLayout,
   changeLayoutMode,

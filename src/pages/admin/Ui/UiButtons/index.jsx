@@ -2,7 +2,7 @@ import React from "react";
 import { Container } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import DefaultOutlineButtons from "./DefaultOutlineButtons";
 import SoftButtons from "./SoftButtons";
 import RoundedWithIcon from "./RoundedWithIcon";

@@ -10,7 +10,7 @@ import { getWalletbalanceData } from "@store/admin/actions";
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 
-import getChartColorsArray from "@components/admin/Common/ChartsDynamicColor";
+import getChartColorsArray from "@components/admin/ui/ChartsDynamicColor";
 
 const WalletBalance = ({ dataColors }) => {
   const dispatch = useDispatch();

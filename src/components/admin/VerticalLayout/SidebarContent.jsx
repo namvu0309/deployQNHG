@@ -7,7 +7,7 @@ import SimpleBar from "simplebar-react";
 // MetisMenu
 import MetisMenu from "metismenujs";
 import { Link, useLocation } from "react-router-dom";
-import withRouter from "../Common/withRouter";
+import withRouter from "../ui/withRouter";
 
 import { withTranslation } from "react-i18next";
 import { useCallback } from "react";

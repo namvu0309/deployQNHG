@@ -1,79 +1,39 @@
 import PropTypes from "prop-types";
 import React from "react";
-
 import { Routes, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
-import { useSelector } from "react-redux";
-import { createSelector } from "reselect";
-
-// Import Routes all
+// Import Routes
 import {
   authProtectedRoutes,
   publicRoutes,
 } from "../src/routes/admin/index.jsx";
 
-// Import all middleware
+// Middleware
 import Authmiddleware from "../src/routes/admin/route.jsx";
 
-// layouts Format
+// Layouts
 import VerticalLayout from "@components/admin/VerticalLayout/";
-import HorizontalLayout from "@components/admin/HorizontalLayout/";
 import NonAuthLayout from "@components/admin/NonAuthLayout";
 
-// Import scss
+// SCSS
 import "@assets/admin/scss/theme.scss";
 
-// Import Firebase Configuration file
-// import { initFirebaseBackend } from "./helpers/firebase_helper"
-
+// Fake backend
 import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
-// Activating fake backend
 fakeBackend();
 
-// const firebaseConfig = {
-//   apiKey: import.meta.env.VITE_APP_APIKEY,
-//   authDomain: import.meta.env.VITE_APP_AUTHDOMAIN,
-//   databaseURL: import.meta.env.VITE_APP_DATABASEURL,
-//   projectId: import.meta.env.VITE_APP_PROJECTID,
-//   storageBucket: import.meta.env.VITE_APP_STORAGEBUCKET,
-//   messagingSenderId: import.meta.env.VITE_APP_MESSAGINGSENDERID,
-//   appId: import.meta.env.VITE_APP_APPID,
-//   measurementId: import.meta.env.VITE_APP_MEASUREMENTID,
-// };
-
-// init firebase backend
-// initFirebaseBackend(firebaseConfig)
-
 const App = (props) => {
-  const LayoutProperties = createSelector(
-    (state) => state.Layout,
-    (layout) => ({
-      layoutType: layout.layoutType,
-    })
-  );
+  // Sử dụng cố định VerticalLayout
+  const Layout = VerticalLayout;
 
-  const { layoutType } = useSelector(LayoutProperties);
-
-  function getLayout(layoutType) {
-    let layoutCls = VerticalLayout;
-    switch (layoutType) {
-      case "horizontal":
-        layoutCls = HorizontalLayout;
-        break;
-      default:
-        layoutCls = VerticalLayout;
-        break;
-    }
-    return layoutCls;
-  }
-
-  const Layout = getLayout(layoutType);
+  // Tạo user giả cho localStorage (có thể bỏ nếu dùng auth thật)
   localStorage.setItem("authUser", JSON.stringify({ username: "quanglam" }));
+
   return (
     <React.Fragment>
       <Routes>
-        {/* Cái này của admin */}
+        {/* Route không yêu cầu đăng nhập */}
         {publicRoutes.map((route, idx) => (
           <Route
             path={route.path}
@@ -83,7 +43,7 @@ const App = (props) => {
           />
         ))}
 
-        {/* Cái này của admin */}
+        {/* Route yêu cầu đăng nhập, sử dụng VerticalLayout */}
         {authProtectedRoutes.map((route, idx) => (
           <Route
             path={route.path}
@@ -105,10 +65,8 @@ App.propTypes = {
   layout: PropTypes.any,
 };
 
-const mapStateToProps = (state) => {
-  return {
-    layout: state.Layout,
-  };
-};
+const mapStateToProps = (state) => ({
+  layout: state.Layout,
+});
 
 export default connect(mapStateToProps, null)(App);

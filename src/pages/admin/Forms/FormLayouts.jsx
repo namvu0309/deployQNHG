@@ -17,7 +17,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const FormLayouts = () => {
   //meta title
