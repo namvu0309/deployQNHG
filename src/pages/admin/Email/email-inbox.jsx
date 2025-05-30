@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 import {
   Button,
   Card,
@@ -18,7 +18,7 @@ import {
 } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 import classnames from "classnames";
 
@@ -39,7 +39,7 @@ import EmailToolbar from "./email-toolbar";
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 import { labelsData, mailChatData } from "@common/admin/data";
-import Spinners from "@components/admin/Common/Spinner";
+import Spinners from "@components/admin/ui/Spinner";
 
 const EmailInbox = () => {
   //meta title

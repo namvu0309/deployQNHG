@@ -1,6 +1,6 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
-import getChartColorsArray from "@components/admin/Common/ChartsDynamicColor";
+import getChartColorsArray from "@components/admin/ui/ChartsDynamicColor";
 
 const ColumnWithDataLabels = ({ dataColors }) => {
   const spineareaChartColors = getChartColorsArray(dataColors);

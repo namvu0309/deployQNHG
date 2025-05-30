@@ -5,11 +5,11 @@ import { Container, Row, Col, Card, CardBody } from "reactstrap";
 import avatar2 from "@assets/admin/images/users/avatar-2.jpg";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 //Import Email Sidebar
 import EmailSideBar from "./email-sidebar";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 import { useDispatch, useSelector } from "react-redux";
 import { getMailsListsId as onGetMailsListsId } from "@store/admin/mails/actions";
 import { createSelector } from "reselect";

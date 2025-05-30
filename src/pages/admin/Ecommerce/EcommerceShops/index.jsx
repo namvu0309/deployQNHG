@@ -5,7 +5,7 @@ import { Col, Container, Row } from "reactstrap";
 import { map } from "lodash";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 //Import Card
 import CardShop from "./CardShop";
@@ -15,7 +15,7 @@ import { getShops as onGetShops } from "@store/admin/e-commerce/actions";
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 
-import Spinners from "@components/admin/Common/Spinner";
+import Spinners from "@components/admin/ui/Spinner";
 const EcommerceShops = () => {
   //meta title
   document.title = "Shops | Skote - Vite React Admin & Dashboard Template";

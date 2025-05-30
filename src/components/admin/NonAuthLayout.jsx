@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import withRouter from "./Common/withRouter";
+import withRouter from "./ui/withRouter";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 import { changeLayoutMode } from "@store/admin/actions";

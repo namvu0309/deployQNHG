@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { isEmpty } from "lodash";
 import { Card, CardBody, Col, Container, Row } from "reactstrap";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 import "@assets/admin/scss/datatables.scss";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import { getWallet as onGetWallet } from "@store/admin/actions";
 import WalletActivities from "./walletActivities";
 import WalletStats from "./walletStats";

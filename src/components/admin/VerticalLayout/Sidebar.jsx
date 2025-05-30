@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
-import withRouter from "../Common/withRouter";
+import withRouter from "../ui/withRouter";
 
 import { withTranslation } from "react-i18next";
 import SidebarContent from "./SidebarContent";

@@ -29,7 +29,7 @@ import { Link } from "react-router-dom";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import BasicCard from "./BasicCard";
 import CardTitleTreatment from "./CardTitleTreatment";
 import CardFeatured from "./CardFeatured";

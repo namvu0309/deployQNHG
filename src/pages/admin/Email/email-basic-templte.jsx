@@ -3,7 +3,7 @@ import { Row, Col } from "reactstrap";
 import { Link } from "react-router-dom";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const EmailBasicTemplte = () => {
   //meta title

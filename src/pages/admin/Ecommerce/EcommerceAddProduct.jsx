@@ -18,7 +18,7 @@ import { useFormik } from "formik";
 import Select from "react-select";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const EcommerenceAddProduct = () => {
   //meta title

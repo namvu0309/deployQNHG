@@ -26,7 +26,7 @@ import ReactApexChart from "react-apexcharts";
 import SimpleBar from "simplebar-react";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 //Import Images
 import avatar from "@assets/admin/images/users/avatar-1.jpg";

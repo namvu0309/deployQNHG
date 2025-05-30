@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import {
   Row,
   Col,
@@ -9,8 +9,8 @@ import {
   UncontrolledTooltip,
   Badge,
 } from "reactstrap";
-import TableContainer from "@components/admin/Common/TableContainer";
-import DeleteModal from "@components/admin/Common/DeleteModal";
+import TableContainer from "@components/admin/ui/TableContainer";
+import DeleteModal from "@components/admin/ui/DeleteModal";
 import { Link } from "react-router-dom";
 
 import {
@@ -18,7 +18,7 @@ import {
   deleteApplyJob as OnDeleteApplyJob,
 } from "@store/admin/actions";
 
-import Spinners from "@components/admin/Common/Spinner";
+import Spinners from "@components/admin/ui/Spinner";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";

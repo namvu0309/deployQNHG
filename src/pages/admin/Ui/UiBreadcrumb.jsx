@@ -4,7 +4,7 @@ import { Card, CardBody, CardTitle, Col, Container, Row } from "reactstrap";
 import { Link } from "react-router-dom";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 function UiBreadcrumb(props) {
   //meta title

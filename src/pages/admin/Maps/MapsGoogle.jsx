@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import LightData from "./LightData";
 import { Row, Col, Card, CardBody, CardTitle, CardSubtitle } from "reactstrap";
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 import {
   GoogleMap,

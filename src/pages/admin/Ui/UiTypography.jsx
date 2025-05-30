@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Row, Col, CardBody, CardTitle, Container } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const UiTypography = () => {
   //meta title

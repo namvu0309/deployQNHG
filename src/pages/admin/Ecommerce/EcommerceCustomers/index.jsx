@@ -23,9 +23,9 @@ import {
 } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
-import DeleteModal from "@components/admin/Common/DeleteModal";
+import DeleteModal from "@components/admin/ui/DeleteModal";
 import {
   getCustomers as onGetCustomers,
   addNewCustomer as onAddNewCustomer,
@@ -36,8 +36,8 @@ import {
 //redux
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
-import TableContainer from "@components/admin/Common/TableContainer";
-import Spinners from "@components/admin/Common/Spinner";
+import TableContainer from "@components/admin/ui/TableContainer";
+import Spinners from "@components/admin/ui/Spinner";
 import moment from "moment";
 import { ToastContainer } from "react-toastify";
 

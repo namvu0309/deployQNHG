@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Row, Col, Card, CardBody, CardTitle, Container } from "reactstrap";
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 

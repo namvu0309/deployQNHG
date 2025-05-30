@@ -19,7 +19,7 @@ import FunnelChart from "../AllCharts/apex/FunnelChart";
 import { Row, Col, Card, CardBody, CardTitle } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const Apexchart = () => {
   //meta title

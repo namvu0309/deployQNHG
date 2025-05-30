@@ -20,7 +20,7 @@ import {
   deleteMail as onDeleteMail,
   trashMail as onTrashMail,
 } from "@store/admin/mails/actions";
-import DeleteModal from "@components/admin/Common/DeleteModal";
+import DeleteModal from "@components/admin/ui/DeleteModal";
 
 const EmailToolbar = (props) => {
   const dispatch = useDispatch();

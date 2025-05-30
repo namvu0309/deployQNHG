@@ -5,7 +5,7 @@ import { Form, Card, CardBody, Col, Row, Container } from "reactstrap";
 import { Editor } from "@tinymce/tinymce-react";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const FormEditors = () => {
   //meta title

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 import {
   Card,
   CardBody,
@@ -14,10 +14,10 @@ import {
 } from "reactstrap";
 
 // TableContainer
-import TableContainer from "@components/admin/Common/TableContainer";
+import TableContainer from "@components/admin/ui/TableContainer";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 //Import mini card widgets
 import MiniCards from "./mini-card";

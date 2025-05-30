@@ -21,7 +21,7 @@ import "flatpickr/dist/themes/material_blue.css";
 import FlatPickr from "react-flatpickr";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const TasksCreate = () => {
   //meta title

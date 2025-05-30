@@ -33,8 +33,8 @@ import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/themes/material_blue.css";
 
 //Import Component
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
-import DeleteModal from "@components/admin/Common/DeleteModal";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
+import DeleteModal from "@components/admin/ui/DeleteModal";
 
 import {
   getProjects as onGetProjects,
@@ -46,9 +46,9 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 
-import Spinners from "@components/admin/Common/Spinner";
+import Spinners from "@components/admin/ui/Spinner";
 import { ToastContainer } from "react-toastify";
-import TableContainer from "@components/admin/Common/TableContainer";
+import TableContainer from "@components/admin/ui/TableContainer";
 
 const ProjectStatus = ({ status }) => {
   switch (status) {

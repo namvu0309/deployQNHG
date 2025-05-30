@@ -2,20 +2,20 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Col, Container, Row } from "reactstrap";
 import { Link } from "react-router-dom";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 //Import Card invoice
 import CardInvoice from "./card-invoice";
 import { getInvoices as onGetInvoices } from "@store/admin/actions";
 
-import Spinners from "@components/admin/Common/Spinner";
+import Spinners from "@components/admin/ui/Spinner";
 
 const InvoicesList = () => {
   //meta title

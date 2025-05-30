@@ -27,7 +27,7 @@ import {
 
 // IMage
 import avatar1 from "@assets/admin/images/users/avatar-1.jpg";
-import Spinners from "@components/admin/Common/Spinner";
+import Spinners from "@components/admin/ui/Spinner";
 
 const ChatList = ({ userChatOpen, currentRoomId }) => {
   const dispatch = useDispatch();

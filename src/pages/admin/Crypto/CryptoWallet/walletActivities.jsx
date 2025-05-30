@@ -4,9 +4,9 @@ import PropTypes from "prop-types";
 import { Card, CardBody, NavItem, NavLink } from "reactstrap";
 import classnames from "classnames";
 
-import TableContainer from "@components/admin/Common/TableContainer";
+import TableContainer from "@components/admin/ui/TableContainer";
 
-import Spinners from "@components/admin/Common/Spinner";
+import Spinners from "@components/admin/ui/Spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { getCryptoProducts as onGetCryptoProducts } from "@store/admin/actions";
 import { Link } from "react-router-dom";

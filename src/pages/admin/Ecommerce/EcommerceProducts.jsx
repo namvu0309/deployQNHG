@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Link, useNavigate } from "react-router-dom";
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 import {
   Card,
   CardBody,
@@ -28,7 +28,7 @@ import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 //Import data
 import { discountData } from "@common/admin/data";
@@ -40,8 +40,8 @@ import { getProducts as onGetProducts } from "@store/admin/e-commerce/actions";
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 
-import { handleSearchData } from "@components/admin/Common/searchFile";
-import Spinners from "@components/admin/Common/Spinner";
+import { handleSearchData } from "@components/admin/ui/searchFile";
+import Spinners from "@components/admin/ui/Spinner";
 
 const EcommerceProducts = () => {
   //meta title

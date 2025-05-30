@@ -15,7 +15,7 @@ import {
 import { Link } from "react-router-dom";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 //Import Product Images
 import img1 from "@assets/admin/images/product/img-1.png";

@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { Container, Row, Col, Card, CardBody, Badge } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const IconMaterialdesign = () => {
   useEffect(() => {

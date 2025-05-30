@@ -2,7 +2,7 @@ import React from "react";
 import { Container, Row } from "reactstrap";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import Overview from "./Overview";
 import DetailsSection from "./DetailsSection";
 

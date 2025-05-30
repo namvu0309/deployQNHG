@@ -12,7 +12,7 @@ import { withTranslation } from "react-i18next";
 // Redux
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import withRouter from "../../Common/withRouter";
+import withRouter from "../../ui/withRouter";
 
 // users
 import user1 from "@assets/admin/images/users/avatar-1.jpg";

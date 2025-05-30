@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row } from "reactstrap";
 
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import FormSelect2 from "./FormSelect2";
 import ReactColorPicker from "./ReactColorpicker";
 import BootstrapMaxLength from "./BootstrapMaxLength";

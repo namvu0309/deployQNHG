@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { isEmpty } from "lodash";
 import "bootstrap/dist/css/bootstrap.min.css";
-import TableContainer from "@components/admin/Common/TableContainer";
+import TableContainer from "@components/admin/ui/TableContainer";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
-import DeleteModal from "@components/admin/Common/DeleteModal";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
+import DeleteModal from "@components/admin/ui/DeleteModal";
 
 import {
   getJobList as onGetJobList,
@@ -39,7 +39,7 @@ import {
   DropdownItem,
   Badge,
 } from "reactstrap";
-import Spinners from "@components/admin/Common/Spinner";
+import Spinners from "@components/admin/ui/Spinner";
 import { ToastContainer } from "react-toastify";
 
 const JobList = () => {

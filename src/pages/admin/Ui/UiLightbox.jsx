@@ -40,7 +40,7 @@ import img6 from "@assets/admin/images/small/img-6.jpg";
 import img7 from "@assets/admin/images/small/img-7.jpg";
 
 //Import Breadcrumb
-import Breadcrumbs from "@components/admin/Common/Breadcrumb";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const images = [img1, img2, img3, img4, img5, img6];
 const images1 = [img3, img7];

@@ -21,10 +21,10 @@ import { useFormik } from "formik";
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 
-import withRouter from "@components/admin/Common/withRouter";
+import withRouter from "@components/admin/ui/withRouter";
 
 //Import Breadcrumb
-import Breadcrumb from "@components/admin/Common/Breadcrumb";
+import Breadcrumb from "@components/admin/ui/Breadcrumb";
 
 import avatar from "@assets/admin/images/users/avatar-1.jpg";
 // actions
