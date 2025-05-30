@@ -8,7 +8,10 @@ import {
   authProtectedRoutes,
   publicRoutes,
 } from "../src/routes/admin/index.jsx";
-
+//FE
+import  {
+ clientRoutes 
+} from "../src/routes/client/index.jsx";
 // Middleware
 import Authmiddleware from "../src/routes/admin/route.jsx";
 
@@ -16,11 +19,15 @@ import Authmiddleware from "../src/routes/admin/route.jsx";
 import VerticalLayout from "@components/admin/VerticalLayout/";
 import NonAuthLayout from "@components/admin/NonAuthLayout";
 
+
 // SCSS
 import "@assets/admin/scss/theme.scss";
 
 // Fake backend
 import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
+// FE
+
+
 fakeBackend();
 
 const App = (props) => {
@@ -52,6 +59,16 @@ const App = (props) => {
                 <Layout>{route.component}</Layout>
               </Authmiddleware>
             }
+            key={idx}
+            exact={true}
+          />
+        ))}
+
+        {/* Route danh cho client */}
+        {clientRoutes.map((route, idx) => (
+          <Route
+            path={route.path}
+            element={<NonAuthLayout>{route.component}</NonAuthLayout>}
             key={idx}
             exact={true}
           />
