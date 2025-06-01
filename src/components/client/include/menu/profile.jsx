@@ -1,81 +1,135 @@
-import React from "react";
-
-// import cb1 from "@assets/admin/images/profile/1.png";
-// import cb2 from "@assets/admin/images/profile/2.png";
-// import cb3 from "@assets/admin/images/profile/3.png";
-// import cb4 from "@assets/admin/images/profile/4.png";
-
-const combos = [
-  {
-    id: 1,
-    title: "COMBO 1",
-    description: "Đầy đủ món Việt...",
-    priceText: "1038K",
-    price: "1,038,000",
-    
-
-  },
-  {
-    id: 2,
-    title: "COMBO 2",
-    description: "Hương vị cuốn hút...",
-    priceText: "1044K",
-    price: "1,044,000",
-   
-  },
-  {
-    id: 3,
-    title: "COMBO 3",
-    description: "Nậm chân hấp dẫn...",
-    priceText: "1121K",
-    price: "1,121,000",
-   
-  },
-  {
-    id: 4,
-    title: "COMBO 4",
-    description: "Đặc trưng vùng miền...",
-    priceText: "1309K",
-    price: "1,309,000",
-  
-  },
-];
+import React, { useState } from "react";
+import './menu.scss';
+import { combos, dishs } from "./data-menu";
+import plush from "./image/plush.svg";
 
 const Profile = () => {
+  const [cart, setCart] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAdd = (item) => {
+    const priceNumber = Number(item.price.toString().replace(/[^\d]/g, ""));
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((i) => i.id === item.id);
+      if (existingItem) {
+        return prevCart.map((i) =>
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+        );
+      } else {
+        return [...prevCart, { ...item, quantity: 1, price: priceNumber }];
+      }
+    });
+  };
+
+  const handleRemoveAll = () => {
+    setCart([]);
+    setIsModalOpen(false);
+  };
+
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = cart.reduce((sum, item) => sum + item.quantity * item.price, 0);
+
   return (
-    <div className="p-8">
-      <h2 className="text-3xl font-bold mb-6 text-green-800">Combo</h2>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {combos.map((combo) => (
-          <div
-            key={combo.id}
-            className="bg-white rounded-xl shadow hover:shadow-md transition"
-          >
-            <div className="relative h-64 rounded-t-xl overflow-hidden">
-              <img
-                src={combo.image}
-                alt={combo.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-0 left-0 bg-green-900 text-yellow-300 text-sm font-bold px-3 py-1">
-                ★ {combo.title}
-              </div>
+    <div className="td-menu">
+      <div className="menuList">
+        <div className="widthCT">
+          {totalItems > 0 && (
+            <div className="order-summary" onClick={() => setIsModalOpen(true)}>
+                <span className="count">{totalItems} MÓN</span> <span className="tt">TẠM TÍNH</span> <br />
+                <span className="total">{totalPrice.toLocaleString()}</span>
             </div>
-            <div className="p-4">
-              <p className="text-gray-700 text-sm line-clamp-2 mb-2">
-                {combo.description}
-              </p>
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm text-gray-800">{combo.title}</span>
-                <span className="text-right text-gray-600 text-sm">{combo.price}</span>
-              </div>
-              <button className="mt-2 px-3 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700">
-                Đặt
-              </button>
-            </div>
+          )}
+
+
+          <div className="menuBox">
+            <h2 className="title-menu">Combo</h2>
+            <ul className="list-food-menu">
+              {combos.map((combo) => (
+                <li key={combo.id}>
+                  <div className="food-menu">
+                    <a href="#" className="thumb">
+                      <img src={combo.image} alt={combo.title} />
+                    </a>
+                    <div className="info-box">
+                      <a href="#" className="title-food">{combo.title}</a>
+                      <div className="price-food">{combo.price}</div>
+                      <div className="funcsBox">
+                        <button
+                          className="add-to-card"
+                          onClick={() => handleAdd(combo)}
+                        >
+                          <img src={plush} alt="" />
+                          <span className="txt">Đặt</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
-        ))}
+
+          <div className="menuBox">
+            <h2 className="title-menu">Món mới</h2>
+            <ul className="list-food-menu dish">
+              {dishs.map((dish) => (
+                <li key={dish.id}>
+                  <div className="food-menu-dish">
+                    <a href="#" className="thumb">
+                      <img src={dish.image} alt={dish.description} />
+                    </a>
+                    <div className="info-box">
+                      <a href="#" className="title-food">{dish.description}</a>
+                      <div className="price-food">{dish.price}</div>
+                      <div className="funcsBox">
+                        <button
+                          className="add-to-card"
+                          onClick={() => handleAdd(dishs)}
+                        >
+                          <img src={plush} alt="" />
+                          <span className="txt">Đặt</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {isModalOpen && (
+            <div className="cart-modal">
+              <div className="cart-header">
+                <h2>Tạm tính</h2>
+                <button className="close-btn" onClick={() => setIsModalOpen(false)}>×</button>
+              </div>
+              <div className="cart-footer">
+                <div className="total">Tổng tiền: <span>{totalPrice.toLocaleString()}</span></div>
+                <div className="clear">
+                  <div className="text-clear">
+                    <span>Đơn giá tạm tính chỉ mang tính chất tham khảo.</span><br />Liên hệ hotline để Tự Do có thể tư vấn cho bạn chu đáo nhất.
+                  </div>
+                  <div onClick={handleRemoveAll} className="clear-cart">Xoá hết tạm tính</div>
+                </div>
+              
+              </div>
+
+              <ul className="cart-list">
+                {cart.map((item) => (
+                  <li key={item.id} className="cart-item">
+                    <div className="name">{item.title || item.description}</div>
+                    <div className="quantity-control">
+                      <span>{item.quantity}</span>
+                    </div>
+                    <div className="price">
+                      {(item.price * item.quantity).toLocaleString()}₫
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
