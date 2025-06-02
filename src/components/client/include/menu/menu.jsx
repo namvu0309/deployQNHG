@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import './menu.scss';
 import { combos, dishs, drinks } from "./data-menu";
 import Header from "../header/header";
-import plush from "./image/plush.svg";
+import plush from "../../../../assets/client/images/menu/plush.svg";
 
 const Menu = () => {
 

@@ -1,13 +1,15 @@
-import cb1 from "./image/1.png";
-import cb2 from "./image/2.png";
-import cb3 from "./image/3.png";
-import cb4 from "./image/4.png";
-import dish1 from "./image/dish1.png";
-import drink1 from "./image/drink1.webp";
-import drink2 from "./image/drink2.webp";
-import drink3 from "./image/drink3.webp";
-import drink4 from "./image/drink4.webp";
-import drink5 from "./image/drink5.webp";
+import cb1 from "../../../../assets/client/images/menu/1.png";
+import cb2 from "../../../../assets/client/images/menu/2.png";
+import cb3 from "../../../../assets/client/images/menu/3.png";
+import cb4 from "../../../../assets/client/images/menu/4.png";
+
+import dish1 from  "../../../../assets/client/images/menu/dish1.png";
+import drink1 from  "../../../../assets/client/images/menu/drink1.webp";
+import drink2 from  "../../../../assets/client/images/menu/drink2.webp";
+import drink3 from  "../../../../assets/client/images/menu/drink3.webp";
+import drink4 from  "../../../../assets/client/images/menu/drink4.webp";
+import drink5 from  "../../../../assets/client/images/menu/drink5.webp";
+
 
 export const combos = [
   {

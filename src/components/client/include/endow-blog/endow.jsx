@@ -1,7 +1,7 @@
 import React from "react";
 import './endow.scss';
-import banner from "./image/banner.jpg";
-import rightArrow from "./image/rightarrow-icon.png";
+import banner from "../../../../assets/client/images/endow-blog/banner.jpg";
+import rightArrow from "../../../../assets/client/images/endow-blog/rightarrow-icon.png";
 import {endows} from "./data-endow";
 import { Link } from "react-router-dom";
 
