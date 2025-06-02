@@ -1,0 +1,279 @@
+.detail-page {
+  padding: 90px 57px 59px 57px;
+  background: #f8f8f8;
+     .breadcrumb {
+      font-size: 14px;
+      margin-bottom: 12px;
+      padding-left: 0;
+      max-width: 1115px;
+      margin: auto;
+      padding-left: 10px;
+      .endow{
+        display: inline-flex; 
+        align-items: center;
+        opacity: 0.6;
+        &:hover {
+            cursor: pointer; 
+            opacity: 1;
+        }
+      }
+
+      a {
+        color: #007bff;
+        text-decoration: none;
+      }
+    }
+
+
+  .container {
+    display: flex;
+    gap: 46px;
+    max-width: 1200px;
+    margin: auto;
+  }
+
+  .main-content {
+    flex: 3;
+    margin-left: 46px;
+
+    .title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+
+    .banner,
+    .image {
+      width: 100%;
+      margin: 16px 0;
+      border-radius: 6px;
+    }
+
+    p {
+      margin-bottom: 16px;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .hotline {
+       margin-top: 36px;
+
+  h4 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 15px;
+    margin-bottom: 12px;
+    line-height: 1.6;
+
+    a {
+      color: #007bff;
+      text-decoration: underline;
+    }
+  }
+
+  ul {
+    padding-left: 0;
+    list-style-type: none;
+
+    li {
+      margin-bottom: 8px;
+
+      a {
+        color: green;
+        font-size: 14px;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+}
+
+  }
+
+
+  .sidebar {
+    flex: 1;
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+      letter-spacing: -0.2px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          border-radius: 6px;
+          padding: 8px;
+        }
+
+        img {
+          width: 80px;
+          height: 80px;
+          object-fit: cover;
+          border-radius: 6px;
+          flex-shrink: 0;
+        }
+
+        p {
+          font-size: 15px;
+          line-height: 1.5;
+          color: #333;
+          margin: 0;
+          font-weight: 400;
+        }
+      }
+    }
+
+    .feature-image {
+      margin-top: 40px;
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+      overflow: hidden;
+
+      &:hover {
+        transform: scale(1.02);
+      }
+    }
+}
+}
+ .menuBox{
+                padding: 40px 0;
+                max-width: 1115px;
+                margin: auto;
+                .title-menu{
+                    font-size: 26px;
+                    line-height: 110%;
+                    letter-spacing: -0.02em;
+                    margin-bottom: 27px;
+                    color: #1B4E30;
+                }
+
+                
+                .dish {
+                     display: flex;
+                        gap: 25px;
+                        -ms-flex-wrap: wrap;
+                        flex-wrap: wrap;
+                        list-style-type: none;
+                        padding: 0;
+                    li{
+                        width: calc((100% - 50px) / 3) !important;
+                        .food-menu-dish{
+                                    display: flex;
+                                    flex-wrap: wrap;
+                                    .thumb{
+                                            flex-shrink: 0;
+                                            display: block;
+                                            width: 355px;
+                                            height: 190px;
+                                            border-radius: 5px 0px 0px 5px;
+                                            overflow: hidden;
+                                            position: relative;
+                                            text-decoration: none;
+                                            padding: 0;
+                                            cursor: pointer;    
+                                            img {
+                                                    z-index: 1;
+                                                    position: absolute;
+                                                    top: 0;
+                                                    left: 0;
+                                                    display: block;
+                                                    width: 100%;
+                                                    height: 100%;
+                                                    overflow: hidden;
+                                                    -o-object-fit: cover;
+                                                    object-fit: cover;
+                                                    width: 352px;
+                                                    height: 190px;
+                                            }
+                                    }
+                                    .info-box{
+                                        padding: 12px 16px;
+                                        border-radius: 0px 0px 10px 10px;
+                                        -webkit-box-flex: 1;
+                                        -ms-flex-positive: 1;
+                                        flex-grow: 1;
+                                        background: #FFFFFF;
+                                        border-style: solid;
+                                        border-color: #EFEFEF;
+                                        border-radius: 0px 5px 5px 0px;
+                                        -webkit-box-sizing: border-box;
+                                        box-sizing: border-box;
+                                        height: auto;
+                                        border-width: 1px 1px 1px 0;
+                                        display: -webkit-box;
+                                        display: -ms-flexbox;
+                                        display: flex;
+                                        -webkit-box-orient: vertical;
+                                        -webkit-box-direction: normal;
+                                        -ms-flex-direction: column;
+                                        flex-direction: column;
+                                        .title-food{
+                                                font-size: 18px;
+                                                white-space: normal;
+                                                font-size: 17px;
+                                                line-height: 120%;
+                                                display: block;
+                                                color: #222222;
+                                                margin-bottom: 8px;
+                                        }
+                                        .price-food{
+                                         font-size: 15px;
+                                         line-height: 100%;
+                                         color: #1B4E30;
+                                         margin-bottom: auto;
+                                        }
+                                        .funcsBox{
+                                            display: flex;
+                                            .add-to-card{
+                                                display: flex;
+                                                align-items: center;
+                                                padding: 4px 10px;
+                                                gap: 7.67px;
+                                                img {
+                                                    width: 16px;
+                                                    height: 14px;
+                                                }
+                                                    .txt {
+                                                            font-size: 13px;
+                                                            line-height: 120%;
+                                                            color: #222;
+                                                            font-family: "PlusJaS-SemiBold";
+                                                            transition: all 0.25s ease;
+                                                    }
+                                            }
+                                        }
+                                    }
+                                }
+                    }
+                }
+            }
