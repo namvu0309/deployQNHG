@@ -99,39 +99,71 @@
 
   .sidebar {
     flex: 1;
-    background: #fff;
-    padding: 16px;
-    border-radius: 6px;
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
     h3 {
-      font-size: 18px;
-      margin-bottom: 12px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+      letter-spacing: -0.2px;
     }
 
     ul {
       list-style: none;
       padding: 0;
-      list-style-type: none;
+      margin: 0;
 
       li {
         display: flex;
-        gap: 8px;
-        margin-bottom: 16px;
+        gap: 12px;
+        margin-bottom: 20px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          border-radius: 6px;
+          padding: 8px;
+        }
 
         img {
           width: 80px;
           height: 80px;
           object-fit: cover;
-          border-radius: 4px;
+          border-radius: 6px;
+          flex-shrink: 0;
         }
 
         p {
-          font-size: 14px;
-          line-height: 1.4;
+          font-size: 15px;
+          line-height: 1.5;
+          color: #333;
+          margin: 0;
+          font-weight: 400;
         }
       }
     }
-  }
+
+    .feature-image {
+      margin-top: 40px;
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+      overflow: hidden;
+
+      &:hover {
+        transform: scale(1.02);
+      }
+    }
+}
 }
  .menuBox{
                 padding: 40px 0;

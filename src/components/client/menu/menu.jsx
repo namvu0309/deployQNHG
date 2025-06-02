@@ -1,16 +1,14 @@
 import React, { useState } from "react";
-import './menu.scss';
+import "./menu.scss";
 import { combos, dishs, drinks } from "./data-menu";
 import Header from "../header/header";
 import plush from "../../../../assets/client/images/menu/plush.svg";
 
 const Menu = () => {
-
   const [cart, setCart] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAdd = (item) => {
-    
     const priceNumber = Number(item.price.toString().replace(/[^\d]/g, ""));
     setCart((prevCart) => {
       const existingItem = prevCart.find((i) => i.id === item.id);
@@ -30,21 +28,23 @@ const Menu = () => {
   };
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cart.reduce((sum, item) => sum + item.quantity * item.price, 0);
+  const totalPrice = cart.reduce(
+    (sum, item) => sum + item.quantity * item.price,
+    0
+  );
 
- 
   return (
     <div className="td-menu">
-       <Header/>
+      <Header />
       <div className="menuList">
         <div className="widthCT">
           {totalItems > 0 && (
             <div className="order-summary" onClick={() => setIsModalOpen(true)}>
-                <span className="count">{totalItems} MÓN</span> <span className="tt">TẠM TÍNH</span> <br />
-                <span className="total">{totalPrice.toLocaleString()}</span>
+              <span className="count">{totalItems} MÓN</span>{" "}
+              <span className="tt">TẠM TÍNH</span> <br />
+              <span className="total">{totalPrice.toLocaleString()}</span>
             </div>
           )}
-
 
           <div className="menuBox">
             <h2 className="title-menu">Combo</h2>
@@ -56,7 +56,9 @@ const Menu = () => {
                       <img src={combo.image} alt={combo.title} />
                     </a>
                     <div className="info-box">
-                      <a href="#" className="title-food">{combo.title}</a>
+                      <a href="#" className="title-food">
+                        {combo.title}
+                      </a>
                       <div className="price-food">{combo.price}</div>
                       <div className="funcsBox">
                         <button
@@ -84,7 +86,9 @@ const Menu = () => {
                       <img src={dish.image} alt={dish.description} />
                     </a>
                     <div className="info-box">
-                      <a href="#" className="title-food">{dish.description}</a>
+                      <a href="#" className="title-food">
+                        {dish.description}
+                      </a>
                       <div className="price-food">{dish.price}</div>
                       <div className="funcsBox">
                         <button
@@ -101,50 +105,61 @@ const Menu = () => {
               ))}
             </ul>
           </div>
-         <div className="menuBox">
-  <h2 className="title-menu">Đồ Uống</h2>
-  <ul className="list-food-menu drink">
-    {drinks.map((drink) => (
-      <li key={drink.id}>
-        <div className="food-menu-dish">
-          <a href="#" className="thumb">
-            <img src={drink.image} alt={drink.name} />
-          </a>
-          <div className="info-box">
-            <a href="#" className="title-food">{drink.name}</a>
-            <div className="price-food">{drink.price}</div>
-            <div className="funcsBox">
-              <button
-                className="add-to-card"
-                onClick={() => handleAdd(drink)}
-              >
-                <img src={plush} alt="" />
-                <span className="txt">Đặt</span>
-              </button>
-            </div>
+          <div className="menuBox">
+            <h2 className="title-menu">Đồ Uống</h2>
+            <ul className="list-food-menu drink">
+              {drinks.map((drink) => (
+                <li key={drink.id}>
+                  <div className="food-menu-dish">
+                    <a href="#" className="thumb">
+                      <img src={drink.image} alt={drink.name} />
+                    </a>
+                    <div className="info-box">
+                      <a href="#" className="title-food">
+                        {drink.name}
+                      </a>
+                      <div className="price-food">{drink.price}</div>
+                      <div className="funcsBox">
+                        <button
+                          className="add-to-card"
+                          onClick={() => handleAdd(drink)}
+                        >
+                          <img src={plush} alt="" />
+                          <span className="txt">Đặt</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
-      </li>
-    ))}
-  </ul>
-</div>
-
 
           {isModalOpen && (
             <div className="cart-modal">
               <div className="cart-header">
                 <h2>Tạm tính</h2>
-                <button className="close-btn" onClick={() => setIsModalOpen(false)}>×</button>
+                <button
+                  className="close-btn"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  ×
+                </button>
               </div>
               <div className="cart-footer">
-                <div className="total">Tổng tiền: <span>{totalPrice.toLocaleString()}</span></div>
+                <div className="total">
+                  Tổng tiền: <span>{totalPrice.toLocaleString()}</span>
+                </div>
                 <div className="clear">
                   <div className="text-clear">
-                    <span>Đơn giá tạm tính chỉ mang tính chất tham khảo.</span><br />Liên hệ hotline để Tự Do có thể tư vấn cho bạn chu đáo nhất.
+                    <span>Đơn giá tạm tính chỉ mang tính chất tham khảo.</span>
+                    <br />
+                    Liên hệ hotline để Tự Do có thể tư vấn cho bạn chu đáo nhất.
                   </div>
-                  <div onClick={handleRemoveAll} className="clear-cart">Xoá hết tạm tính</div>
+                  <div onClick={handleRemoveAll} className="clear-cart">
+                    Xoá hết tạm tính
+                  </div>
                 </div>
-              
               </div>
 
               <ul className="cart-list">

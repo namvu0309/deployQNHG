@@ -1,7 +1,8 @@
 import Menu from "@components/client/include/menu/menu";
 import Endow from "../../components/client/endow-blog/endow";
 import Detail from "../../components/client/detail-blog/detail";
-import Header from "../../components/client/include/header/header"
+import Header from "../../components/client/include/header/header";
+import Footer from "../../components/client/include/footer/footer"
 
 const clientRoutes = [
     {
@@ -19,6 +20,10 @@ const clientRoutes = [
    {
     path: "/endow-page/detail/:id",
     component: <Detail/>,
+  },
+   {
+    path: "/footer-page",
+    component: <Footer/>,
   },
 ]
 

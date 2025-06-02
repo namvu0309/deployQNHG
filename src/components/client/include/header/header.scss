@@ -26,6 +26,7 @@
       color: #000;
     }
   }
+  
 
   .header-main {
     background-color: #0f3e27;
@@ -35,6 +36,7 @@
     padding: 15px 40px;
     min-height: 80px;
 
+    
     .header-left {
       display: flex;
       align-items: center;
@@ -43,10 +45,30 @@
         height: 60px;
         margin-right: 20px;
       }
+ .brand-name {
+      h2 {
+        font-size: 20px;
+        margin: 0;
+        font-weight: bold;
+        color: #cbcfcd;
+        line-height: 1.2;
 
+        .line-1, .line-2 {
+          display: block;
+        }
+      }
+    }
+    .divider {
+      width: 1px;
+      height: 20px;
+      background-color: #d3d3d3;
+      margin: 0 15px;
+    }
       .hotline {
         color: #ffa727;
         font-size: 18px;
+         flex-direction: column;
+      align-items: flex-start;
 
         span {
           margin-right: 6px;

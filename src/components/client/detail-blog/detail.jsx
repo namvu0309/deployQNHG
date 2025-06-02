@@ -8,6 +8,8 @@ import arowRight from "../../../assets/client/images/detail-blog/arrow-right.png
 import rightArrow from "../../../assets/client/images/detail-blog/rightarrow-icon.png";
 import banner from "../../../assets/client/images/detail-blog/banner.jpg";
 import tinhHoa from "../../../assets/client/images/detail-blog/tinhhoa.png"; 
+import laushiptudo from "../../../assets/client/images/detail-blog/laushiptudo.webp";
+import anh1 from "../../../assets/client/images/detail-blog/anh1.webp"
 // import tinhHoa2 from "../../../../assets/client/images/detail-blog/tinhhoa2.png"; 
 
 
@@ -75,23 +77,25 @@ const Detail = () => {
 
         </div>
 
-        <div className="sidebar">
-          <h3>Tin mới liên</h3>
-          <ul>
-            <li>
-              <img src={tinhHoa} alt="News 1" />
-              <p>TỰ HÀO VIỆT NAM - MỘT BỮA ĂN MẸ NẤU TẠI QUÁN NHẬU TỰ DO</p>
-            </li>
-            <li>
-              <img src={tinhHoa} alt="News 2" />
-              <p>Giảm 30% TỔNG HÓA ĐƠN</p>
-            </li>
-            <li>
-              <img src={tinhHoa} alt="News 3" />
-              <p>SINH NHẬT CỰC CHẤT - TỰ DO LO TẤT</p>
-            </li>
-          </ul>
-        </div>
+       <div className="sidebar">
+  <h3>Tin mới liên</h3>
+  <ul>
+    <li>
+      <img src={tinhHoa} alt="News 1" />
+      <p>TỰ HÀO VIỆT NAM - MỘT BỮA ĂN MẸ NẤU TẠI QUÁN NHẬU TỰ DO</p>
+    </li>
+    <li>
+      <img src={tinhHoa} alt="News 2" />
+      <p>Giảm 30% TỔNG HÓA ĐƠN</p>
+    </li>
+    <li>
+      <img src={tinhHoa} alt="News 3" />
+      <p>SINH NHẬT CỰC CHẤT - TỰ DO LO TẤT</p>
+    </li>
+  </ul>
+  <img src={laushiptudo} alt="Feature Image" className="feature-image" />
+  <img src={anh1} alt="Feature Image" className="feature-image" />
+</div>
       </div>
        <div className="menuBox">
                              <h2 className="title-menu">Món mới</h2>
