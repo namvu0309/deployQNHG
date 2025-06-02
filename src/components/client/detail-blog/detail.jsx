@@ -4,10 +4,10 @@ import './detail.scss';
 import {endows} from "../endow-blog/data-endow";
 import { Link } from 'react-router-dom';
 
-import arowRight from "../../../../assets/client/images/detail-blog/arrow-right.png";
-import rightArrow from "../../../../assets/client/images/detail-blog/rightarrow-icon.png";
-import banner from "../../../../assets/client/images/detail-blog/banner.jpg";
-import tinhHoa from "../../../../assets/client/images/detail-blog/tinhhoa.png"; 
+import arowRight from "../../../assets/client/images/detail-blog/arrow-right.png";
+import rightArrow from "../../../assets/client/images/detail-blog/rightarrow-icon.png";
+import banner from "../../../assets/client/images/detail-blog/banner.jpg";
+import tinhHoa from "../../../assets/client/images/detail-blog/tinhhoa.png"; 
 // import tinhHoa2 from "../../../../assets/client/images/detail-blog/tinhhoa2.png"; 
 
 

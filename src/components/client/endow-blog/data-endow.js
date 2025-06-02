@@ -1,4 +1,4 @@
-import endow1 from "../../../../assets/client/images/endow-blog/endow1.png";
+import endow1 from "../../../assets/client/images/endow-blog/endow1.png";
 
 export const endows = Array(9).fill(0).map((_, index) => ({
   id: index + 1,

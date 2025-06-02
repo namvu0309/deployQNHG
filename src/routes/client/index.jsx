@@ -1,6 +1,6 @@
 import Menu from "@components/client/include/menu/menu";
-import Endow from "../../components/client/include/endow-blog/endow";
-import Detail from "../../components/client/include/detail-blog/detail";
+import Endow from "../../components/client/endow-blog/endow";
+import Detail from "../../components/client/detail-blog/detail";
 import Header from "../../components/client/include/header/header"
 
 const clientRoutes = [
