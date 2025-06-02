@@ -1,11 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import './detail.scss';
-import {endows} from "../uudai/data-endow";
+import {endows} from "../endow/data-endow";
 import { Link } from 'react-router-dom';
 
 import arowRight from "./image/arrow-right.png";
-import rightArrow from "../uudai/image/rightarrow-icon.png";
+import rightArrow from "../endow/image/rightarrow-icon.png";
 import banner from "./image/banner.jpg";
 import tinhHoa from "./image/tinhhoa.png"; 
 // import tinhHoa2 from "./image/tinhhoa2.png"; 

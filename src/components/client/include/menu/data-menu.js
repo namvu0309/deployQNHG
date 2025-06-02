@@ -3,6 +3,11 @@ import cb2 from "./image/2.png";
 import cb3 from "./image/3.png";
 import cb4 from "./image/4.png";
 import dish1 from "./image/dish1.png";
+import drink1 from "./image/drink1.webp";
+import drink2 from "./image/drink2.webp";
+import drink3 from "./image/drink3.webp";
+import drink4 from "./image/drink4.webp";
+import drink5 from "./image/drink5.webp";
 
 export const combos = [
   {
@@ -69,3 +74,40 @@ export const dishs = Array(9).fill({
   price: "225,000",
   image: dish1,
 });
+export const drinks = [
+  {
+    id: 1,
+    name: "Trà đào cam sả",
+    description: "Thơm mát, nhẹ nhàng, thanh lọc cơ thể",
+    price: "45,000",
+    image: drink1,
+  },
+  {
+    id: 2,
+    name: "Nước chanh leo",
+    description: "Chua ngọt vừa phải, giải khát tức thì",
+    price: "40,000",
+    image: drink2,
+  },
+  {
+    id: 3,
+    name: "Sữa đậu nành",
+    description: "Bổ dưỡng, không chất bảo quản",
+    price: "30,000",
+    image: drink3,
+  },
+  {
+    id: 4,
+    name: "Coca-Cola",
+    description: "Có gas, lạnh sâu, phù hợp món nướng",
+    price: "25,000",
+    image: drink4,
+  },
+  {
+    id: 5,
+    name: "Bia Heineken",
+    description: "Lạnh, vị đắng nhẹ, dành cho người sành",
+    price: "35,000",
+    image: drink5,
+  },
+];

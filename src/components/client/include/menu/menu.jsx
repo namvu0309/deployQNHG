@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import './menu.scss';
-import { combos, dishs } from "./data-menu";
+import { combos, dishs, drinks } from "./data-menu";
+import Header from "../header/header";
 import plush from "./image/plush.svg";
 
-const Profile = () => {
+const Menu = () => {
+
   const [cart, setCart] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAdd = (item) => {
+    
     const priceNumber = Number(item.price.toString().replace(/[^\d]/g, ""));
     setCart((prevCart) => {
       const existingItem = prevCart.find((i) => i.id === item.id);
@@ -29,8 +32,10 @@ const Profile = () => {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
+ 
   return (
     <div className="td-menu">
+       <Header/>
       <div className="menuList">
         <div className="widthCT">
           {totalItems > 0 && (
@@ -96,6 +101,34 @@ const Profile = () => {
               ))}
             </ul>
           </div>
+         <div className="menuBox">
+  <h2 className="title-menu">Đồ Uống</h2>
+  <ul className="list-food-menu drink">
+    {drinks.map((drink) => (
+      <li key={drink.id}>
+        <div className="food-menu-dish">
+          <a href="#" className="thumb">
+            <img src={drink.image} alt={drink.name} />
+          </a>
+          <div className="info-box">
+            <a href="#" className="title-food">{drink.name}</a>
+            <div className="price-food">{drink.price}</div>
+            <div className="funcsBox">
+              <button
+                className="add-to-card"
+                onClick={() => handleAdd(drink)}
+              >
+                <img src={plush} alt="" />
+                <span className="txt">Đặt</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </li>
+    ))}
+  </ul>
+</div>
+
 
           {isModalOpen && (
             <div className="cart-modal">
@@ -135,4 +168,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default Menu;

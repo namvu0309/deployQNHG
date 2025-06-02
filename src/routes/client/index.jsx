@@ -1,11 +1,16 @@
-import Profile from "@components/client/include/menu/profile";
-import Endow from "../../components/client/include/uudai/uudai";
-import Detail from "../../components/client/include/xemngay/detail";
+import Menu from "@components/client/include/menu/menu";
+import Endow from "../../components/client/include/endow/endow";
+import Detail from "../../components/client/include/seenow/detail";
+import Header from "../../components/client/include/header/header"
 
 const clientRoutes = [
     {
-    path: "/home-page",
-    component: <Profile />,
+    path: "/header-page",
+    component: <Header />,
+  },
+    {
+    path: "/menu-page",
+    component: <Menu />,
   },
   {
     path: "/endow-page",
