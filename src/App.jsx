@@ -9,16 +9,13 @@ import {
   publicRoutes,
 } from "../src/routes/admin/index.jsx";
 //FE
-import  {
- clientRoutes 
-} from "../src/routes/client/index.jsx";
+import { clientRoutes } from "../src/routes/client/index.jsx";
 // Middleware
 import Authmiddleware from "../src/routes/admin/route.jsx";
 
 // Layouts
-import VerticalLayout from "@components/admin/VerticalLayout/";
-import NonAuthLayout from "@components/admin/NonAuthLayout";
-
+import Include from "@components/admin/Include/";
+import LayoutAdmin from "@layouts/admin/LayoutAdmin.jsx";
 
 // SCSS
 import "@assets/admin/scss/theme.scss";
@@ -27,12 +24,11 @@ import "@assets/admin/scss/theme.scss";
 import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
 // FE
 
-
 fakeBackend();
 
 const App = (props) => {
-  // Sử dụng cố định VerticalLayout
-  const Layout = VerticalLayout;
+  // Sử dụng cố định Include
+  const Layout = Include;
 
   // Tạo user giả cho localStorage (có thể bỏ nếu dùng auth thật)
   localStorage.setItem("authUser", JSON.stringify({ username: "quanglam" }));
@@ -44,13 +40,13 @@ const App = (props) => {
         {publicRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={<NonAuthLayout>{route.component}</NonAuthLayout>}
+            element={<LayoutAdmin>{route.component}</LayoutAdmin>}
             key={idx}
             exact={true}
           />
         ))}
 
-        {/* Route yêu cầu đăng nhập, sử dụng VerticalLayout */}
+        {/* Route yêu cầu đăng nhập, sử dụng Include */}
         {authProtectedRoutes.map((route, idx) => (
           <Route
             path={route.path}
