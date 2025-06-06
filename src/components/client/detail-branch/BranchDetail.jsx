@@ -1,13 +1,10 @@
 import React from "react";
 import "./Detail.scss";
-// import img1 from "@assets/client/images/Facility/anh-badinh.jpg"; // Đảm bảo ảnh này tồn tại
+import img1 from "@assets/client/images/Branch/anh-badinh.jpg"; // Sửa lỗi chính tả "Brach" -> "Branch"
 
-const BaDinhDetail = () => {
-    const img1 = "https://via.placeholder.com/800x500";
-
+const BranchDetail = () => {
   return (
-    
-    <div className="facility-detail">
+   <div className="branch-detail">
       <h1>67A Phó Đức Chính – “Chốn ăn chơi” mới của anh em quận Ba Đình</h1>
 
       <div className="banner">
@@ -40,4 +37,4 @@ const BaDinhDetail = () => {
   );
 };
 
-export default BaDinhDetail;
+export default BranchDetail;

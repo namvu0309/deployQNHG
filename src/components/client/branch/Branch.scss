@@ -1,4 +1,4 @@
-.facility-page {
+.branch-page {
   padding: 40px;
   font-family: "Roboto", sans-serif;
   color: #222;
@@ -12,7 +12,7 @@
       margin-bottom: 20px;
     }
 
-    .facility-card {
+    .branch-card {
       display: flex;
       justify-content: space-between;
       align-items: stretch;
@@ -22,7 +22,7 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
       margin-bottom: 30px;
 
-      .facility-info {
+      .branch-info {
         flex: 1;
         padding: 30px;
 
@@ -110,7 +110,7 @@
         }
       }
 
-      .facility-image {
+      .branch-image {
         width: 300px;
         height: auto;
         overflow: hidden;

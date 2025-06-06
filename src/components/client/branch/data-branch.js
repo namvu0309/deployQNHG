@@ -1,8 +1,8 @@
-import img1 from "@assets/client/images/Facility/anh-badinh.jpg";
-import img2 from "@assets/client/images/Facility/anh-caugiay.jpg";
-import img3 from "@assets/client/images/Facility/anh-dongda.jpg";
+import img1 from "@assets/client/images/Branch/anh-badinh.jpg";
+import img2 from "@assets/client/images/Branch/anh-caugiay.jpg";
+import img3 from "@assets/client/images/Branch/anh-dongda.jpg";
 
-export const facilities  = [
+export const branches  = [
   {
     id: 1,
     image: img1,

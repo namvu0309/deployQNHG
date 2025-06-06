@@ -3,7 +3,9 @@ import Endow from "../../components/client/endow-blog/endow";
 import Detail from "../../components/client/detail-blog/detail";
 import Header from "../../components/client/include/header/header";
 import Footer from "../../components/client/include/footer/footer"
-import Facility from "../../components/client/facility/Facility";
+// import BaDinhDetail from "../../components/client/detail-branch/BranchDetail";
+import Branch from "../../components/client/branch/Branch";
+import BranchDetail from "../../components/client/detail-branch/BranchDetail";
 
 const clientRoutes = [
     {
@@ -16,20 +18,25 @@ const clientRoutes = [
   },
     {
     path: "/co-so",
-    component: <Facility />,
+    component: <Branch />,
   },
   {
     path: "/endow-page",
     component: <Endow/>,
   },
    {
-    path: "/endow-page/detail/:id",
+    path: "/endow-page/detail/:slug",
     component: <Detail/>,
   },
    {
     path: "/footer-page",
     component: <Footer/>,
   },
+  {
+  path: "/ba-dinh-detail",
+  component: <BranchDetail />,
+},
+
 ]
 
 export { clientRoutes };
