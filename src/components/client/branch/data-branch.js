@@ -2,9 +2,10 @@ import img1 from "@assets/client/images/Branch/anh-badinh.jpg";
 import img2 from "@assets/client/images/Branch/anh-caugiay.jpg";
 import img3 from "@assets/client/images/Branch/anh-dongda.jpg";
 
-export const branches  = [
+export const branches = [
   {
     id: 1,
+    slug: "pho-duc-chinh",
     image: img1,
     address: "67A Phó Đức Chính",
     district: "Ba Đình",
@@ -18,6 +19,7 @@ export const branches  = [
   },
   {
     id: 2,
+    slug: "nguyen-van-huyen",
     image: img2,
     address: "10 Nguyễn Văn Huyên",
     district: "Cầu Giấy",
@@ -31,6 +33,7 @@ export const branches  = [
   },
   {
     id: 3,
+    slug: "lang-thuong",
     image: img3,
     address: "68 Láng Thượng",
     district: "Đống Đa",
