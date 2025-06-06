@@ -1,4 +1,4 @@
-import Menu from "@components/client/include/menu/menu";
+import Menu from "../../components/client/menu/menu";
 import Endow from "../../components/client/endow-blog/endow";
 import Detail from "../../components/client/detail-blog/detail";
 import Header from "../../components/client/include/header/header";

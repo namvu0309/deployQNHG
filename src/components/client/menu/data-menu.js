@@ -1,14 +1,14 @@
-import cb1 from "../../../../assets/client/images/menu/1.png";
-import cb2 from "../../../../assets/client/images/menu/2.png";
-import cb3 from "../../../../assets/client/images/menu/3.png";
-import cb4 from "../../../../assets/client/images/menu/4.png";
+import cb1 from "@assets/client/images/menu/1.png";
+import cb2 from "@assets/client/images/menu/2.png";
+import cb3 from "@assets/client/images/menu/3.png";
+import cb4 from "@assets/client/images/menu/4.png";
 
-import dish1 from  "../../../../assets/client/images/menu/dish1.png";
-import drink1 from  "../../../../assets/client/images/menu/drink1.webp";
-import drink2 from  "../../../../assets/client/images/menu/drink2.webp";
-import drink3 from  "../../../../assets/client/images/menu/drink3.webp";
-import drink4 from  "../../../../assets/client/images/menu/drink4.webp";
-import drink5 from  "../../../../assets/client/images/menu/drink5.webp";
+import dish1 from  "@assets/client/images/menu/dish1.png";
+import drink1 from  "@assets/client/images/menu/drink1.webp";
+import drink2 from  "@assets/client/images/menu/drink2.webp";
+import drink3 from  "@assets/client/images/menu/drink3.webp";
+import drink4 from  "@assets/client/images/menu/drink4.webp";
+import drink5 from  "@assets/client/images/menu/drink5.webp";
 
 
 export const combos = [
