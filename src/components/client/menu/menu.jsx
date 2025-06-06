@@ -3,7 +3,6 @@ import "./menu.scss";
 import { combos, dishs, drinks } from "./data-menu";
 import Header from "@components/client/include/header/header";
 import plush from "@assets/client/images/menu/plush.svg";
-
 const Menu = () => {
   const [cart, setCart] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
