@@ -18,7 +18,7 @@ export default defineConfig({
       // eslint-disable-next-line no-undef
       "@pages": resolve(__dirname, "src/pages"),
       // eslint-disable-next-line no-undef
-      "@routers": resolve(__dirname, "src/routers"),
+      "@routes": resolve(__dirname, "src/routes"),
       // eslint-disable-next-line no-undef
       "@helpers": resolve(__dirname, "src/helpers"),
       // eslint-disable-next-line no-undef
