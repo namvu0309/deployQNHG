@@ -4,25 +4,22 @@ import { Routes, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
 // Import Routes
-import {
-  authProtectedRoutes,
-  publicRoutes,
-} from "../src/routes/admin/index.jsx";
+import { authProtectedRoutes, publicRoutes } from "@routes/admin/index.jsx";
 //FE
-import { clientRoutes } from "../src/routes/client/index.jsx";
+import { clientRoutes } from "@routes/client/index.jsx";
 // Middleware
-import Authmiddleware from "../src/routes/admin/route.jsx";
+import Authmiddleware from "@routes/admin/route.jsx";
 
 // Layouts
 import Include from "@components/admin/Include/";
-import LayoutAdmin from "@layouts/admin/LayoutAdmin.jsx";
-
 // SCSS
 import "@assets/admin/scss/theme.scss";
 
 // Fake backend
 import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
-// FE
+
+// Layouts
+import BaseLayout from "@layouts/BaseLayout.jsx";
 
 fakeBackend();
 
@@ -40,7 +37,7 @@ const App = (props) => {
         {publicRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={<LayoutAdmin>{route.component}</LayoutAdmin>}
+            element={<BaseLayout>{route.component}</BaseLayout>}
             key={idx}
             exact={true}
           />
@@ -64,7 +61,7 @@ const App = (props) => {
         {clientRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={<NonAuthLayout>{route.component}</NonAuthLayout>}
+            element={<BaseLayout>{route.component}</BaseLayout>}
             key={idx}
             exact={true}
           />
