@@ -1,10 +1,10 @@
 import { defineConfig } from "vite";
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(),tailwindcss()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       // eslint-disable-next-line no-undef
@@ -25,6 +25,7 @@ export default defineConfig({
       "@store": resolve(__dirname, "src/store"),
       // eslint-disable-next-line no-undef
       "@locales": resolve(__dirname, "src/locales"),
+      "@layouts": resolve(__dirname, "src/layouts"),
     },
   },
 });
