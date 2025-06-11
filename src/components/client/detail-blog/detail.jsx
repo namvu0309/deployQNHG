@@ -1,38 +1,44 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import './detail.scss';
-import {endows} from "../endow-blog/data-endow";
-import { Link } from 'react-router-dom';
+import { useParams, useNavigate } from "react-router-dom";
+import { endows } from "../endow-blog/data-endow";
+import "./detail.scss";
 
-import arowRight from "../../../assets/client/images/detail-blog/arrow-right.png";
+import arrowRight from "../../../assets/client/images/detail-blog/arrow-right.png";
 import rightArrow from "../../../assets/client/images/detail-blog/rightarrow-icon.png";
 import banner from "../../../assets/client/images/detail-blog/banner.jpg";
-import tinhHoa from "../../../assets/client/images/detail-blog/tinhhoa.png"; 
+import tinhHoa from "../../../assets/client/images/detail-blog/tinhhoa.png";
 import laushiptudo from "../../../assets/client/images/detail-blog/laushiptudo.webp";
-import anh1 from "../../../assets/client/images/detail-blog/anh1.webp"
-// import tinhHoa2 from "../../../../assets/client/images/detail-blog/tinhhoa2.png"; 
-
+import anh1 from "../../../assets/client/images/detail-blog/anh1.webp";
+import { Link } from "react-router-dom";
+import Footer from "../../../components/client/include/footer/footer";
 
 const Detail = () => {
+  const { slug } = useParams();
+  const endow = endows.find((b) => b.slug === slug);
+  const navigate = useNavigate();
 
- const navigate = useNavigate();
+  if (!endow) {
+    return (
+      <div className="not-found">
+        <h2>Không tìm thấy nội dung ưu đãi</h2>
+        <button onClick={() => navigate("/endow-page")}>Quay lại trang ưu đãi</button>
+      </div>
+    );
+  }
 
   return (
+    <div className="detail-page">
+      <div className="breadcrumb">
+        <div>
+          <span onClick={() => navigate(-1)} className="endow">
+            Tin tức
+            <img src={arrowRight} alt="arrow" style={{ marginRight: '8px' }} />
+          </span>
+          <span>Ưu đãi</span>
+        </div>
+      </div>
 
-  <div className="detail-page">
-     <div className="breadcrumb">
-              <div>
-                    <span
-                    onClick={() => navigate(-1)} 
-                    className="endow"
-                    >
-                    Tin tức
-                    <img src={arowRight} alt="arrow" style={{ marginRight: '8px' }} />
-                    </span>
-                    <span>Ưu đãi</span>
-                </div>
-          </div>
-      <div className="container">
+       <div className="container">
        
         <div className="main-content">
         
@@ -77,59 +83,48 @@ const Detail = () => {
 
         </div>
 
-       <div className="sidebar">
-  <h3>Tin mới liên</h3>
-  <ul>
-    <li>
-      <img src={tinhHoa} alt="News 1" />
-      <p>TỰ HÀO VIỆT NAM - MỘT BỮA ĂN MẸ NẤU TẠI QUÁN NHẬU TỰ DO</p>
-    </li>
-    <li>
-      <img src={tinhHoa} alt="News 2" />
-      <p>Giảm 30% TỔNG HÓA ĐƠN</p>
-    </li>
-    <li>
-      <img src={tinhHoa} alt="News 3" />
-      <p>SINH NHẬT CỰC CHẤT - TỰ DO LO TẤT</p>
-    </li>
-  </ul>
-  <img src={laushiptudo} alt="Feature Image" className="feature-image" />
-  <img src={anh1} alt="Feature Image" className="feature-image" />
-</div>
+        <div className="sidebar">
+          <h3>Tin mới liên quan</h3>
+          <ul>
+            {endows.slice(0, 3).map((e) => (
+              <li key={e.id}>
+                <img src={e.image} alt={e.description} />
+                <p>{e.description}</p>
+              </li>
+            ))}
+          </ul>
+          <img src={laushiptudo} alt="Feature Image" className="feature-image" />
+          <img src={anh1} alt="Feature Image" className="feature-image" />
+        </div>
       </div>
-       <div className="menuBox">
-                             <h2 className="title-menu">Món mới</h2>
-                       
-                             <ul className="list-food-menu dish">
-                               {endows.map((endow) => (
-                               <li
-                                 key={endow.id}
-                               >
-                                 <div className="food-menu-dish">
-            
-                                    <Link to={`/endow-page/detail/${endow.id}`} className="thumb">
-                                    <img src={endow.image} alt={endow.title} />
-                                    </Link>
-            
-                                   <div className="info-box">
-                                     <a href="" className="title-food">{endow.description}</a>
-                                     <div className="price-food">{endow.price}</div>
-                                     <div className="funcsBox">
-                                        <Link to={`/endow-page/detail/${endow.id}`} className="add-to-card">
-                                     <img src= {rightArrow} alt="" />
-                                         <span className="txt">Xem ngay</span>
-                                    </Link>
-                                     </div>
-                                   </div>
-                                  
-                                 </div>
-                               </li>
-                                              ))}
-                               </ul>
-                 
-                             </div>
+
+      <div className="menuBox">
+        <h2 className="title-menu">Món mới</h2>
+        <ul className="list-food-menu dish">
+          {endows.map((endow) => (
+            <li key={endow.id}>
+              <div className="food-menu-dish">
+                <Link to={`/endow-page/detail/${endow.slug}`} className="thumb">
+                  <img src={endow.image} alt={endow.description} />
+                </Link>
+                <div className="info-box">
+                  <a href="#" className="title-food">{endow.description}</a>
+                  <div className="price-food">{endow.price || "Liên hệ"}</div>
+                  <div className="funcsBox">
+                    <Link to={`/endow-page/detail/${endow.slug}`} className="add-to-card">
+                      <img src={rightArrow} alt="" />
+                      <span className="txt">Xem ngay</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <Footer/>
     </div>
   );
-}
+};
 
 export default Detail;
