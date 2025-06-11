@@ -3,6 +3,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
+
 // Import Routes
 import { authProtectedRoutes, publicRoutes } from "@routes/admin/index.jsx";
 //FE
@@ -27,13 +28,13 @@ const App = (props) => {
   // Sử dụng cố định Include
   const Layout = Include;
 
-  // Tạo user giả cho localStorage (có thể bỏ nếu dùng auth thật)
+  // Tạo user giả
   localStorage.setItem("authUser", JSON.stringify({ username: "quanglam" }));
 
   return (
     <React.Fragment>
       <Routes>
-        {/* Route không yêu cầu đăng nhập */}
+        {/* ✅ Public Admin Routes */}
         {publicRoutes.map((route, idx) => (
           <Route
             path={route.path}
@@ -43,7 +44,6 @@ const App = (props) => {
           />
         ))}
 
-        {/* Route yêu cầu đăng nhập, sử dụng Include */}
         {authProtectedRoutes.map((route, idx) => (
           <Route
             path={route.path}
@@ -57,7 +57,7 @@ const App = (props) => {
           />
         ))}
 
-        {/* Route danh cho client */}
+        {/* ✅ Client Routes — Header + Footer tự động */}
         {clientRoutes.map((route, idx) => (
           <Route
             path={route.path}
