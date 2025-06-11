@@ -80,7 +80,7 @@ export default function LoginUserPage() {
 
         <div className="auth-links">
           <a href="/forgot" className="forgot">Quên mật khẩu?</a>
-          <a href="/register" className="register">Đăng ký thành viên</a>
+          <a href="/register-page" className="register">Đăng ký thành viên</a>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./Header.scss";
 import logo from "../../../../assets/client/images/header/logo.jpg";
 
+
 const Header = () => {
   const [showNoti, setShowNoti] = useState(true);
 
@@ -55,6 +56,10 @@ const Header = () => {
             <a href="#booking" className="nav-button">
               ĐẶT BÀN
             </a>
+         <a href="/login-page" className="nav-login" aria-label="Tài khoản">
+  <i className="fas fa-user nav-login__icon" aria-hidden="true"></i>
+</a>
+            
           </div>
           <div className="search-container">
             <input
