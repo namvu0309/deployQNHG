@@ -4,35 +4,28 @@ import { Routes, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
 // Import Routes
-import {
-  authProtectedRoutes,
-  publicRoutes,
-} from "../src/routes/admin/index.jsx";
+import { authProtectedRoutes, publicRoutes } from "@routes/admin/index.jsx";
 //FE
-import  {
- clientRoutes 
-} from "../src/routes/client/index.jsx";
+import { clientRoutes } from "@routes/client/index.jsx";
 // Middleware
-import Authmiddleware from "../src/routes/admin/route.jsx";
+import Authmiddleware from "@routes/admin/route.jsx";
 
 // Layouts
-import VerticalLayout from "@components/admin/VerticalLayout/";
-import NonAuthLayout from "@components/admin/NonAuthLayout";
-
-
+import Include from "@components/admin/Include/";
 // SCSS
 import "@assets/admin/scss/theme.scss";
 
 // Fake backend
 import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
-// FE
 
+// Layouts
+import BaseLayout from "@layouts/BaseLayout.jsx";
 
 fakeBackend();
 
 const App = (props) => {
-  // Sử dụng cố định VerticalLayout
-  const Layout = VerticalLayout;
+  // Sử dụng cố định Include
+  const Layout = Include;
 
   // Tạo user giả cho localStorage (có thể bỏ nếu dùng auth thật)
   localStorage.setItem("authUser", JSON.stringify({ username: "quanglam" }));
@@ -44,13 +37,13 @@ const App = (props) => {
         {publicRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={<NonAuthLayout>{route.component}</NonAuthLayout>}
+            element={<BaseLayout>{route.component}</BaseLayout>}
             key={idx}
             exact={true}
           />
         ))}
 
-        {/* Route yêu cầu đăng nhập, sử dụng VerticalLayout */}
+        {/* Route yêu cầu đăng nhập, sử dụng Include */}
         {authProtectedRoutes.map((route, idx) => (
           <Route
             path={route.path}
@@ -68,7 +61,7 @@ const App = (props) => {
         {clientRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={<NonAuthLayout>{route.component}</NonAuthLayout>}
+            element={<BaseLayout>{route.component}</BaseLayout>}
             key={idx}
             exact={true}
           />

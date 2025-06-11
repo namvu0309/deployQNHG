@@ -42,7 +42,6 @@ import { withTranslation } from "react-i18next";
 //redux
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
-import LatestTranactions from "./LatestTranaction";
 
 const Dashboard = (props) => {
   const [modal, setmodal] = useState(false);
@@ -212,12 +211,6 @@ const Dashboard = (props) => {
 
             <Col xl="4">
               <TopCities />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col lg="12">
-              <LatestTranactions />
             </Col>
           </Row>
         </Container>
