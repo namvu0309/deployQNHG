@@ -3,32 +3,30 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
-// Admin Routes
-import {
-  authProtectedRoutes,
-  publicRoutes,
-} from "../src/routes/admin/index.jsx";
 
-// FE Routes
-import { clientRoutes } from "../src/routes/client/index.jsx";
-
+// Import Routes
+import { authProtectedRoutes, publicRoutes } from "@routes/admin/index.jsx";
+//FE
+import { clientRoutes } from "@routes/client/index.jsx";
 // Middleware
-import Authmiddleware from "../src/routes/admin/route.jsx";
+import Authmiddleware from "@routes/admin/route.jsx";
 
 // Layouts
-import VerticalLayout from "@components/admin/VerticalLayout/";
-import NonAuthLayout from "@components/admin/NonAuthLayout";
-import ClientLayout from "@components/client/include/ClientLayout"; // ✅ THÊM
-
+import Include from "@components/admin/Include/";
 // SCSS
 import "@assets/admin/scss/theme.scss";
 
 // Fake backend
 import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
+
+// Layouts
+import BaseLayout from "@layouts/BaseLayout.jsx";
+
 fakeBackend();
 
 const App = (props) => {
-  const Layout = VerticalLayout;
+  // Sử dụng cố định Include
+  const Layout = Include;
 
   // Tạo user giả
   localStorage.setItem("authUser", JSON.stringify({ username: "quanglam" }));
@@ -40,13 +38,12 @@ const App = (props) => {
         {publicRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={<NonAuthLayout>{route.component}</NonAuthLayout>}
+            element={<BaseLayout>{route.component}</BaseLayout>}
             key={idx}
             exact={true}
           />
         ))}
 
-        {/* ✅ Protected Admin Routes */}
         {authProtectedRoutes.map((route, idx) => (
           <Route
             path={route.path}
@@ -64,7 +61,7 @@ const App = (props) => {
         {clientRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={<ClientLayout>{route.component}</ClientLayout>}
+            element={<BaseLayout>{route.component}</BaseLayout>}
             key={idx}
             exact={true}
           />

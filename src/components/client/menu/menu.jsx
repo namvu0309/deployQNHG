@@ -3,6 +3,7 @@ import "./menu.scss";
 import { combos, dishs, drinks } from "./data-menu";
 import Header from "@components/client/include/header/header";
 import plush from "@assets/client/images/menu/plush.svg";
+import Footer from "../../../components/client/include/footer/footer";
 
 const Menu = () => {
   const [cart, setCart] = useState([]);
@@ -178,6 +179,7 @@ const Menu = () => {
             </div>
           )}
         </div>
+      <Footer/>
       </div>
     </div>
   );

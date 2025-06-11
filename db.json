@@ -1,0 +1,148 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "fullName": "Nguyễn Văn A",
+      "email": "nguyenvana@example.com",
+      "password": "Password123!",
+      "role": "user",
+      "createdAt": "2025-01-15T08:30:00.000Z"
+    },
+    {
+      "id": "2",
+      "fullName": "Trần Thị B",
+      "email": "tranthib@example.com",
+      "password": "SecurePass456$",
+      "role": "admin",
+      "createdAt": "2025-02-20T14:45:00.000Z"
+    },
+    {
+      "id": "3",
+      "fullName": "Lê Văn C",
+      "email": "levanc@example.com",
+      "password": "UserPass789#",
+      "role": "user",
+      "createdAt": "2025-03-05T10:15:00.000Z"
+    },
+    {
+      "id": "4",
+      "fullName": "Phạm Thị D",
+      "email": "phamthid@example.com",
+      "password": "MyPass321@",
+      "role": "moderator",
+      "createdAt": "2025-04-10T16:00:00.000Z"
+    },
+    {
+      "id": "5",
+      "fullName": "Hoàng Văn E",
+      "email": "hoangvane@example.com",
+      "password": "TestPass654%",
+      "role": "user",
+      "createdAt": "2025-05-22T11:20:00.000Z"
+    },
+    {
+      "id": "204c",
+      "fullName": "NGUYỄN THỊ ",
+      "email": "nguyennga2617@gmail.com",
+      "password": "425234",
+      "role": "user",
+      "createdAt": "2025-06-11T04:04:59.291Z"
+    },
+    {
+      "id": "1c2a",
+      "fullName": "vsds",
+      "email": "uatsabeco@gmail.com",
+      "password": "867857",
+      "role": "user",
+      "createdAt": "2025-06-11T04:06:41.626Z"
+    },
+    {
+      "id": "dbc0",
+      "fullName": "vsds",
+      "email": "uatsabeco@gmail.com",
+      "password": "867857",
+      "role": "user",
+      "createdAt": "2025-06-11T04:06:44.218Z"
+    },
+    {
+      "id": "c0c7",
+      "fullName": "vsds",
+      "email": "uatsabeco@gmail.com",
+      "password": "867857",
+      "role": "user",
+      "createdAt": "2025-06-11T04:06:44.754Z"
+    },
+    {
+      "id": "f636",
+      "fullName": "vsds",
+      "email": "uatsabeco@gmail.com",
+      "password": "867857",
+      "role": "user",
+      "createdAt": "2025-06-11T04:06:45.122Z"
+    },
+    {
+      "id": "1cc6",
+      "fullName": "vsds",
+      "email": "uatsabeco@gmail.com",
+      "password": "867857",
+      "role": "user",
+      "createdAt": "2025-06-11T04:06:45.361Z"
+    },
+    {
+      "id": "a857",
+      "fullName": "vsds",
+      "email": "uatsabeco@gmail.com",
+      "password": "867857",
+      "role": "user",
+      "createdAt": "2025-06-11T04:08:08.554Z"
+    },
+    {
+      "id": "1478",
+      "fullName": "vsds",
+      "email": "uatsabeco@gmail.com",
+      "password": "867857",
+      "role": "user",
+      "createdAt": "2025-06-11T04:08:09.097Z"
+    },
+    {
+      "id": "0843",
+      "fullName": "vsds",
+      "email": "uatsabeco@gmail.com",
+      "password": "867857",
+      "role": "user",
+      "createdAt": "2025-06-11T04:08:09.521Z"
+    },
+    {
+      "id": "f87a",
+      "fullName": "vsds",
+      "email": "uatsabeco@gmail.com",
+      "password": "867857",
+      "role": "user",
+      "createdAt": "2025-06-11T04:08:09.737Z"
+    },
+    {
+      "id": "88ac",
+      "fullName": "NGUYỄN THỊ ",
+      "email": "uatsabeco@gmail.com",
+      "password": "4234235",
+      "createdAt": "2025-06-11T04:08:58.730Z",
+      "role": "user"
+    },
+    {
+      "id": "0f6a",
+      "fullName": "NGUYỄN THỊ NGUYỆT NGA",
+      "email": "nguyennga2617@gmail.com",
+      "password": "123456",
+      "createdAt": "2025-06-11T04:12:33.474Z",
+      "role": "user"
+    },
+    {
+      "id": "53db",
+      "fullName": "casf",
+      "email": "daoquynhthu.dynamite.95@gmail.com",
+      "password": "123456",
+      "createdAt": "2025-06-11T04:27:03.321Z",
+      "role": "user"
+    }
+  ]
+}
