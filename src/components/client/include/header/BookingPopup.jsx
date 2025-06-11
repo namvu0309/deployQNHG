@@ -22,9 +22,6 @@ const BookingPopup = ({ isOpen, onClose }) => {
           {/* THÔNG TIN ĐẶT BÀN */}
           <div className="form-group">
             <h4>Thông tin đặt bàn</h4>
-            <div>
-                <p>Cơ Sở: Phó Đức Chính</p>
-            </div>
 
             <div className="row">
               <div className="form-field">
