@@ -1,0 +1,128 @@
+.contact-page {
+  position: relative;
+  padding: 50px 20px;
+  overflow: hidden;
+
+ .video-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; // 👈 không được thiếu dòng này
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.3; // 👈 nhẹ nhàng, không lấn chữ
+}
+
+  .contact-container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 40px;
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  }
+
+  .contact-info {
+    flex: 1;
+    min-width: 300px;
+
+    .brand {
+      font-size: 28px;
+      font-weight: 700;
+      color: #174229;
+    }
+
+    .slogan {
+      font-size: 16px;
+      color: #777;
+      margin-bottom: 20px;
+    }
+
+    .info-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 25px;
+
+      li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        font-size: 15px;
+        color: #333;
+      }
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 15px;
+
+      a {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #174229;
+        font-size: 16px;
+        transition: all 0.3s;
+
+        &:hover {
+          background: #174229;
+          color: white;
+        }
+      }
+    }
+  }
+
+  .contact-form {
+    flex: 1;
+    min-width: 300px;
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+
+      input,
+      textarea {
+        padding: 12px 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 15px;
+        font-family: inherit;
+        resize: none;
+
+        &:focus {
+          border-color: #174229;
+          outline: none;
+        }
+      }
+
+      button {
+        background-color: #fca311;
+        color: white;
+        padding: 12px 24px;
+        font-size: 15px;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 600;
+        align-self: flex-start;
+
+        &:hover {
+          background-color: #e29500;
+        }
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@ import Header from "../../components/client/include/header/header";
 import Footer from "../../components/client/include/footer/footer";
 import Branch from "../../components/client/branch/Branch";
 import BranchDetail from "../../components/client/BranchDetail/BranchDetail";
+import Contact from "../../components/client/contact/Contact";
 
 const clientRoutes = [
   {
@@ -12,19 +13,19 @@ const clientRoutes = [
     component: <Header />,
   },
   {
-    path: "/menu-page",
+    path: "/thuc-don",
     component: <Menu />,
   },
   {
-    path: "/co-so",
-    component: <Branch />, // Danh sách chi nhánh
-  },
-  {
-    path: "/co-so/:slug", // Trang chi tiết chi nhánh
+    path: "/co-so", // Trang chi tiết chi nhánh
     component: <BranchDetail />,
   },
   {
-    path: "/endow-page",
+    path: "/lien-he", // Trang chi tiết chi nhánh
+    component: <Contact />,
+  },
+  {
+    path: "/uu-dai", // Trang ưu đãi
     component: <Endow />,
   },
   {

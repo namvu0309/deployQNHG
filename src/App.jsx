@@ -3,44 +3,40 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
-// Import Routes
+// Admin Routes
 import {
   authProtectedRoutes,
   publicRoutes,
 } from "../src/routes/admin/index.jsx";
-//FE
-import  {
- clientRoutes 
-} from "../src/routes/client/index.jsx";
+
+// FE Routes
+import { clientRoutes } from "../src/routes/client/index.jsx";
+
 // Middleware
 import Authmiddleware from "../src/routes/admin/route.jsx";
 
 // Layouts
 import VerticalLayout from "@components/admin/VerticalLayout/";
 import NonAuthLayout from "@components/admin/NonAuthLayout";
-
+import ClientLayout from "@components/client/include/ClientLayout"; // ✅ THÊM
 
 // SCSS
 import "@assets/admin/scss/theme.scss";
 
 // Fake backend
 import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
-// FE
-
-
 fakeBackend();
 
 const App = (props) => {
-  // Sử dụng cố định VerticalLayout
   const Layout = VerticalLayout;
 
-  // Tạo user giả cho localStorage (có thể bỏ nếu dùng auth thật)
+  // Tạo user giả
   localStorage.setItem("authUser", JSON.stringify({ username: "quanglam" }));
 
   return (
     <React.Fragment>
       <Routes>
-        {/* Route không yêu cầu đăng nhập */}
+        {/* ✅ Public Admin Routes */}
         {publicRoutes.map((route, idx) => (
           <Route
             path={route.path}
@@ -50,7 +46,7 @@ const App = (props) => {
           />
         ))}
 
-        {/* Route yêu cầu đăng nhập, sử dụng VerticalLayout */}
+        {/* ✅ Protected Admin Routes */}
         {authProtectedRoutes.map((route, idx) => (
           <Route
             path={route.path}
@@ -64,11 +60,11 @@ const App = (props) => {
           />
         ))}
 
-        {/* Route danh cho client */}
+        {/* ✅ Client Routes — Header + Footer tự động */}
         {clientRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={<NonAuthLayout>{route.component}</NonAuthLayout>}
+            element={<ClientLayout>{route.component}</ClientLayout>}
             key={idx}
             exact={true}
           />
