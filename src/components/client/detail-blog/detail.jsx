@@ -66,11 +66,11 @@ const Detail = () => {
             <p>
               Bạn có thể liên hệ qua hotline <strong>1900 1986</strong> để đặt bàn và nhận hỗ trợ nhanh nhất!
               <br />
-              Fanpage: <a href="https://www.facebook.com/QuanNhauTuDo/" target="_blank" rel="noopener noreferrer">
-                https://www.facebook.com/QuanNhauTuDo/
+              Fanpage: <a href="https://www.facebook.com/QuanNhauHoangGia/" target="_blank" rel="noopener noreferrer">
+                https://www.facebook.com/QuanNhauHoangGia/
               </a>
             </p>
-            <ul>
+            {/* <ul>
               <li><a href="#">Quán Nhậu Tự Do 18 Nguyễn Văn Huyên – Cầu Giấy</a></li>
               <li><a href="#">Quán Nhậu Tự Do 505 Minh Khai – Hai Bà Trưng</a></li>
               <li><a href="#">Quán Nhậu Tự Do 68 Bùi Huy Bích – Hai Bà Trưng</a></li>
@@ -78,7 +78,7 @@ const Detail = () => {
               <li><a href="#">Quán Nhậu Tự Do 22 Dịch Vọng – Cầu Giấy</a></li>
               <li><a href="#">Quán Nhậu Tự Do 12 Nguyễn Văn Tuyết – Đống Đa</a></li>
               <li><a href="#">Quán Nhậu Tự Do 67A Phó Đức Chính – Ba Đình</a></li>
-            </ul>
+            </ul> */}
           </div>
 
         </div>
@@ -99,7 +99,7 @@ const Detail = () => {
       </div>
 
       <div className="menuBox">
-        <h2 className="title-menu">Món mới</h2>
+        <h2 className="title-menu">Bài Viết Khác</h2>
         <ul className="list-food-menu dish">
           {endows.map((endow) => (
             <li key={endow.id}>
