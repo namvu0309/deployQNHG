@@ -1,0 +1,97 @@
+// AuthPage.scss
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f7f7f7;
+  padding: 1rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.auth-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #052615;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    color: #444;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+
+    &::placeholder {
+      color: #aaa;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #d21f2d;
+      box-shadow: 0 0 0 3px rgba(210, 31, 45, 0.15);
+    }
+  }
+}
+
+.btn-primary {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #0b5a32;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: darken(#3db391, 8%);
+  }
+}
+
+.auth-links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+
+  a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s;
+
+    &.register {
+      color: #d21f2d;
+      font-weight: 500;
+
+      &:hover {
+        color: darken(#d21f2d, 8%);
+      }
+    }
+    &.forgot {
+      &:hover {
+        color: #d21f2d;
+      }
+    }
+  }
+}

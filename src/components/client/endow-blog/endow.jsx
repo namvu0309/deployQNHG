@@ -4,6 +4,8 @@ import banner from "@assets/client/images/endow-blog/banner.jpg";
 import rightArrow from "../../../assets/client/images/endow-blog/rightarrow-icon.png";
 import {endows} from "./data-endow";
 import { Link } from "react-router-dom";
+import Footer from "../../../components/client/include/footer/footer";
+// import CartModal from "../cart/cartmodel";
 
 const Endow = () => {
   return (
@@ -22,7 +24,7 @@ const Endow = () => {
                    >
                      <div className="food-menu-dish">
 
-                        <Link to={`/endow-page/detail/${endow.id}`} className="thumb">
+                        <Link to={`/endow-page/detail/${endow.slug}`} className="thumb">
                         <img src={endow.image} alt={endow.title} />
                         </Link>
 
@@ -30,7 +32,7 @@ const Endow = () => {
                          <a href="" className="title-food">{endow.description}</a>
                          <div className="price-food">{endow.price}</div>
                          <div className="funcsBox">
-                            <Link to={`/endow-page/detail/${endow.id}`} className="add-to-card">
+                            <Link to={`/endow-page/detail/${endow.slug}`} className="add-to-card">
                          <img src= {rightArrow} alt="" />
                              <span className="txt">Xem ngay</span>
                         </Link>
@@ -45,6 +47,7 @@ const Endow = () => {
                  </div>
            </div>
            </div>
+           <Footer/>
          </div>
 
     

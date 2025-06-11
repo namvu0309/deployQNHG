@@ -2,7 +2,11 @@ import Menu from "../../components/client/menu/menu";
 import Endow from "../../components/client/endow-blog/endow";
 import Detail from "../../components/client/detail-blog/detail";
 import Header from "../../components/client/include/header/header";
-import Footer from "../../components/client/include/footer/footer"
+import Footer from "../../components/client/include/footer/footer";
+import RegisterUserPage from "../../pages/client/auth/register";
+import LoginUserPage from "../../pages/client/auth/login";
+
+
 
 const clientRoutes = [
     {
@@ -18,12 +22,20 @@ const clientRoutes = [
     component: <Endow/>,
   },
    {
-    path: "/endow-page/detail/:id",
-    component: <Detail/>,
+    path: "/endow-page/detail/:slug",
+    component: <Detail />,
   },
    {
     path: "/footer-page",
     component: <Footer/>,
+  },
+   {
+    path: "/register-page",
+    component: <RegisterUserPage/>,
+  },
+   {
+    path: "/login-page",
+    component: <LoginUserPage/>,
   },
 ]
 

@@ -46,7 +46,7 @@ const Header = () => {
             <a href="#stores" className="nav-link">
               CƠ SỞ
             </a>
-            <a href="#offers" className="nav-link">
+            <a href="endow-page" className="nav-link">
               ƯU ĐÃI
             </a>
             <a href="#contact" className="nav-link">
