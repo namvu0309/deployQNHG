@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import "./Header.scss";
+import "./header.scss";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../../../../assets/client/images/header/logo.jpg";
+import BookingPopup from "./BookingPopup"; // Import popup đặt bàn
 
 
 const Header = () => {
   const [showNoti, setShowNoti] = useState(true);
+  const [showPopup, setShowPopup] = useState(false); // State để mở popup
+  const location = useLocation();
 
   return (
     <header className="header-wrapper">
@@ -18,44 +22,71 @@ const Header = () => {
             onClick={() => setShowNoti(false)}
             aria-label="Đóng thông báo"
           >
-            ×
+            ✕
           </button>
         </div>
       )}
 
       <div className="header-main">
         <div className="header-left">
-          <div className="logo">
-            <img src={logo} alt="Logo" className="footer-logo" />
-          </div>
-          <div className="brand-name">
-            <h2>
-              <span className="line-1">Quán Nhậu</span>
-              <span className="line-2">Hoàng Gia</span>
-            </h2>
-          </div>
+          <Link to="/" className="logo">
+            <img src={logo} alt="Quán Nhậu Hoàng Gia" />
+          </Link>
+          <div className="brand-name"></div>
+          <div className="divider"></div>
           <div className="hotline">
-            <span>HOTLINE</span>
-            <strong>*1986</strong>
+            <span>HOTLINE</span> <strong>*1986</strong>
           </div>
         </div>
-        <nav className="nav-menu">
+
+        <div className="nav-menu">
           <div className="nav-links">
-            <a href="/menu-page" className="nav-link active">
-              THỰC ĐƠN
-            </a>
-            <a href="#stores" className="nav-link">
-              CƠ SỞ
-            </a>
-            <a href="endow-page" className="nav-link">
-              ƯU ĐÃI
-            </a>
-            <a href="#contact" className="nav-link">
-              LIÊN HỆ
-            </a>
-            <a href="#booking" className="nav-button">
+            <Link
+              to="# "
+              className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
+            >
+              Trang Chủ
+            </Link>
+            <Link
+              to="/thuc-don"
+              className={`nav-link ${
+                location.pathname.includes("/thuc-don") ? "active" : ""
+              }`}
+            >
+              Thực Đơn
+            </Link>
+            <Link
+              to="/co-so"
+              className={`nav-link ${
+                location.pathname.includes("/co-so") ? "active" : ""
+              }`}
+            >
+              Cơ Sở
+            </Link>
+            <Link
+              to="/uu-dai"
+              className={`nav-link ${
+                location.pathname.includes("/uu-dai") ? "active" : ""
+              }`}
+            >
+              Ưu Đãi
+            </Link>
+            <Link
+              to="/lien-he"
+              className={`nav-link ${
+                location.pathname.includes("/lien-he") ? "active" : ""
+              }`}
+            >
+              Liên Hệ
+            </Link>
+
+            {/* Nút Đặt Bàn mở popup */}
+            <button
+              className="nav-button"
+              onClick={() => setShowPopup(true)}
+            >
               ĐẶT BÀN
-            </a>
+            </button>
          <a href="/login-page" className="nav-login" aria-label="Tài khoản">
   <i className="fas fa-user nav-login__icon" aria-hidden="true"></i>
 </a>
@@ -79,12 +110,13 @@ const Header = () => {
               </svg>
             </button>
           </div>
-        </nav>
+        </div>
       </div>
 
-      
-
-      
+      {/* Hiển thị popup khi showPopup === true */}
+      {showPopup && (
+        <BookingPopup isOpen={showPopup} onClose={() => setShowPopup(false)} />
+      )}
     </header>
   );
 };

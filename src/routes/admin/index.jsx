@@ -1,49 +1,11 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-// Pages Component
-import Chat from "@pages/admin/Chat/Chat";
-
 // // File Manager
 import FileManager from "@pages/admin/FileManager/index";
 
 // // Profile
 import UserProfile from "@pages/admin/Authentication/user-profile";
-
-// Pages Calendar
-import Calendar from "@pages/admin/Calendar/index";
-
-// // //Tasks
-import TasksList from "@pages/admin/Tasks/tasks-list";
-import TasksCreate from "@pages/admin/Tasks/tasks-create";
-import TasksKanban from "@pages/admin/Tasks/tasks-kanban";
-
-// // //Projects
-import ProjectsGrid from "@pages/admin/Projects/projects-grid";
-import ProjectsList from "@pages/admin/Projects/projects-list";
-import ProjectsOverview from "@pages/admin/Projects/ProjectOverview/projects-overview";
-import ProjectsCreate from "@pages/admin/Projects/projects-create";
-
-// // //Ecommerce Pages
-import EcommerceProducts from "@pages/admin/Ecommerce/EcommerceProducts";
-import EcommerceProductDetail from "@pages/admin/Ecommerce/EcommerceProductDetail/index";
-import EcommerceOrders from "@pages/admin/Ecommerce/EcommerceOrders/index";
-import EcommerceCustomers from "@pages/admin/Ecommerce/EcommerceCustomers/index";
-import EcommerceCart from "@pages/admin/Ecommerce/EcommerceCart";
-import EcommerceCheckout from "@pages/admin/Ecommerce/EcommerceCheckout";
-import EcommerceShops from "@pages/admin/Ecommerce/EcommerceShops/index";
-import EcommerenceAddProduct from "@pages/admin/Ecommerce/EcommerceAddProduct";
-
-// //Email
-import EmailInbox from "@pages/admin/Email/email-inbox";
-import EmailRead from "@pages/admin/Email/email-read";
-import EmailBasicTemplte from "@pages/admin/Email/email-basic-templte";
-import EmailAlertTemplte from "@pages/admin/Email/email-template-alert";
-import EmailTemplateBilling from "@pages/admin/Email/email-template-billing";
-
-// //Invoices
-import InvoicesList from "@pages/admin/Invoices/invoices-list";
-import InvoiceDetail from "@pages/admin/Invoices/invoices-detail";
 
 // // Authentication related pages
 import Login from "@pages/admin/Authentication/Login";
@@ -71,54 +33,10 @@ import TwostepVerification2 from "@pages/admin/AuthenticationInner/auth-two-step
 
 // // Dashboard
 import Dashboard from "@pages/admin/Dashboard/index";
-import DashboardSaas from "@pages/admin/Dashboard-saas/index";
-import DashboardCrypto from "@pages/admin/Dashboard-crypto/index";
-import Blog from "@pages/admin/Dashboard-Blog/index";
-import DashboardJob from "@pages/admin/DashboardJob/index";
-
-// //Crypto
-import CryptoWallet from "@pages/admin/Crypto/CryptoWallet/crypto-wallet";
-import CryptoBuySell from "@pages/admin/Crypto/crypto-buy-sell";
-import CryptoExchange from "@pages/admin/Crypto/crypto-exchange";
-import CryptoLending from "@pages/admin/Crypto/crypto-lending";
-import CryptoOrders from "@pages/admin/Crypto/CryptoOrders";
-import CryptoKYCApplication from "@pages/admin/Crypto/crypto-kyc-application";
-import CryptoIcoLanding from "@pages/admin/Crypto/CryptoIcoLanding/index";
-
-// // Charts
-import ChartApex from "@pages/admin/Charts/Apexcharts";
-import ChartjsChart from "@pages/admin/Charts/ChartjsChart";
-import EChart from "@pages/admin/Charts/EChart";
-import SparklineChart from "@pages/admin/Charts/SparklineChart";
-import ChartsKnob from "@pages/admin/Charts/charts-knob";
-import ReCharts from "@pages/admin/Charts/ReCharts";
-
-// // Maps
-import MapsGoogle from "@pages/admin/Maps/MapsGoogle";
-
-// //Icons
-import IconBoxicons from "@pages/admin/Icons/IconBoxicons";
-import IconDripicons from "@pages/admin/Icons/IconDripicons";
-import IconMaterialdesign from "@pages/admin/Icons/IconMaterialdesign";
-import IconFontawesome from "@pages/admin/Icons/IconFontawesome";
 
 // //Tables
 import BasicTables from "@pages/admin/Tables/BasicTables";
 import DatatableTables from "@pages/admin/Tables/DatatableTables";
-
-// //Blog
-import BlogList from "@pages/admin/Blog/BlogList/index";
-import BlogGrid from "@pages/admin/Blog/BlogGrid/index";
-import BlogDetails from "@pages/admin/Blog/BlogDetails";
-
-//Job
-import JobGrid from "@pages/admin/JobPages/JobGrid/index";
-import JobDetails from "@pages/admin/JobPages/JobDetails";
-import JobCategories from "@pages/admin/JobPages/JobCategories";
-import JobList from "@pages/admin/JobPages/JobList/index";
-import ApplyJobs from "@pages/admin/JobPages/ApplyJobs/index";
-import CandidateList from "@pages/admin/JobPages/CandidateList";
-import CandidateOverview from "@pages/admin/JobPages/CandidateOverview";
 
 // // Forms
 import FormElements from "@pages/admin/Forms/FormElements";
@@ -169,115 +87,23 @@ import PagesPricing from "@pages/admin/Utility/pages-pricing";
 import Pages404 from "@pages/admin/Utility/pages-404";
 import Pages500 from "@pages/admin/Utility/pages-500";
 
-// //Contacts
-import ContactsGrid from "@pages/admin/Contacts/contacts-grid";
-import ContactsList from "@pages/admin/Contacts/ContactList/contacts-list";
-import ContactsProfile from "@pages/admin/Contacts/ContactsProfile/index";
-import UiProgressbar from "@pages/admin/Ui/UiProgressbar";
-// import UiProgressbar from "../../src/pages/Ui/UiProgressbar"
+import PageBranch from "@pages/admin/Branches/index";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
-  { path: "/dashboard-saas", component: <DashboardSaas /> },
-  { path: "/dashboard-crypto", component: <DashboardCrypto /> },
-  { path: "/blog", component: <Blog /> },
-  { path: "/dashboard-job", component: <DashboardJob /> },
-
-  //   //Crypto
-  { path: "/crypto-wallet", component: <CryptoWallet /> },
-  { path: "/crypto-buy-sell", component: <CryptoBuySell /> },
-  { path: "/crypto-exchange", component: <CryptoExchange /> },
-  { path: "/crypto-landing", component: <CryptoLending /> },
-  { path: "/crypto-orders", component: <CryptoOrders /> },
-  { path: "/crypto-kyc-application", component: <CryptoKYCApplication /> },
 
   //chat
-  { path: "/chat", component: <Chat /> },
+  { path: "/branch", component: <PageBranch /> },
 
   //File Manager
   { path: "/apps-filemanager", component: <FileManager /> },
 
-  // //calendar
-  { path: "/calendar", component: <Calendar /> },
-
   //   // //profile
   { path: "/profile", component: <UserProfile /> },
-
-  //   //Ecommerce
-  {
-    path: "/ecommerce-product-detail/:id",
-    component: <EcommerceProductDetail />,
-  },
-  { path: "/ecommerce-products", component: <EcommerceProducts /> },
-  { path: "/ecommerce-orders", component: <EcommerceOrders /> },
-  { path: "/ecommerce-customers", component: <EcommerceCustomers /> },
-  { path: "/ecommerce-cart", component: <EcommerceCart /> },
-  { path: "/ecommerce-checkout", component: <EcommerceCheckout /> },
-  { path: "/ecommerce-shops", component: <EcommerceShops /> },
-  { path: "/ecommerce-add-product", component: <EcommerenceAddProduct /> },
-
-  //   //Email
-  { path: "/email-inbox", component: <EmailInbox /> },
-  { path: "/email-read/:id?", component: <EmailRead /> },
-  { path: "/email-template-basic", component: <EmailBasicTemplte /> },
-  { path: "/email-template-alert", component: <EmailAlertTemplte /> },
-  { path: "/email-template-billing", component: <EmailTemplateBilling /> },
-
-  //   //Invoices
-  { path: "/invoices-list", component: <InvoicesList /> },
-  { path: "/invoices-detail", component: <InvoiceDetail /> },
-  { path: "/invoices-detail/:id?", component: <InvoiceDetail /> },
-
-  //   // Tasks
-  { path: "/tasks-list", component: <TasksList /> },
-  { path: "/tasks-create", component: <TasksCreate /> },
-  { path: "/tasks-kanban", component: <TasksKanban /> },
-
-  //   //Projects
-  { path: "/projects-grid", component: <ProjectsGrid /> },
-  { path: "/projects-list", component: <ProjectsList /> },
-  { path: "/projects-overview", component: <ProjectsOverview /> },
-  { path: "/projects-overview/:id", component: <ProjectsOverview /> },
-  { path: "/projects-create", component: <ProjectsCreate /> },
-
-  //   //Blog
-  { path: "/blog-list", component: <BlogList /> },
-  { path: "/blog-grid", component: <BlogGrid /> },
-  { path: "/blog-details", component: <BlogDetails /> },
-
-  { path: "/job-grid", component: <JobGrid /> },
-  { path: "/job-details", component: <JobDetails /> },
-  { path: "/job-categories", component: <JobCategories /> },
-  { path: "/job-list", component: <JobList /> },
-  { path: "/job-apply", component: <ApplyJobs /> },
-  { path: "/candidate-list", component: <CandidateList /> },
-  { path: "/candidate-overview", component: <CandidateOverview /> },
-
-  // Contacts
-  { path: "/contacts-grid", component: <ContactsGrid /> },
-  { path: "/contacts-list", component: <ContactsList /> },
-  { path: "/contacts-profile", component: <ContactsProfile /> },
-
-  //   //Charts
-  { path: "/apex-charts", component: <ChartApex /> },
-  { path: "/chartjs-charts", component: <ChartjsChart /> },
-  { path: "/e-charts", component: <EChart /> },
-  { path: "/sparkline-charts", component: <SparklineChart /> },
-  { path: "/charts-knob", component: <ChartsKnob /> },
-  { path: "/re-charts", component: <ReCharts /> },
-
-  //   // Icons
-  { path: "/icons-boxicons", component: <IconBoxicons /> },
-  { path: "/icons-dripicons", component: <IconDripicons /> },
-  { path: "/icons-materialdesign", component: <IconMaterialdesign /> },
-  { path: "/icons-fontawesome", component: <IconFontawesome /> },
 
   //   // Tables
   { path: "/tables-basic", component: <BasicTables /> },
   { path: "/tables-datatable", component: <DatatableTables /> },
-
-  //   // Maps
-  { path: "/maps-google", component: <MapsGoogle /> },
 
   //   // Forms
   { path: "/form-elements", component: <FormElements /> },
@@ -304,7 +130,6 @@ const authProtectedRoutes = [
   { path: "/ui-images", component: <UiImages /> },
   { path: "/ui-lightbox", component: <UiLightbox /> },
   { path: "/ui-modals", component: <UiModal /> },
-  { path: "/ui-progressbars", component: <UiProgressbar /> },
   { path: "/ui-tabs-accordions", component: <UiTabsAccordions /> },
   { path: "/ui-typography", component: <UiTypography /> },
   { path: "/ui-video", component: <UiVideo /> },
@@ -322,10 +147,7 @@ const authProtectedRoutes = [
   { path: "/pages-faqs", component: <PagesFaqs /> },
   { path: "/pages-pricing", component: <PagesPricing /> },
 
-  //   // this route should be at the end of all other routes
-  //   // eslint-disable-next-line react/display-name
   { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
-
 ];
 
 const publicRoutes = [
@@ -338,7 +160,6 @@ const publicRoutes = [
   { path: "/pages-comingsoon", component: <PagesComingsoon /> },
   { path: "/pages-404", component: <Pages404 /> },
   { path: "/pages-500", component: <Pages500 /> },
-  { path: "/crypto-icno-landing", component: <CryptoIcoLanding /> },
 
   //   // Authentication Inner
   { path: "/pages-login", component: <Login1 /> },

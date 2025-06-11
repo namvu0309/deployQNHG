@@ -5,29 +5,37 @@ import Header from "../../components/client/include/header/header";
 import Footer from "../../components/client/include/footer/footer";
 import RegisterUserPage from "../../pages/client/auth/register";
 import LoginUserPage from "../../pages/client/auth/login";
-
-
+import BranchDetail from "../../components/client/BranchDetail/BranchDetail";
+import Contact from "../../components/client/contact/Contact";
 
 const clientRoutes = [
-    {
+  {
     path: "/header-page",
     component: <Header />,
   },
-    {
-    path: "/menu-page",
+  {
+    path: "/thuc-don",
     component: <Menu />,
   },
   {
-    path: "/endow-page",
-    component: <Endow/>,
+    path: "/co-so", // Trang chi tiết chi nhánh
+    component: <BranchDetail />,
   },
-   {
+  {
+    path: "/lien-he", // Trang chi tiết chi nhánh
+    component: <Contact />,
+  },
+  {
+    path: "/uu-dai", // Trang ưu đãi
+    component: <Endow />,
+  },
+  {
     path: "/endow-page/detail/:slug",
     component: <Detail />,
   },
-   {
+  {
     path: "/footer-page",
-    component: <Footer/>,
+    component: <Footer />,
   },
    {
     path: "/register-page",
@@ -37,6 +45,6 @@ const clientRoutes = [
     path: "/login-page",
     component: <LoginUserPage/>,
   },
-]
+];
 
 export { clientRoutes };
