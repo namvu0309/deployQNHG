@@ -14,19 +14,19 @@ const clientRoutes = [
     component: <Header />,
   },
   {
-    path: "/thuc-don",
+    path: "/menu-page",
     component: <Menu />,
   },
   {
-    path: "/co-so", // Trang chi tiết chi nhánh
+    path: "/branch-page", 
     component: <BranchDetail />,
   },
   {
-    path: "/lien-he", // Trang chi tiết chi nhánh
+    path: "/contact-page",
     component: <Contact />,
   },
   {
-    path: "/uu-dai", // Trang ưu đãi
+    path: "/endow-page", 
     component: <Endow />,
   },
   {

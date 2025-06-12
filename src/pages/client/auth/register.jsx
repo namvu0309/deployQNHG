@@ -1,4 +1,3 @@
-// RegisterUserPage.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './auth.scss';
@@ -43,50 +42,53 @@ export default function RegisterUserPage() {
 
   return (
     <div className="auth-container">
-      <div className="auth-card">
-        <h1 className="auth-title">ĐĂNG KÝ THÀNH VIÊN</h1>
-        {error && <div className="mb-4 p-3 bg-red-100 text-red-800 rounded">{error}</div>}
-        {success && <div className="mb-4 p-3 bg-green-100 text-green-800 rounded">Đăng ký thành công! Chuyển trang...</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
+      <div className="logo">
+        <img src="/src/assets/client/images/header/logo.jpg" alt="Hoàng Gia" />
+      </div>
+      <div className="thumbnail-panel">
+        <div className="thumb"><img src="/src/assets/client/images/auth/thumb1.webp" alt="" /></div>
+        <div className="thumb"><img src="/src/assets/client/images/auth/thumb2.webp" alt="" /></div>
+        <div className="thumb"><img src="/src/assets/client/images/auth/thumb3.webp" alt="" /></div>
+        <div className="thumb"><img src="/src/assets/client/images/auth/thumb4.webp" alt="" /></div>
+      </div>
+      <div className="form-panel">
+        <div className="auth-card">
+          <h1 className="auth-title">ĐĂNG KÝ THÀNH VIÊN</h1>
+          {error && <div className="alert error">{error}</div>}
+          {success && <div className="alert success">Đăng ký thành công! Chuyển trang...</div>}
+          <form onSubmit={handleSubmit} className="login-form">
             <input
               type="text"
               name="fullName"
-              placeholder="Họ tên"
+              placeholder="Họ và tên"
               value={form.fullName}
               onChange={handleChange}
               required
               className="form-input"
             />
-          </div>
-          <div className="form-group">
             <input
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder="Email của bạn"
               value={form.email}
               onChange={handleChange}
               required
               className="form-input"
             />
-          </div>
-          <div className="form-group">
             <input
               type="password"
               name="password"
-              placeholder="Mật khẩu"
+              placeholder="Mật khẩu của bạn"
               value={form.password}
               onChange={handleChange}
               required
               className="form-input"
             />
+            <button type="submit" className="btn-primary">Đăng ký</button>
+          </form>
+          <div className="auth-links">
+            <a href="/login-page" className="forgot">Quay lại đăng nhập</a>
           </div>
-          <button type="submit" className="btn-primary">
-            Đăng ký
-          </button>
-        </form>
-        <div className="auth-links">
-          <a href="/login-page" className="forgot">Quay lại đăng nhập</a>
         </div>
       </div>
     </div>
