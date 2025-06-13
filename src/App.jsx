@@ -20,6 +20,7 @@ import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
 
 // Layouts
 import BaseLayout from "@layouts/BaseLayout.jsx";
+import { ToastContainer } from "react-toastify";
 
 fakeBackend();
 
