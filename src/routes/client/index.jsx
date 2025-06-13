@@ -7,6 +7,7 @@ import RegisterUserPage from "../../pages/client/auth/register";
 import LoginUserPage from "../../pages/client/auth/login";
 import BranchDetail from "../../components/client/BranchDetail/BranchDetail";
 import Contact from "../../components/client/contact/Contact";
+import Home from "../../components/client/home/home";
 
 const clientRoutes = [
   {
@@ -44,7 +45,11 @@ const clientRoutes = [
    {
     path: "/login-page",
     component: <LoginUserPage/>,
-  },
+  },,
+   {
+    path: "/home-page",
+    component: <Home/>,
+  }
 ];
 
 export { clientRoutes };
