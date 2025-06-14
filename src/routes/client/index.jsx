@@ -20,7 +20,7 @@ const clientRoutes = [
     component: <Menu />,
   },
   {
-    path: "/branch-page", 
+    path: "/branch-page",
     component: <BranchDetail />,
   },
   {
@@ -28,7 +28,7 @@ const clientRoutes = [
     component: <Contact />,
   },
   {
-    path: "/endow-page", 
+    path: "/endow-page",
     component: <Endow />,
   },
   {

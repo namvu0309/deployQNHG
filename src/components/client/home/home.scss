@@ -290,3 +290,282 @@
     }
   }
 }
+/* === Section Giới thiệu thương hiệu (nâng cấp thẩm mỹ) === */
+.intro-section {
+  background-color: #f4b01b;
+  padding: 5rem 1.5rem;
+  font-family: 'Poppins', sans-serif;
+
+  .intro-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+
+  .intro-text {
+    flex: 1 1 45%;
+    color: #18432c;
+
+    h2 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      margin-bottom: 1.8rem;
+      line-height: 1.2;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        font-size: 1.25rem;
+        margin-bottom: 1.2rem;
+        position: relative;
+        padding-left: 2.2rem;
+        line-height: 1.6;
+        transition: color 0.3s ease;
+
+        &:before {
+          content: '✔';
+          position: absolute;
+          left: 0;
+          top: 0;
+          font-size: 1.2rem;
+          color: #18432c;
+        }
+
+        &:hover {
+          color: #0b3d0b;
+        }
+      }
+    }
+  }
+
+  .intro-image {
+    flex: 1 1 50%;
+    text-align: center;
+
+    img {
+      width: 100%;
+      max-width: 520px;
+      display: inline-block;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.03);
+      }
+    }
+  }
+
+  /* Responsive cho màn hình nhỏ */
+  @media (max-width: 768px) {
+    .intro-container {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .intro-text,
+    .intro-image {
+      flex: 1 1 100%;
+    }
+
+    .intro-text h2 {
+      font-size: 2.2rem;
+    }
+
+    .intro-text ul li {
+      font-size: 1.1rem;
+    }
+  }
+}
+// tiệc tùng
+.party-section {
+  background-color: #f4b01b;
+  padding: 4rem 1.5rem;
+
+  .party-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .party-text {
+    flex: 1 1 45%;
+    color: #18432c;
+
+    h2 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        position: relative;
+        padding-left: 2rem;
+
+        &::before {
+          content: '✔';
+          position: absolute;
+          left: 0;
+        }
+      }
+    }
+  }
+
+ .party-image {
+  flex: 1 1 50%;
+  text-align: center;
+
+  img {
+    width: 100%;
+    max-width: 500px;
+    display: inline-block;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05); // 💥 phóng to hơn intro-section một chút
+    }
+  }
+}
+
+}
+// kẻ ngăn giữa các section
+.section-divider {
+  width: 100%;
+  height: 3px;
+  background-color: #18432c; // màu xanh đậm thương hiệu
+  border-radius: 999px; // bo tròn đầu
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+//  club section7
+.club-section {
+  background-color: #18432c;
+  color: #fff;
+  padding: 5rem 1.5rem;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+
+  .club-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .club-subtitle {
+    font-size: 1.6rem;
+    color: #f4b01b;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .club-title {
+    font-size: 2.3rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .club-description {
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto 2.5rem;
+    color: #c9d1ca;
+  }
+
+  .club-logos {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+
+    img {
+      width: 100px;
+      height: auto;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .club-cta {
+    background-color: transparent;
+    border: 2px solid #f4b01b;
+    color: #fff;
+    padding: 0.8rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #f4b01b;
+      color: #18432c;
+    }
+  }
+}
+
+.promo-slider-section {
+  background-color: #18432c;
+  padding: 3rem 0;
+
+  .promo-slider-container {
+    max-width: 1300px;
+    margin: 0 auto;
+
+    .promo-slide-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 10px;
+
+      img {
+        width: auto;                  // 👈 KHÔNG kéo ảnh 100%
+        max-width: 100%;              // 👈 Giới hạn theo khung
+        height: auto;                 // 👈 Giữ tỉ lệ gốc
+        max-height: 450px;            // 👈 Không quá cao
+        object-fit: contain;          // 👈 Không crop ảnh
+        border-radius: 1rem;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+
+        &:hover {
+          transform: scale(1.03);     // 👈 Zoom nhẹ khi hover
+        }
+      }
+    }
+  }
+
+  // Dành cho thiết bị nhỏ hơn
+  @media (max-width: 768px) {
+    .promo-slide-item img {
+      max-height: 300px;
+    }
+  }
+}
+

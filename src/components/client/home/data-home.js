@@ -1,3 +1,4 @@
+// src/components/client/home/data-home.js
 // src/pages/home/data-home.js (hoặc tương ứng)
 import dish1 from '../../../assets/client/images/home/dish1.webp';
 import dish2 from '../../../assets/client/images/home/dish2.webp';
@@ -5,6 +6,12 @@ import dish3 from '../../../assets/client/images/home/dish3.webp';
 import dish4 from '../../../assets/client/images/home/dish4.webp';
 import endow1 from "../../../assets/client/images/endow-blog/endow1.png";
 import endow2 from "../../../assets/client/images/endow-blog/endow2.webp";
+import introVisual from "../../../assets/client/images/home/intro-visual.webp";
+import partyVisual from "../../../assets/client/images/home/intro-visual.webp";
+import promo1 from "../../../assets/client/images/home/birthday.webp";
+import promo2 from "../../../assets/client/images/home/hotpot.webp";
+import promo3 from "../../../assets/client/images/home/member.webp";
+
 
 export const dishes = [
   { id: 1, name: 'Măng trúc xào bò', price: '145,000', img: dish1 },
@@ -12,6 +19,7 @@ export const dishes = [
   { id: 3, name: 'Cá chẽm chiên giòn kèm xoài xanh', price: '239,000', img: dish3 },
   { id: 4, name: 'Dê xào hoa chuối', price: '169,000', img: dish4 },
 ];
+
 export const endows = [
   {
     id: 1,
@@ -68,3 +76,32 @@ export const endows = [
     image: endow1,
   }
 ];
+// quán nhậu
+export const introInfo = {
+  title: "Quán Nhậu Đẳng Cấp Hà Nội",
+  points: [
+    "Ẩm thực vùng miền quá đa dạng",
+    "Bia ngon, rượu say với bạn hiền",
+    "Cảnh đẹp, quán vui quên lối về",
+  ],
+  image: introVisual,
+};
+// tiệc tùng
+export const partyInfo = {
+  title: "Dịch vụ tiệc tùng hết nấc",
+  points: [
+    "Loa, mic, video, hô là có",
+    "Phòng Vip riêng tư luôn sẵn sàng",
+    "Hỗ trợ nhiệt tình mọi yêu cầu",
+  ],
+  image: partyVisual,
+};
+// slider bài viết
+
+export const promoSlides = [
+  { id: 1, image: promo1, alt: "Sinh nhật cực chất" },
+  { id: 2, image: promo2, alt: "Ship lẩu tận nhà" },
+  { id: 3, image: promo3, alt: "Thành viên mới" },
+
+];
+
