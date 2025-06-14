@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { promoSlides } from "./data-home";
+import { dishes, endows } from './data-home';
 
 export default function Home() {
   const settings = {
@@ -15,6 +16,7 @@ export default function Home() {
     slidesToShow: 4,
     slidesToScroll: 1,
     arrows: true,
+
     responsive: [
       { breakpoint: 1200, settings: { slidesToShow: 4 } },
       { breakpoint: 992, settings: { slidesToShow: 2 } },
@@ -24,14 +26,10 @@ export default function Home() {
 
   return (
     <>
-      {/* Section 1: Tiêu đề */}
+      {/* Section 1: tiêu đề */}
       <section className="home-section">
         <div className="home-content">
-          <h1>
-            HOÀNG GIA QUÁN
-            <br />
-            THẾ GIỚI CỦA TA
-          </h1>
+          <h1>HOÀNG GIA QUÁN<br />THẾ GIỚI CỦA TA</h1>
         </div>
       </section>
 
@@ -40,7 +38,7 @@ export default function Home() {
         <h2 className="section-title">Món mới ra lò</h2>
         <div className="slider-wrapper">
           <Slider {...settings}>
-            {dishes.map((d) => (
+            {dishes.map(d => (
               <div key={d.id} className="card-item small">
                 <div className="card-image">
                   <img src={d.img} alt={d.name} />
@@ -59,21 +57,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section 3: Chữ chạy ưu đãi */}
+      {/* Section 3: chữ chạy */}
       <section className="promotion-section">
         <div className="promotion-wrapper">
           <span className="promotion-text">
-            ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI
-            HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖
+            ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖
           </span>
         </div>
       </section>
 
-      {/* Section 4: Ưu đãi & tin tức */}
+      {/* Section 4: Khuyến mãi & Tin tức */}
       <section className="promo-cards-section">
+        {/* <h2 className="section-title">Ưu đãi &amp; Tin tức</h2> */}
         <div className="slider-wrapper promo">
           <Slider {...settings}>
-            {endows.map((item) => (
+            {endows.map(item => (
               <div key={item.id} className="card-item small">
                 <div className="card-image">
                   <img src={item.image} alt={item.description} />
@@ -131,7 +129,7 @@ export default function Home() {
   <div className="club-container">
     <h3 className="club-subtitle">HOÀNG GIA CLUB</h3>
     <h4 className="club-title">Gia nhập Hoàng Gia <br />Uống sang - chơi chất.</h4>
-  
+
     <p className="club-description">
       Hoàng Gia Club là nơi hội tụ của những tâm hồn yêu thích sự sang trọng và đẳng cấp. Tại đây, bạn sẽ được trải nghiệm những ly rượu thượng hạng, những món ăn tinh tế và những khoảnh khắc đáng nhớ bên bạn bè và người thân.
     </p>
@@ -166,7 +164,7 @@ export default function Home() {
 </section>
 
 
-    
+
     </>
   );
 }

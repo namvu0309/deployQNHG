@@ -1,4 +1,4 @@
-// LoginUserPage.jsx
+/* LoginUserPage.jsx */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './auth.scss';
@@ -38,20 +38,27 @@ export default function LoginUserPage() {
 
   return (
     <div className="auth-container">
-      <div className="auth-card">
-        <h1 className="auth-title">ĐĂNG NHẬP THÀNH VIÊN</h1>
+      {/* Logo top-left */}
+      <div className="logo">
+        <img src="/src/assets/client/images/header/logo.jpg" alt="Hoàng Gia" />
+      </div>
+      {/* Left panel: thumbnails grid */}
+      <div className="thumbnail-panel">
+        <div className="thumb"><img src="/src/assets/client/images/auth/thumb1.webp" alt="" /></div>
+        <div className="thumb"><img src="/src/assets/client/images/auth/thumb2.webp" alt="" /></div>
+        <div className="thumb"><img src="/src/assets/client/images/auth/thumb3.webp" alt="" /></div>
+        <div className="thumb"><img src="/src/assets/client/images/auth/thumb4.webp" alt="" /></div>
+       
+      </div>
+      {/* Right panel: form card */}
+      <div className="form-panel">
+        <div className="auth-card">
+          <h1 className="auth-title">ĐĂNG NHẬP THÀNH VIÊN</h1>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-800 rounded">{error}</div>
-        )}
-        {success && (
-          <div className="mb-4 p-3 bg-green-100 text-green-800 rounded">
-            Đăng nhập thành công! Chuyển trang...
-          </div>
-        )}
+          {error && <div className="alert error">{error}</div>}
+          {success && <div className="alert success">Đăng nhập thành công! Chuyển trang...</div>}
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
+          <form onSubmit={handleSubmit} className="login-form">
             <input
               type="email"
               name="email"
@@ -61,8 +68,6 @@ export default function LoginUserPage() {
               required
               className="form-input"
             />
-          </div>
-          <div className="form-group">
             <input
               type="password"
               name="password"
@@ -72,15 +77,13 @@ export default function LoginUserPage() {
               required
               className="form-input"
             />
-          </div>
-          <button type="submit" className="btn-primary">
-            Đăng nhập
-          </button>
-        </form>
+            <button type="submit" className="btn-primary">Đăng nhập</button>
+          </form>
 
-        <div className="auth-links">
-          <a href="/forgot" className="forgot">Quên mật khẩu?</a>
-          <a href="/register-page" className="register">Đăng ký thành viên</a>
+          <div className="auth-links">
+            <a href="/forgot" className="forgot">Quên mật khẩu?</a>
+            <a href="/register-page" className="register">Đăng ký thành viên</a>
+          </div>
         </div>
       </div>
     </div>

@@ -7,27 +7,28 @@ import RegisterUserPage from "../../pages/client/auth/register";
 import LoginUserPage from "../../pages/client/auth/login";
 import BranchDetail from "../../components/client/BranchDetail/BranchDetail";
 import Contact from "../../components/client/contact/Contact";
-import Home from "../../components/client/home/home";
-
+import Home from "../../components/client/home/home"
+import "slick-carousel/slick/slick.css"
+import "slick-carousel/slick/slick-theme.css"
 const clientRoutes = [
   {
     path: "/header-page",
     component: <Header />,
   },
   {
-    path: "/thuc-don",
+    path: "/menu-page",
     component: <Menu />,
   },
   {
-    path: "/co-so", // Trang chi tiết chi nhánh
+    path: "/branch-page",
     component: <BranchDetail />,
   },
   {
-    path: "/lien-he", // Trang chi tiết chi nhánh
+    path: "/contact-page",
     component: <Contact />,
   },
   {
-    path: "/uu-dai", // Trang ưu đãi
+    path: "/endow-page",
     component: <Endow />,
   },
   {
@@ -45,11 +46,11 @@ const clientRoutes = [
    {
     path: "/login-page",
     component: <LoginUserPage/>,
-  },,
+  },
    {
     path: "/home-page",
     component: <Home/>,
-  }
+  },
 ];
 
 export { clientRoutes };
