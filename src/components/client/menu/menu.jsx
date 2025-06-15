@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "./menu.scss";
 import { combos, dishs, drinks } from "./data-menu";
-import Header from "@components/client/include/header/header";
 import plush from "@assets/client/images/menu/plush.svg";
+
 const Menu = () => {
   const [cart, setCart] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,7 +34,6 @@ const Menu = () => {
 
   return (
     <div className="td-menu">
-      <Header />
       <div className="menuList">
         <div className="widthCT">
           {totalItems > 0 && (
@@ -145,21 +144,7 @@ const Menu = () => {
                   ×
                 </button>
               </div>
-              <div className="cart-footer">
-                <div className="total">
-                  Tổng tiền: <span>{totalPrice.toLocaleString()}</span>
-                </div>
-                <div className="clear">
-                  <div className="text-clear">
-                    <span>Đơn giá tạm tính chỉ mang tính chất tham khảo.</span>
-                    <br />
-                    Liên hệ hotline để Tự Do có thể tư vấn cho bạn chu đáo nhất.
-                  </div>
-                  <div onClick={handleRemoveAll} className="clear-cart">
-                    Xoá hết tạm tính
-                  </div>
-                </div>
-              </div>
+              
 
               <ul className="cart-list">
                 {cart.map((item) => (
