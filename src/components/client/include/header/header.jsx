@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import logo from "../../../../assets/client/images/header/logo.jpg";
 import BookingPopup from "./BookingPopup"; // Import popup đặt bàn
 
+
 const Header = () => {
   const [showNoti, setShowNoti] = useState(true);
   const [showPopup, setShowPopup] = useState(false); // State để mở popup
@@ -85,6 +86,28 @@ const Header = () => {
               onClick={() => setShowPopup(true)}
             >
               ĐẶT BÀN
+            </button>
+         <a href="/login-page" className="nav-login" aria-label="Tài khoản">
+  <i className="fas fa-user nav-login__icon" aria-hidden="true"></i>
+</a>
+            
+          </div>
+          <div className="search-container">
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Tìm kiếm món ăn"
+            />
+            <button className="search-button" aria-label="Tìm kiếm">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z" />
+              </svg>
             </button>
           </div>
         </div>

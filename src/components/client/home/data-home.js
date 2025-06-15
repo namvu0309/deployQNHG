@@ -1,4 +1,5 @@
 // src/components/client/home/data-home.js
+// src/pages/home/data-home.js (hoặc tương ứng)
 import dish1 from '../../../assets/client/images/home/dish1.webp';
 import dish2 from '../../../assets/client/images/home/dish2.webp';
 import dish3 from '../../../assets/client/images/home/dish3.webp';
@@ -75,7 +76,7 @@ export const endows = [
     image: endow1,
   }
 ];
-// quán nhậu 
+// quán nhậu
 export const introInfo = {
   title: "Quán Nhậu Đẳng Cấp Hà Nội",
   points: [
