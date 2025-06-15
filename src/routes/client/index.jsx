@@ -20,11 +20,11 @@ const clientRoutes = [
     component: <Menu />,
   },
   {
-    path: "/branch-page",
+    path: "/branch-page", // Trang chi tiết chi nhánh
     component: <BranchDetail />,
   },
   {
-    path: "/contact-page",
+    path: "/contact-page", // Trang chi tiết chi nhánh
     component: <Contact />,
   },
   {
