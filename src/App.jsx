@@ -21,6 +21,7 @@ import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
 
 // Layouts
 import BaseLayout from "@layouts/BaseLayout.jsx";
+import ClientLayout from "@components/client/include/ClientLayout";
 
 fakeBackend();
 
@@ -61,7 +62,7 @@ const App = (props) => {
         {clientRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={<BaseLayout>{route.component}</BaseLayout>}
+            element={<ClientLayout>{route.component}</ClientLayout>}
             key={idx}
             exact={true}
           />

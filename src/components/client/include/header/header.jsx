@@ -47,33 +47,33 @@ const Header = () => {
               Trang Chủ
             </Link>
             <Link
-              to="/thuc-don"
+              to="/menu-page"
               className={`nav-link ${
-                location.pathname.includes("/thuc-don") ? "active" : ""
+                location.pathname.includes("/menu-page") ? "active" : ""
               }`}
             >
               Thực Đơn
             </Link>
             <Link
-              to="/co-so"
+              to="/branch-page"
               className={`nav-link ${
-                location.pathname.includes("/co-so") ? "active" : ""
+                location.pathname.includes("/branch-page") ? "active" : ""
               }`}
             >
               Cơ Sở
             </Link>
             <Link
-              to="/uu-dai"
+              to="/endow-page"
               className={`nav-link ${
-                location.pathname.includes("/uu-dai") ? "active" : ""
+                location.pathname.includes("/endow-page") ? "active" : ""
               }`}
             >
               Ưu Đãi
             </Link>
             <Link
-              to="/lien-he"
+              to="/contact-page"
               className={`nav-link ${
-                location.pathname.includes("/lien-he") ? "active" : ""
+                location.pathname.includes("/contact-page") ? "active" : ""
               }`}
             >
               Liên Hệ

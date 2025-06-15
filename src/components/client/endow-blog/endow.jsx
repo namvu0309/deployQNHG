@@ -4,7 +4,6 @@ import banner from "@assets/client/images/endow-blog/banner.jpg";
 import rightArrow from "../../../assets/client/images/endow-blog/rightarrow-icon.png";
 import {endows} from "./data-endow";
 import { Link } from "react-router-dom";
-import Footer from "../../../components/client/include/footer/footer";
 // import CartModal from "../cart/cartmodel";
 
 const Endow = () => {
@@ -47,7 +46,7 @@ const Endow = () => {
                  </div>
            </div>
            </div>
-           <Footer/>
+          
          </div>
 
     
