@@ -125,31 +125,6 @@
         color: #0f3e27;
       }
     }
-   
-.nav-login {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #f5f5f5;
-  transition: background-color 0.2s;
-
-  &__icon {
-    font-size: 1.5rem;   // kích cỡ icon
-    color: #555;         // màu mặc định
-  }
-
-  &:hover {
-    background-color: #e0e0e0;
-
-    &__icon {
-      color: #333;       // màu khi hover
-    }
-  }
-}
-
   }
 
   .search-container {

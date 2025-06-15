@@ -28,7 +28,7 @@ const clientRoutes = [
     component: <Contact />,
   },
   {
-    path: "/endow-page",
+    path: "/endow-page", // Trang ưu đãi
     component: <Endow />,
   },
   {
