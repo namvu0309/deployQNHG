@@ -9,7 +9,7 @@ import {  publicRoutes } from "@routes/admin/index.jsx";
 //FE
 import { clientRoutes } from "@routes/client/index.jsx";
 // Middleware
-// import Authmiddleware from "@routes/admin/route.jsx";
+import Authmiddleware from "@routes/admin/route.jsx";
 
 // Layouts
 import Include from "@components/admin/Include/";
@@ -22,6 +22,7 @@ import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
 // Layouts
 import AdminLayout from "@layouts/AdminLayout";
 import ClientLayout from "@components/client/include/ClientLayout";
+import { authProtectedRoutes } from "@routes/admin";
 
 fakeBackend();
 
@@ -45,7 +46,7 @@ const App = (props) => {
           />
         ))}
 
-        {/* {authProtectedRoutes.map((route, idx) => (
+        {authProtectedRoutes.map((route, idx) => (
           <Route
             path={route.path}
             element={
@@ -56,7 +57,7 @@ const App = (props) => {
             key={idx}
             exact={true}
           />
-        ))} */}
+        ))}
 
         {/* ✅ Client Routes — Header + Footer tự động */}
         {clientRoutes.map((route, idx) => (
