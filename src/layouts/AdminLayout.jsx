@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 import { changeLayoutMode } from "@store/admin/actions";
 
-const BaseLayout = (props) => {
+const AdminLayout = (props) => {
   const dispatch = useDispatch();
 
   const selectProperty = createSelector(
@@ -25,9 +25,9 @@ const BaseLayout = (props) => {
   return <React.Fragment>{props.children}</React.Fragment>;
 };
 
-BaseLayout.propTypes = {
+AdminLayout.propTypes = {
   children: PropTypes.any,
   location: PropTypes.object,
 };
 
-export default withRouter(BaseLayout);
+export default withRouter(AdminLayout);

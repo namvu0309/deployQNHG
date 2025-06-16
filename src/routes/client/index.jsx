@@ -12,8 +12,8 @@ import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 const clientRoutes = [
   {
-    path: "/header-page",
-    component: <Header />,
+    path: "/",
+    component: <Home/>,
   },
   {
     path: "/menu-page",
@@ -35,10 +35,6 @@ const clientRoutes = [
     path: "/endow-page/detail/:slug",
     component: <Detail />,
   },
-  {
-    path: "/footer-page",
-    component: <Footer />,
-  },
    {
     path: "/register-page",
     component: <RegisterUserPage/>,
@@ -47,10 +43,7 @@ const clientRoutes = [
     path: "/login-page",
     component: <LoginUserPage/>,
   },
-   {
-    path: "/home-page",
-    component: <Home/>,
-  },
+   
 ];
 
 export { clientRoutes };
