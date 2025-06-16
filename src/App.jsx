@@ -5,15 +5,16 @@ import { connect } from "react-redux";
 
 
 // Import Routes
-import { authProtectedRoutes, publicRoutes } from "@routes/admin/index.jsx";
+import {  publicRoutes } from "@routes/admin/index.jsx";
 //FE
 import { clientRoutes } from "@routes/client/index.jsx";
 // Middleware
-import Authmiddleware from "@routes/admin/route.jsx";
+// import Authmiddleware from "@routes/admin/route.jsx";
 
 // Layouts
 import Include from "@components/admin/Include/";
-
+// SCSS
+import "@assets/admin/scss/theme.scss";
 
 // Fake backend
 import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
@@ -21,9 +22,6 @@ import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
 // Layouts
 import AdminLayout from "@layouts/AdminLayout";
 import ClientLayout from "@components/client/include/ClientLayout";
-
-// SCSS
-import "@assets/admin/scss/theme.scss";
 
 fakeBackend();
 
