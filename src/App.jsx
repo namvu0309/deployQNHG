@@ -13,15 +13,17 @@ import Authmiddleware from "@routes/admin/route.jsx";
 
 // Layouts
 import Include from "@components/admin/Include/";
-// SCSS
-import "@assets/admin/scss/theme.scss";
+
 
 // Fake backend
 import fakeBackend from "@helpers/admin/AuthType/fakeBackend";
 
 // Layouts
-import BaseLayout from "@layouts/BaseLayout.jsx";
+import AdminLayout from "@layouts/AdminLayout";
 import ClientLayout from "@components/client/include/ClientLayout";
+
+// SCSS
+import "@assets/admin/scss/theme.scss";
 
 fakeBackend();
 
@@ -39,13 +41,13 @@ const App = (props) => {
         {publicRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={<BaseLayout>{route.component}</BaseLayout>}
+            element={<AdminLayout>{route.component}</AdminLayout>}
             key={idx}
             exact={true}
           />
         ))}
 
-        {authProtectedRoutes.map((route, idx) => (
+        {/* {authProtectedRoutes.map((route, idx) => (
           <Route
             path={route.path}
             element={
@@ -56,7 +58,7 @@ const App = (props) => {
             key={idx}
             exact={true}
           />
-        ))}
+        ))} */}
 
         {/* ✅ Client Routes — Header + Footer tự động */}
         {clientRoutes.map((route, idx) => (

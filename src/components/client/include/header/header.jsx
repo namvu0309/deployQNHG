@@ -41,7 +41,7 @@ const Header = () => {
         <div className="nav-menu">
           <div className="nav-links">
             <Link
-              to="/home-page"
+              to="/"
               className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
             >
               Trang Chủ
