@@ -10,12 +10,14 @@
 
   .home-content {
     h1 {
-      font-size: 4rem;
-      text-transform: uppercase;
-      line-height: 1.2;
-      font-weight: 800;
-      
-    }
+  font-family: 'Stardos Stencil', sans-serif;
+  font-size: 4rem;
+  text-transform: uppercase;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #FDB833; 
+  
+}
   }
 }
 
@@ -26,25 +28,30 @@
   text-align: center;
 
   .section-title {
-    font-size: 3rem;
+    font-size: 2rem;
     margin-bottom: 2rem;
-    color: #fff;
-    font-weight: 800;
+    color: #fff; 
+    font-weight: 700;
+    font-family: 'Stardos Stencil', sans-serif;
+    text-transform: uppercase;
   }
+
 
   .slider-wrapper {
     max-width: 1300px;     
     margin: 0 auto;         
     padding: 0 1rem;
+   
          
     
     .slick-slide {
       padding: 0 8px;       
+    
     }
   }
 
   .card-image img {
-    height: 250px;          /* giảm chiều cao ảnh nếu muốn */
+    height: 250px;         
   }
 
   /* Card chính */
@@ -55,7 +62,12 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+     height: 100%;
+
   }
+  .slider-inner {
+  min-height: 100%;
+}
 
   .card-image {
     img {
@@ -165,6 +177,28 @@
     }
   }
 }
+/* ===== FIX TOÀN DIỆN LỖI SLIDER BỊ CẮT / VỠ ===== */
+.slick-track {
+  display: flex !important;
+}
+
+.slick-slide {
+  height: inherit !important;
+}
+
+.slick-slide > div {
+  display: flex !important;
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* Đảm bảo các card chiếm đủ vùng hiển thị */
+.card-item {
+  display: flex !important;
+  flex-direction: column;
+  height: 100%;
+}
+
 /* ===== Section chữ chạy ===== */
 .promotion-section {
   background-color: #f4b01b;  // nền vàng tươi
@@ -289,6 +323,7 @@
       }
     }
   }
+  
 }
 /* === Section Giới thiệu thương hiệu (nâng cấp thẩm mỹ) === */
 .intro-section {
@@ -308,15 +343,20 @@
 
   .intro-text {
     flex: 1 1 45%;
-    color: #18432c;
+color: #222222;
+font-family: 'Stardos Stencil', sans-serif;
+font-weight: 700;
+text-transform: uppercase;
 
     h2 {
-      font-size: 3.2rem;
-      font-weight: 800;
-      margin-bottom: 1.8rem;
-      line-height: 1.2;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+     font-size: 3.2rem;
+  font-weight: 700;
+  margin-bottom: 1.8rem;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Stardos Stencil', sans-serif;
+  color: #222222;
     }
 
     ul {
@@ -407,9 +447,14 @@
     color: #18432c;
 
     h2 {
-      font-size: 3rem;
-      font-weight: 800;
-      margin-bottom: 1.5rem;
+      font-size: 3.2rem;
+  font-weight: 700; 
+  margin-bottom: 1.8rem;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Stardos Stencil', sans-serif;
+  color: #222222;
     }
 
     ul {
