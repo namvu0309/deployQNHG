@@ -63,13 +63,15 @@ export default function Home() {
       </section>
 
       {/* Section 3: chữ chạy */}
-      <section className="promotion-section">
-        <div className="promotion-wrapper">
-          <span className="promotion-text">
-            ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖
-          </span>
-        </div>
-      </section>
+   <section className="promotion-section">
+  <div className="marquee">
+    <div className="marquee-track">
+      <div className="marquee-content">
+        ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Section 4: Khuyến mãi & Tin tức */}
       <section className="promo-cards-section">
