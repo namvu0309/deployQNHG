@@ -56,4 +56,9 @@ export const changeReservationStatus = (id, status) => {
     return axios.post(`${API_URL}/reservations/${id}/change-status`, {
         status,
     });
+};
+
+// Xác nhận đơn đặt bàn
+export const confirmReservation = (id) => {
+    return axios.post(`${API_URL}/reservations/${id}/confirm`);
 }; 

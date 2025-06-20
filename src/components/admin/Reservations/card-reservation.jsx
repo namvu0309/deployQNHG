@@ -9,6 +9,8 @@ import {
 } from "reactstrap";
 import { MdModeEdit, MdVisibility } from "react-icons/md";
 import { FaTrash, FaCheck, FaTimes, FaUsers, FaCalendarAlt, FaClock, FaStickyNote } from "react-icons/fa";
+import { confirmReservation } from '@services/admin/reservationService';
+import { toast } from 'react-toastify';
 
 const ReservationCard = ({
     reservation,
@@ -16,6 +18,7 @@ const ReservationCard = ({
     onView,
     onDelete,
     onStatusChange,
+    onTimeChange,
 }) => {
     const getStatusBadge = (status) => {
         const statusConfig = {
@@ -39,15 +42,9 @@ const ReservationCard = ({
         return date.toLocaleDateString('vi-VN');
     };
 
-    const formatTime = (timeString) => {
-        if (!timeString) return "N/A";
-        return timeString;
-    };
 
-    const truncateText = (text, maxLength = 50) => {
-        if (!text) return "Không có ghi chú";
-        return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
-    };
+
+
 
     return (
         <Card className="h-100 reservation-card shadow-sm">
@@ -67,13 +64,20 @@ const ReservationCard = ({
 
                 {/* Thông tin chi tiết */}
                 <div className="flex-grow-1">
+                    {/* Hàm tiện ích tách ngày và giờ từ reservation_time */}
+                    {/*
+                        Hàm extractDate, extractTime, formatDate, formatTime nên được đặt ở đầu file hoặc file utils.
+                        Ở đây sử dụng trực tiếp cho hiển thị ngày/giờ đặt.
+                    */}
                     <div className="mb-3">
                         <div className="d-flex align-items-center mb-2">
                             <FaCalendarAlt className="text-muted me-2" size={14} />
                             <small className="text-muted">Ngày đặt:</small>
                         </div>
                         <div className="ms-4">
-                            <strong>{formatDate(reservation.booking_date || reservation.reservation_date)}</strong>
+                            <strong>
+                                {formatDate(reservation.reservation_time)}
+                            </strong>
                         </div>
                     </div>
 
@@ -83,7 +87,53 @@ const ReservationCard = ({
                             <small className="text-muted">Giờ đặt:</small>
                         </div>
                         <div className="ms-4">
-                            <strong>{formatTime(reservation.booking_time || reservation.reservation_time)}</strong>
+                            {reservation.status === "pending" && onTimeChange ? (
+                                <input
+                                    type="time"
+                                    value={
+                                        (() => {
+                                            let timeStr = reservation.reservation_time;
+                                            if (!timeStr) return "";
+                                            if (timeStr.includes("T")) {
+                                                const d = new Date(timeStr);
+                                                return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false });
+                                            }
+                                            const match = timeStr.match(/(\\d{2}):(\\d{2})/);
+                                            if (match) return `${match[1]}:${match[2]}`;
+                                            if (/^\\d{2}:\\d{2}(:\\d{2})?$/.test(timeStr)) return timeStr.slice(0, 5);
+                                            return "";
+                                        })()
+                                    }
+                                    onChange={e => onTimeChange(reservation.id, e.target.value)}
+                                    style={{ fontSize: 16, padding: "2px 8px" }}
+                                />
+                            ) : (
+                                <strong>
+                                    {
+                                        // Hiển thị chỉ phần giờ và phút, không kèm ngày
+                                        (() => {
+                                            if (!reservation.reservation_time) return "N/A";
+                                            // Nếu là dạng "2025-06-20 17:13:00" hoặc ISO string
+                                            let timeStr = reservation.reservation_time;
+                                            // Nếu có ký tự "T" (ISO), chuyển sang dạng "HH:mm"
+                                            if (timeStr.includes("T")) {
+                                                const d = new Date(timeStr);
+                                                return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false });
+                                            }
+                                            // Nếu là dạng "YYYY-MM-DD HH:mm:ss"
+                                            const match = timeStr.match(/(\d{2}):(\d{2})/);
+                                            if (match) {
+                                                return `${match[1]}:${match[2]}`;
+                                            }
+                                            // Nếu chỉ là "HH:mm" hoặc "HH:mm:ss"
+                                            if (/^\d{2}:\d{2}(:\d{2})?$/.test(timeStr)) {
+                                                return timeStr.slice(0, 5);
+                                            }
+                                            return timeStr;
+                                        })()
+                                    }
+                                </strong>
+                            )}
                         </div>
                     </div>
 
@@ -99,13 +149,30 @@ const ReservationCard = ({
 
                     <div className="mb-3">
                         <div className="d-flex align-items-center mb-2">
-                            <FaStickyNote className="text-muted me-2" size={14} />
-                            <small className="text-muted">Ghi chú:</small>
+                            <FaStickyNote className="me-2" style={{ color: "#ffb300" }} size={16} />
+                            <small style={{ color: "#ff9800", fontWeight: 600, fontSize: 15 }}>Ghi chú :</small>
                         </div>
                         <div className="ms-4">
-                            <small className="text-muted">
-                                {truncateText(reservation.notes || reservation.special_requests)}
-                            </small>
+                            {(reservation.notes || reservation.special_requests) ? (
+                                <div
+                                    style={{
+                                        background: "linear-gradient(90deg, #fffde4 0%, #ffe9c7 100%)",
+                                        borderLeft: "5px solid #ffb300",
+                                        borderRadius: 8,
+                                        padding: "10px 14px",
+                                        color: "#5d4037",
+                                        fontSize: 16,
+                                        fontWeight: 500,
+                                        boxShadow: "0 2px 8px rgba(255,193,7,0.08)",
+                                        minHeight: 40,
+                                        whiteSpace: "pre-line"
+                                    }}
+                                >
+                                    {reservation.notes || reservation.special_requests}
+                                </div>
+                            ) : (
+                                <span style={{ color: "#bdbdbd", fontStyle: "italic" }}>Không có ghi chú</span>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -143,7 +210,7 @@ const ReservationCard = ({
                                 </Col>
                             )}
                         </Row>
-                        
+
                         {reservation.status === "pending" && onStatusChange && onDelete && (
                             <Row className="g-2 mt-2">
                                 <Col xs={6}>
@@ -151,7 +218,15 @@ const ReservationCard = ({
                                         color="success"
                                         size="sm"
                                         className="w-100"
-                                        onClick={() => onStatusChange(reservation.id, "confirmed")}
+                                        onClick={async () => {
+                                            try {
+                                                await confirmReservation(reservation.id);
+                                                toast.success("Đã xác nhận đơn đặt bàn!");
+                                                if (onStatusChange) onStatusChange(reservation.id, "confirmed");
+                                            } catch {
+                                                toast.error("Xác nhận thất bại!");
+                                            }
+                                        }}
                                         title="Xác nhận"
                                     >
                                         <FaCheck size={14} />

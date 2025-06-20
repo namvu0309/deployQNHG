@@ -19,7 +19,7 @@ import {
     Spinner,
 } from "reactstrap";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
-import { getTableAreas } from "@services/admin/reservationService";
+import { getTableAreas, createReservation } from "@services/admin/reservationService";
 import Swal from "sweetalert2";
 
 const TableAreaIndex = () => {
@@ -33,6 +33,7 @@ const TableAreaIndex = () => {
         capacity: "",
         status: "active",
     });
+    const [loadingCreate, setLoadingCreate] = useState(false);
 
     const fetchTableAreas = async (page = 1) => {
         setLoading(true);
@@ -61,11 +62,23 @@ const TableAreaIndex = () => {
     }, []);
 
     const handleCreate = async () => {
+        setLoadingCreate(true);
         try {
-            // Giả lập API call - thay thế bằng API thực tế
+            const payload = {
+                customer_name: formData.name,
+                customer_phone: formData.phone_number,
+                customer_email: formData.email,
+                reservation_time: formData.booking_date && formData.booking_time
+                    ? `${formData.booking_date} ${formData.booking_time}`
+                    : null,
+                number_of_guests: Number(formData.capacity),
+                table_id: formData.table_area_id ? Number(formData.table_area_id) : null,
+                notes: formData.special_requests,
+            };
+            await createReservation(payload);
             Swal.fire({
                 title: "Thành công!",
-                text: "Đã tạo khu vực bàn thành công",
+                text: "Đã tạo đơn đặt bàn thành công",
                 icon: "success",
                 confirmButtonText: "OK",
             });
@@ -77,13 +90,24 @@ const TableAreaIndex = () => {
                 status: "active",
             });
             fetchTableAreas();
-        } catch (error) { // eslint-disable-line no-unused-vars
-            Swal.fire({
-                title: "Lỗi!",
-                text: "Không thể tạo khu vực bàn",
-                icon: "error",
-                confirmButtonText: "OK",
-            });
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.errors) {
+                Swal.fire({
+                    title: "Lỗi!",
+                    text: "Có lỗi xảy ra khi tạo đơn. Vui lòng kiểm tra lại thông tin.",
+                    icon: "error",
+                    confirmButtonText: "OK",
+                });
+            } else {
+                Swal.fire({
+                    title: "Lỗi!",
+                    text: error.response?.data?.message || "Không thể tạo đơn đặt bàn",
+                    icon: "error",
+                    confirmButtonText: "OK",
+                });
+            }
+        } finally {
+            setLoadingCreate(false);
         }
     };
 
@@ -316,9 +340,9 @@ const TableAreaIndex = () => {
                     <Button
                         color="primary"
                         onClick={handleCreate}
-                        disabled={!formData.name || !formData.capacity}
+                        disabled={loadingCreate || !formData.name || !formData.capacity}
                     >
-                        Thêm khu vực bàn
+                        {loadingCreate ? <Spinner size="sm" /> : "Thêm khu vực bàn"}
                     </Button>
                 </ModalFooter>
             </Modal>
