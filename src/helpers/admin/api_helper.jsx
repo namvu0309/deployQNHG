@@ -5,7 +5,7 @@ import accessToken from "./jwt-token-access/accessToken";
 const token = accessToken;
 
 //apply base url for axios
-const API_URL = "";
+const API_URL = "http://127.0.0.1:8000/api";
 
 const axiosApi = axios.create({
   baseURL: API_URL,

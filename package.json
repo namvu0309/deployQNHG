@@ -30,7 +30,7 @@
     "@tinymce/tinymce-react": "^5.1.1",
     "@vtaits/react-color-picker": "^1.0.2",
     "apexcharts": "^4.7.0",
-    "axios": "^1.7.7",
+    "axios": "^1.10.0",
     "axios-mock-adapter": "^2.0.0",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.4",
