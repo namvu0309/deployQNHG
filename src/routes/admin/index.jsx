@@ -91,12 +91,26 @@ import Pages500 from "@pages/admin/Utility/pages-500";
 import PageCustomer from "@pages/admin/Customers/index";
 import UpdateCustomer from "@components/admin/Customers/UpdateCustomer";
 
+// // Reservations
+import PageReservation from "@pages/admin/Reservations/index";
+import PageTableArea from "@pages/admin/TableAreas/index";
+
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
   //Customer routes
   { path: "/customer", component: <PageCustomer /> },
   { path: "/customer/edit/:id", component: <UpdateCustomer /> },
+
+  //Reservation routes
+  { path: "/reservations", component: <PageReservation /> },
+  { path: "/reservations/list", component: <PageReservation /> },
+  { path: "/reservations/:id/detail", component: <PageReservation /> },
+  { path: "/reservations/create", component: <PageReservation /> },
+  { path: "/reservations/:id/edit", component: <PageReservation /> },
+  { path: "/reservations/trash", component: <PageReservation /> },
+  
+  { path: "/table-areas", component: <PageTableArea /> },
 
   //File Manager
   { path: "/apps-filemanager", component: <FileManager /> },
