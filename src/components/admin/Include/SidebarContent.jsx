@@ -167,7 +167,7 @@ const SidebarContent = (props) => {
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/ecommerce-products">
+                  <Link to="/table">
                     {props.t("Danh sách bàn")}
                   </Link>
                 </li>
@@ -177,14 +177,14 @@ const SidebarContent = (props) => {
             <li>
               <Link to="/#" className="has-arrow">
                 <i className="bx bx-task"></i>
-                <span>{props.t("Quản Lí Đặt Bàn")}</span>
+                <span>{props.t("Quản Lí Đơn Đặt Bàn")}</span>
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/email-inbox">{props.t("Danh Sách Đặt Bàn")}</Link>
+                  <Link to="/reservations">{props.t("Danh Sách Đơn Đặt Bàn")}</Link>
                 </li>
                 <li>
-                  <Link to="/email-read">{props.t("Lịch Sử Đặt Bàn")} </Link>
+                  <Link to="/table-areas">{props.t("Lịch Sử Đặt Bàn")} </Link>
                 </li>
               </ul>
             </li>
@@ -238,7 +238,7 @@ const SidebarContent = (props) => {
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/invoices-list">
+                  <Link to="/customer">
                     {props.t("Danh Sách Khách Hàng")}
                   </Link>
                 </li>
@@ -248,13 +248,6 @@ const SidebarContent = (props) => {
                   </Link>
                 </li>
               </ul>
-            </li>
-
-            <li>
-              <Link to="/customer">
-                <i className="bx bx-home-circle"></i>
-                <span>{props.t("Quản lí khách hàng")}</span>
-              </Link>
             </li>
 
             <li>
