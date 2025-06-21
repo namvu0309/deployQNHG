@@ -86,6 +86,9 @@ import PageCustomer from "@pages/admin/Customers/index";
 import UpdateCustomer from "@components/admin/Customers/UpdateCustomer";
 
 import PageTable  from "@pages/admin/Tables/index";
+// // Reservations
+import PageReservation from "@pages/admin/Reservations/index";
+import PageTableArea from "@pages/admin/TableAreas/index";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -97,6 +100,15 @@ const authProtectedRoutes = [
 
   // Table routes
   { path: "/table", component: <PageTable /> },
+  //Reservation routes
+  { path: "/reservations", component: <PageReservation /> },
+  { path: "/reservations/list", component: <PageReservation /> },
+  { path: "/reservations/:id/detail", component: <PageReservation /> },
+  { path: "/reservations/create", component: <PageReservation /> },
+  { path: "/reservations/:id/edit", component: <PageReservation /> },
+  { path: "/reservations/trash", component: <PageReservation /> },
+  
+  { path: "/table-areas", component: <PageTableArea /> },
 
   //File Manager
   { path: "/apps-filemanager", component: <FileManager /> },

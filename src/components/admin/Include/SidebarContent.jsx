@@ -177,14 +177,14 @@ const SidebarContent = (props) => {
             <li>
               <Link to="/#" className="has-arrow">
                 <i className="bx bx-task"></i>
-                <span>{props.t("Quản Lí Đặt Bàn")}</span>
+                <span>{props.t("Quản Lí Đơn Đặt Bàn")}</span>
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/email-inbox">{props.t("Danh Sách Đặt Bàn")}</Link>
+                  <Link to="/reservations">{props.t("Danh Sách Đơn Đặt Bàn")}</Link>
                 </li>
                 <li>
-                  <Link to="/email-read">{props.t("Lịch Sử Đặt Bàn")} </Link>
+                  <Link to="/table-areas">{props.t("Lịch Sử Đặt Bàn")} </Link>
                 </li>
               </ul>
             </li>
