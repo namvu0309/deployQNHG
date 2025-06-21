@@ -90,15 +90,25 @@ import Pages500 from "@pages/admin/Utility/pages-500";
 
 import PageCustomer from "@pages/admin/Customers/index";
 import UpdateCustomer from "@components/admin/Customers/UpdateCustomer";
+import ListRole from "@pages/admin/Role/ListRole.jsx";
+import ListPermissionGroup from "@pages/admin/PermissionGroup/ListPermissionGroup.jsx"
+import ListPermission from "@pages/admin/Permission/ListPermission.jsx"
+import ListUser from "@pages/admin/Users/ListUser.jsx"
+  import ListUserRole from "@pages/admin/UserRole/ListUserRole.jsx"
+  const authProtectedRoutes = [
+    { path: "/dashboard", component: <Dashboard /> },
 
-const authProtectedRoutes = [
-  { path: "/dashboard", component: <Dashboard /> },
+    //Customer routes
+    { path: "/customer", component: <PageCustomer /> },
+    { path: "/customer/edit/:id", component: <UpdateCustomer /> },
 
-  //Customer routes
-  { path: "/customer", component: <PageCustomer /> },
-  { path: "/customer/edit/:id", component: <UpdateCustomer /> },
+    { path: "/roles", component: <ListRole/> },
+    { path: "/permission_groups", component: <ListPermissionGroup/> },
+    { path: "/permissions", component: <ListPermission/> },
+    { path: "/users", component: <ListUser/> },
+    { path: "/user_roles", component: <ListUserRole/> },
 
-  //File Manager
+
   { path: "/apps-filemanager", component: <FileManager /> },
 
   //   // //profile

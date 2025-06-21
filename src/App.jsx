@@ -2,7 +2,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { connect } from "react-redux";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Import Routes
 import {  publicRoutes } from "@routes/admin/index.jsx";
