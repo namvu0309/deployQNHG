@@ -41,13 +41,12 @@ const statusOptions = [
 
 const CustomerForm = ({ initialValues = {}, isEdit = false, onSubmit, loading, apiErrors = {} }) => {
   const [avatarPreview, setAvatarPreview] = useState(null);
-  const [avatarInputKey, setAvatarInputKey] = useState(Date.now()); // Key để reset input file
-  const [isAvatarDeleted, setIsAvatarDeleted] = useState(false); // Cờ báo hiệu ảnh đã bị xóa
+  const [avatarInputKey, setAvatarInputKey] = useState(Date.now()); 
+  const [isAvatarDeleted, setIsAvatarDeleted] = useState(false);
 
-  const [modalOpen, setModalOpen] = useState(false); // State để quản lý Modal phóng to ảnh
-  const [selectedImage, setSelectedImage] = useState(null); // State để lưu URL ảnh được chọn xem
+  const [modalOpen, setModalOpen] = useState(false); 
+  const [selectedImage, setSelectedImage] = useState(null); 
 
-  // Hàm để đóng/mở modal
   const toggleModal = () => setModalOpen(!modalOpen);
 
   const formik = useFormik({

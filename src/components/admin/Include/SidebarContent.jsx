@@ -167,7 +167,7 @@ const SidebarContent = (props) => {
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/ecommerce-products">
+                  <Link to="/table">
                     {props.t("Danh sách bàn")}
                   </Link>
                 </li>
@@ -238,7 +238,7 @@ const SidebarContent = (props) => {
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/invoices-list">
+                  <Link to="/customer">
                     {props.t("Danh Sách Khách Hàng")}
                   </Link>
                 </li>
@@ -248,13 +248,6 @@ const SidebarContent = (props) => {
                   </Link>
                 </li>
               </ul>
-            </li>
-
-            <li>
-              <Link to="/customer">
-                <i className="bx bx-home-circle"></i>
-                <span>{props.t("Quản lí khách hàng")}</span>
-              </Link>
             </li>
 
             {/* <li className="menu-title">Pages</li>

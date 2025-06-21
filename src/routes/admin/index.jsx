@@ -33,11 +33,6 @@ import TwostepVerification2 from "@pages/admin/AuthenticationInner/auth-two-step
 
 // // Dashboard
 import Dashboard from "@pages/admin/Dashboard/index";
-
-// //Tables
-import BasicTables from "@pages/admin/Tables/BasicTables";
-import DatatableTables from "@pages/admin/Tables/DatatableTables";
-
 // // Forms
 import FormElements from "@pages/admin/Forms/FormElements";
 import FormLayouts from "@pages/admin/Forms/FormLayouts";
@@ -48,7 +43,6 @@ import FormMask from "@pages/admin/Forms/FormMask";
 import FormRepeater from "@pages/admin/Forms/FormRepeater";
 import FormUpload from "@pages/admin/Forms/FormUpload";
 import FormWizard from "@pages/admin/Forms/FormWizard";
-import DualListbox from "@pages/admin/Tables/DualListbox";
 
 // //Ui
 import UiAlert from "@pages/admin/Ui/UiAlerts/index";
@@ -91,22 +85,24 @@ import Pages500 from "@pages/admin/Utility/pages-500";
 import PageCustomer from "@pages/admin/Customers/index";
 import UpdateCustomer from "@components/admin/Customers/UpdateCustomer";
 
+import PageTable  from "@pages/admin/Tables/index";
+
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
-  //Customer routes
+  // Customer routes
   { path: "/customer", component: <PageCustomer /> },
   { path: "/customer/edit/:id", component: <UpdateCustomer /> },
+
+
+  // Table routes
+  { path: "/table", component: <PageTable /> },
 
   //File Manager
   { path: "/apps-filemanager", component: <FileManager /> },
 
   //   // //profile
   { path: "/profile", component: <UserProfile /> },
-
-  //   // Tables
-  { path: "/tables-basic", component: <BasicTables /> },
-  { path: "/tables-datatable", component: <DatatableTables /> },
 
   //   // Forms
   { path: "/form-elements", component: <FormElements /> },
@@ -118,7 +114,6 @@ const authProtectedRoutes = [
   { path: "/form-uploads", component: <FormUpload /> },
   { path: "/form-wizard", component: <FormWizard /> },
   { path: "/form-validation", component: <FormValidations /> },
-  { path: "/dual-listbox", component: <DualListbox /> },
 
   //   // Ui
   { path: "/ui-alerts", component: <UiAlert /> },
