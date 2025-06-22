@@ -50,9 +50,20 @@ export default function ListPermissionGroup() {
                         Swal.fire("Đã xóa!", "Nhóm quyền đã được xóa.", "success");
                         fetchGroups();
                     })
-                    .catch(() => {
-                        Swal.fire("Lỗi!", "Xóa thất bại.", "error");
+                    .catch((err) => {
+                        const message = err?.response?.data?.message || "Xóa thất bại.";
+                        const errors = err?.response?.data?.errors;
+
+                        let errorDetail = "";
+
+                        if (errors && typeof errors === "object") {
+                            const allErrors = Object.values(errors).flat();
+                            errorDetail = allErrors.length > 0 ? `\n- ${allErrors.join("\n- ")}` : "";
+                        }
+
+                        Swal.fire("Lỗi!", `${message}${errorDetail}`, "error");
                     });
+
             }
         });
     };

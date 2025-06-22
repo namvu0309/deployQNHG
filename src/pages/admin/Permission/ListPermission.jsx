@@ -51,9 +51,20 @@ export default function ListPermission() {
                         fetchPermissions();
                     })
                     .catch((err) => {
-                        Swal.fire("Lỗi!", "Không thể xóa.", "error");
+                        const message = err?.response?.data?.message || "Không thể xóa.";
+                        const errors = err?.response?.data?.errors;
+
+                        let errorDetail = "";
+
+                        if (errors && typeof errors === "object") {
+                            const allErrors = Object.values(errors).flat();
+                            errorDetail = allErrors.length > 0 ? `\n- ${allErrors.join("\n- ")}` : "";
+                        }
+
+                        Swal.fire("Lỗi!", `${message}${errorDetail}`, "error");
                         console.error("Xóa thất bại:", err);
                     });
+
             }
         });
     };

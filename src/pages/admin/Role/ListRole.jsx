@@ -53,7 +53,17 @@ export default function ListRole() {
                         fetchRoles();
                     })
                     .catch((err) => {
-                        Swal.fire("Lỗi!", "Xóa thất bại.", "error");
+                        const response = err?.response;
+                        const message = response?.data?.message || "Xóa thất bại.";
+                        const errors = response?.data?.errors;
+
+                        let detailMessage = message;
+
+                        if (errors?.role_id && Array.isArray(errors.role_id)) {
+                            detailMessage += "\n" + errors.role_id.join("\n");
+                        }
+
+                        Swal.fire("Lỗi!", detailMessage, "error");
                         console.error("Xóa thất bại:", err);
                     });
             }
