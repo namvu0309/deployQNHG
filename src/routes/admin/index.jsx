@@ -1,16 +1,15 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-// // Profile
 import UserProfile from "@pages/admin/Authentication/user-profile";
 
-// // Authentication related pages
+// Authentication related pages
 import Login from "@pages/admin/Authentication/Login";
 import Logout from "@pages/admin/Authentication/Logout";
 import Register from "@pages/admin/Authentication/Register";
 import ForgetPwd from "@pages/admin/Authentication/ForgetPassword";
 
-// //  // Inner Authentication
+// Inner Authentication
 import Login1 from "@pages/admin/AuthenticationInner/Login";
 import Login2 from "@pages/admin/AuthenticationInner/Login2";
 import Register1 from "@pages/admin/AuthenticationInner/Register";
@@ -28,15 +27,18 @@ import EmailVerification2 from "@pages/admin/AuthenticationInner/auth-email-veri
 import TwostepVerification from "@pages/admin/AuthenticationInner/auth-two-step-verification";
 import TwostepVerification2 from "@pages/admin/AuthenticationInner/auth-two-step-verification-2";
 
-// // Dashboard
+// Dashboard
 import Dashboard from "@pages/admin/Dashboard/index";
 
 import PageCustomer from "@pages/admin/Customers/index";
 import UpdateCustomer from "@components/admin/Customers/UpdateCustomer";
-
-import PageTable  from "@pages/admin/Tables/index";
 import PageDishes  from "@pages/admin/Dishes/index";
-// // Reservations
+import ListRole from "@pages/admin/Role/ListRole.jsx";
+import ListPermissionGroup from "@pages/admin/PermissionGroup/ListPermissionGroup.jsx";
+import ListPermission from "@pages/admin/Permission/ListPermission.jsx";
+import ListUser from "@pages/admin/Users/ListUser.jsx";
+import ListUserRole from "@pages/admin/UserRole/ListUserRole.jsx";
+import PageTable from "@pages/admin/Tables/index";
 import PageReservation from "@pages/admin/Reservations/index";
 import PageTableArea from "@pages/admin/TableAreas/index";
 
@@ -47,22 +49,31 @@ const authProtectedRoutes = [
   { path: "/customer", component: <PageCustomer /> },
   { path: "/customer/edit/:id", component: <UpdateCustomer /> },
 
+  // Role/Permission/User routes
+  { path: "/roles", component: <ListRole /> },
+  { path: "/permission_groups", component: <ListPermissionGroup /> },
+  { path: "/permissions", component: <ListPermission /> },
+  { path: "/users", component: <ListUser /> },
+  { path: "/user_roles", component: <ListUserRole /> },
 
   // Table routes
   { path: "/table", component: <PageTable /> },
-  //Reservation routes
+
+  // Reservation routes
   { path: "/reservations", component: <PageReservation /> },
   { path: "/reservations/list", component: <PageReservation /> },
   { path: "/reservations/:id/detail", component: <PageReservation /> },
   { path: "/reservations/create", component: <PageReservation /> },
   { path: "/reservations/:id/edit", component: <PageReservation /> },
   { path: "/reservations/trash", component: <PageReservation /> },
-  
+
+  // Table areas
   { path: "/table-areas", component: <PageTableArea /> },
 
   { path: "/dishes", component: <PageDishes /> },
   //   // //profile
   { path: "/profile", component: <UserProfile /> },
+
 
   { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
 ];
@@ -73,7 +84,7 @@ const publicRoutes = [
   { path: "/forgot-password", component: <ForgetPwd /> },
   { path: "/register", component: <Register /> },
 
-  //   // Authentication Inner
+
   { path: "/pages-login", component: <Login1 /> },
   { path: "/pages-login-2", component: <Login2 /> },
   { path: "/pages-register", component: <Register1 /> },
@@ -89,11 +100,7 @@ const publicRoutes = [
   { path: "/auth-email-verification", component: <EmailVerification /> },
   { path: "/auth-email-verification-2", component: <EmailVerification2 /> },
   { path: "/auth-two-step-verification", component: <TwostepVerification /> },
-  {
-    path: "/auth-two-step-verification-2",
-    component: <TwostepVerification2 />,
-  },
+  { path: "/auth-two-step-verification-2", component: <TwostepVerification2 /> },
 ];
 
-// export { authProtectedRoutes, publicRoutes };
 export { authProtectedRoutes, publicRoutes };
