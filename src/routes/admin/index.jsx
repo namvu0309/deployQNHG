@@ -94,6 +94,8 @@ import UpdateCustomer from "@components/admin/Customers/UpdateCustomer";
 // // Reservations
 import PageReservation from "@pages/admin/Reservations/index";
 import PageTableArea from "@pages/admin/TableAreas/index";
+import TableAreaManager from "@pages/admin/TableAreas/TableAreaManager";
+import PageOrder from "@pages/admin/Orders/index";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -110,7 +112,21 @@ const authProtectedRoutes = [
   { path: "/reservations/:id/edit", component: <PageReservation /> },
   { path: "/reservations/trash", component: <PageReservation /> },
   
-  { path: "/table-areas", component: <PageTableArea /> },
+  // Quản lý khu vực bàn
+  { path: "/table-areas", component: <PageTableArea  /> },
+  { path: "/table-areas/list", component: <PageTableArea  /> },
+  { path: "/table-areas/:id/detail", component: <PageTableArea  /> },
+  { path: "/table-areas/create", component: <PageTableArea  /> },
+  { path: "/table-areas/:id/update", component: <PageTableArea  /> },
+  { path: "/table-areas/:id/delete", component: <PageTableArea  /> },
+
+  // Quản lý đơn hàng
+  { path: "/orders", component: <PageOrder /> },
+  { path: "/orders/list", component: <PageOrder /> },
+  { path: "/orders/:id/detail", component: <PageOrder /> },
+  { path: "/orders/create", component: <PageOrder /> },
+  { path: "/orders/:id/edit", component: <PageOrder /> },
+  { path: "/orders/track", component: <PageOrder /> },
 
   //File Manager
   { path: "/apps-filemanager", component: <FileManager /> },

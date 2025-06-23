@@ -184,7 +184,7 @@ const SidebarContent = (props) => {
                   <Link to="/reservations">{props.t("Danh Sách Đơn Đặt Bàn")}</Link>
                 </li>
                 <li>
-                  <Link to="/table-areas">{props.t("Lịch Sử Đặt Bàn")} </Link>
+                  <Link to="/table-areas">{props.t("Khu vực bàn")} </Link>
                 </li>
               </ul>
             </li>
@@ -225,8 +225,13 @@ const SidebarContent = (props) => {
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/invoices-list">
+                  <Link to="/orders">
                     {props.t("Danh Sách Đơn Hàng")}
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/orders/track">
+                    {props.t("Theo Dõi Đơn Hàng")}
                   </Link>
                 </li>
               </ul>
