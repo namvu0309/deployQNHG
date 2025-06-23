@@ -169,7 +169,6 @@
         opacity: 0.8;
         transition: all 0.3s;
     }
-    
   }
   
 
@@ -218,7 +217,7 @@
     .marquee-track {
       display: flex;
       width: fit-content;
-      animation: scroll-marquee 10s linear infinite;
+      animation: scroll-marquee 11s linear infinite;
     }
 
     .marquee-content {

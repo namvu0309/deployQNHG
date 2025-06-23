@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -38,7 +37,6 @@ const CustomerIndex = () => {
     setLoading(true);
     try {
       const res = await getCustomers({ page });
-      console.log("API SUCCESS:", res.data);
       setCustomerData({
         items: res.data.data.items,
         meta: res.data.data.meta,
