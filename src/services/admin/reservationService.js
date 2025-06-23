@@ -61,4 +61,11 @@ export const changeReservationStatus = (id, status) => {
 // Xác nhận đơn đặt bàn
 export const confirmReservation = (id) => {
     return axios.post(`${API_URL}/reservations/${id}/confirm`);
-}; 
+};
+
+// Khu vực bàn
+export const getListTableArea = () => axios.get("/api/admin/table-areas/list");
+export const getTableAreaDetail = (id) => axios.get(`/api/admin/table-areas/${id}/detail`);
+export const createTableArea = (data) => axios.post("/api/admin/table-areas/create", data);
+export const updateTableArea = (id, data) => axios.post(`/api/admin/table-areas/${id}/update`, data);
+export const deleteTableArea = (id) => axios.delete(`/api/admin/table-areas/${id}/delete`); 
