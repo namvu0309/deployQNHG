@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "./bookingPopup.scss";
 import { useNavigate } from "react-router-dom";
-import { post } from "../../../../helpers/admin/api_helper";
-import SuccessModal from "./SuccessModal"; // import popup tùy chỉnh
+import { createBooking } from "../../../../services/client/bookingService";
+
+
+import SuccessModal from "./SuccessModal"; 
 
 const BookingPopup = ({ isOpen, onClose }) => {
   const [guestCount, setGuestCount] = useState(1);
@@ -63,21 +65,17 @@ const BookingPopup = ({ isOpen, onClose }) => {
     };
 
     try {
-      await post("/reservations/create", submissionData, {
-        "Content-Type": "application/json",
-      });
+  await createBooking(submissionData); 
 
-      localStorage.setItem("latestReservation", JSON.stringify(submissionData));
-     
-      setShowSuccess(true); //  mở 
-      // onClose();        // đóng popup
-navigate("/reservation_success");
-    } catch (error) {
-      console.error("Đặt bàn thất bại:", error);
-      alert("❌ Có lỗi xảy ra khi đặt bàn. Vui lòng thử lại.");
-    }
-  };
+  localStorage.setItem("latestReservation", JSON.stringify(submissionData));
 
+  setShowSuccess(true);
+  navigate("/reservation_success");
+} catch (error) {
+  console.error("Đặt bàn thất bại:", error.response?.data || error.message);
+  alert("❌ Có lỗi xảy ra khi đặt bàn. Vui lòng thử lại.");
+}
+  }
   if (!isOpen) return null;
 
   return (
