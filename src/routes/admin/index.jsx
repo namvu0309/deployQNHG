@@ -41,8 +41,8 @@ import ListUserRole from "@pages/admin/UserRole/ListUserRole.jsx";
 import PageTable from "@pages/admin/Tables/index";
 import PageReservation from "@pages/admin/Reservations/index";
 import PageTableArea from "@pages/admin/TableAreas/index";
-import TableAreaManager from "@pages/admin/TableAreas/TableAreaManager";
 import PageOrder from "@pages/admin/Orders/index";
+import PageCategory from "@pages/admin/Categories/index";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -60,6 +60,7 @@ const authProtectedRoutes = [
 
   // Table routes
   { path: "/table", component: <PageTable /> },
+  { path: "/categories", component: <PageCategory /> },
 
   // Reservation routes
   { path: "/reservations", component: <PageReservation /> },
@@ -89,8 +90,6 @@ const authProtectedRoutes = [
   //   // //profile
   { path: "/profile", component: <UserProfile /> },
 
-
-  { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
 ];
 
 const publicRoutes = [
