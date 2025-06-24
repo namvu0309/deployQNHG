@@ -70,7 +70,7 @@ const BookingPopup = ({ isOpen, onClose }) => {
   localStorage.setItem("latestReservation", JSON.stringify(submissionData));
 
   setShowSuccess(true);
-  navigate("/reservation_success");
+  // navigate("/reservation_success");
 } catch (error) {
   console.error("Đặt bàn thất bại:", error.response?.data || error.message);
   alert("❌ Có lỗi xảy ra khi đặt bàn. Vui lòng thử lại.");
@@ -200,6 +200,7 @@ const BookingPopup = ({ isOpen, onClose }) => {
         message="Yêu cầu đặt bàn của bạn đã được gửi. Chúng tôi sẽ liên hệ để xác nhận!"
         onClose={() => {
           setShowSuccess(false);
+              onClose();  
           navigate("/reservation_success");
         }}
       />
