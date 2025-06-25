@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import "./bookingPopup.scss";
 import { useNavigate } from "react-router-dom";
 import { createBooking } from "../../../../services/client/bookingService";
-
-
-import SuccessModal from "./SuccessModal"; 
+import SuccessModal from "./SuccessModal";
+import ArrivalTimeSelect from "./ArrivalTimeSelect";
 
 const BookingPopup = ({ isOpen, onClose }) => {
   const [guestCount, setGuestCount] = useState(1);
@@ -52,7 +51,6 @@ const BookingPopup = ({ isOpen, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
-
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -65,18 +63,18 @@ const BookingPopup = ({ isOpen, onClose }) => {
     };
 
     try {
-  await createBooking(submissionData); 
+      await createBooking(submissionData);
+      localStorage.setItem("latestReservation", JSON.stringify(submissionData));
+      setShowSuccess(true);
+    } catch (error) {
+      console.error("Đặt bàn thất bại:", error.response?.data || error.message);
+      alert("❌ Có lỗi xảy ra khi đặt bàn. Vui lòng thử lại.");
+    }
+  };
 
-  localStorage.setItem("latestReservation", JSON.stringify(submissionData));
-
-  setShowSuccess(true);
-  // navigate("/reservation_success");
-} catch (error) {
-  console.error("Đặt bàn thất bại:", error.response?.data || error.message);
-  alert("❌ Có lỗi xảy ra khi đặt bàn. Vui lòng thử lại.");
-}
-  }
   if (!isOpen) return null;
+
+  const minDate = new Date().toISOString().split("T")[0];
 
   return (
     <>
@@ -158,18 +156,21 @@ const BookingPopup = ({ isOpen, onClose }) => {
                     type="date"
                     name="reservation_date"
                     value={orderTable.reservation_date}
+                    min={minDate}
                     onChange={handleChange}
                   />
                   {errors.reservation_date && <p className="error">{errors.reservation_date}</p>}
                 </div>
 
                 <div className="form-field">
-                  <label>Giờ đến</label>
-                  <input
-                    type="time"
-                    name="reservation_time"
-                    value={orderTable.reservation_time}
-                    onChange={handleChange}
+                  <ArrivalTimeSelect
+                    selectedTime={orderTable.reservation_time}
+                    onTimeChange={(time) =>
+                      setOrderTable((prev) => ({
+                        ...prev,
+                        reservation_time: time,
+                      }))
+                    }
                   />
                   {errors.reservation_time && <p className="error">{errors.reservation_time}</p>}
                 </div>
@@ -183,7 +184,6 @@ const BookingPopup = ({ isOpen, onClose }) => {
               />
             </div>
 
-            {/* BUTTON */}
             <div className="actions">
               <button type="button" onClick={onClose}>
                 Đóng
@@ -194,13 +194,12 @@ const BookingPopup = ({ isOpen, onClose }) => {
         </div>
       </div>
 
-      {/* POPUP THÀNH CÔNG */}
       <SuccessModal
         isOpen={showSuccess}
         message="Yêu cầu đặt bàn của bạn đã được gửi. Chúng tôi sẽ liên hệ để xác nhận!"
         onClose={() => {
           setShowSuccess(false);
-              onClose();  
+          onClose();
           navigate("/reservation_success");
         }}
       />
