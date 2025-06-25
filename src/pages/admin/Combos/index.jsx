@@ -46,7 +46,7 @@ const ComboIndex = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [newCombo, setNewCombo] = useState({
         name: "",
-        price: "",
+        selling_price: "",
         status: "active",
         description: "",
         items: [],
@@ -56,7 +56,7 @@ const ComboIndex = () => {
     const [isEdit, setIsEdit] = useState(false);
     const [editComboId, setEditComboId] = useState(null);
     const [activeTab, setActiveTab] = useState("list");
-    const [dishList] = useState([]);
+    const [dishList, setDishList] = useState([]);
     const [selectedCombo, setSelectedCombo] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [showAddDishModal, setShowAddDishModal] = useState(false);
@@ -119,7 +119,7 @@ const ComboIndex = () => {
     const resetNewCombo = () => {
         setNewCombo({
             name: "",
-            price: "",
+            selling_price: "",
             status: "active",
             description: "",
             items: [],
@@ -136,10 +136,10 @@ const ComboIndex = () => {
             const combo = res.data.data.combo;
             setNewCombo({
                 name: combo.name || "",
-                price: combo.price || "",
-                status: combo.status || "active",
+                selling_price: combo.selling_price || "",
+                status: combo.is_active === 1 ? "active" : "inactive",
                 description: combo.description || "",
-                items: combo.items || [],
+                items: res.data.data.items || [],
                 image_url: combo.image_url || "",
             });
             setEditComboId(combo.id);
@@ -151,19 +151,21 @@ const ComboIndex = () => {
         }
     };
 
-    // eslint-disable-next-line
     const handleSave = async () => {
         setErrors({});
         const formData = new FormData();
         formData.append("name", newCombo.name || "");
-        formData.append("price", newCombo.price || "");
-        formData.append("status", newCombo.status || "active");
         formData.append("description", newCombo.description || "");
-        if (newCombo.items && newCombo.items.length > 0) {
-            newCombo.items.forEach((item) => formData.append("items[]", item.id));
-        }
+        formData.append("selling_price", newCombo.selling_price || "");
+        formData.append("is_active", newCombo.status === "active" ? 1 : 0);
         if (newCombo.image instanceof File) {
             formData.append("image_url", newCombo.image);
+        }
+        if (newCombo.items && newCombo.items.length > 0) {
+            newCombo.items.forEach((item, idx) => {
+                formData.append(`items[${idx}][dish_id]`, item.id);
+                formData.append(`items[${idx}][quantity]`, item.quantity || 1);
+            });
         }
         try {
             let response;
@@ -378,7 +380,7 @@ const ComboIndex = () => {
                                             <nav>
                                                 <ul className="pagination">
                                                     <li className={`page-item${meta.page === 1 ? " disabled" : ""}`}>
-                                                        <button className="page-link" onClick={() => handlePageChange(meta.page - 1)}>&laquo;</button>
+                                                        <button className="page-link" onClick={() => handlePageChange(meta.page - 1)}>«</button>
                                                     </li>
                                                     {Array.from({ length: meta.totalPage }, (_, i) => (
                                                         <li key={i + 1} className={`page-item${meta.page === i + 1 ? " active" : ""}`}>
@@ -386,7 +388,7 @@ const ComboIndex = () => {
                                                         </li>
                                                     ))}
                                                     <li className={`page-item${meta.page === meta.totalPage ? " disabled" : ""}`}>
-                                                        <button className="page-link" onClick={() => handlePageChange(meta.page + 1)}>&raquo;</button>
+                                                        <button className="page-link" onClick={() => handlePageChange(meta.page + 1)}>»</button>
                                                     </li>
                                                 </ul>
                                             </nav>
@@ -521,4 +523,4 @@ const ComboIndex = () => {
     );
 };
 
-export default ComboIndex; 
+export default ComboIndex;
