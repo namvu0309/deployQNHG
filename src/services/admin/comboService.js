@@ -11,9 +11,7 @@ export const getComboDetail = (id) => {
 };
 
 export const createCombo = (data) => {
-    return axios.post(`${API_URL}/combos/create`, data, {
-        headers: { "Content-Type": "application/json" },
-    });
+    return axios.post(`${API_URL}/combos/create`, data);
 };
 
 export const updateCombo = (id, data) => {

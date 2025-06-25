@@ -4,7 +4,7 @@ import { addItemToCombo } from "@services/admin/comboService";
 import { toast } from "react-toastify";
 import { getDishes } from "@services/admin/dishService";
 
-const ModalAddDishToCombo = ({ isOpen, onClose, comboId, onSuccess }) => {
+const ModalAddDishToCombo = ({ isOpen, onClose, comboId, onSuccess, mode = "edit" }) => {
     const [dishList, setDishList] = useState([]);
     const [selectedDishes, setSelectedDishes] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -53,12 +53,17 @@ const ModalAddDishToCombo = ({ isOpen, onClose, comboId, onSuccess }) => {
     };
 
     const handleSubmit = async () => {
-        if (!comboId) {
-            toast.error("Không xác định được combo!");
-            return;
-        }
         if (selectedDishes.length === 0) {
             toast.warning("Vui lòng chọn ít nhất 1 món ăn!");
+            return;
+        }
+        if (mode === "create") {
+            onSuccess && onSuccess(selectedDishes);
+            onClose();
+            return;
+        }
+        if (!comboId) {
+            toast.error("Không xác định được combo!");
             return;
         }
         try {

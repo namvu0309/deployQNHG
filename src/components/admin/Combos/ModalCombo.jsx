@@ -15,18 +15,21 @@ import {
 } from "reactstrap";
 import { toast } from "react-toastify";
 import { getDishes } from "@services/admin/dishService";
+import ModalAddDishToCombo from "@components/admin/Combos/ModalAddDishToCombo";
+import { createCombo } from "@services/admin/comboService";
 
 const ModalCombo = ({
   modalOpen,
   setModalOpen,
   combo,
   setCombo,
-  onSave,
   isEdit = false,
-  errors = {},
+  onSave,
 }) => {
   const [previewImage, setPreviewImage] = useState(null);
-  const [dishList, setDishList] = useState([]);
+  const [ setDishList] = useState([]);
+  const [showAddDishModal, setShowAddDishModal] = useState(false);
+  const [errors, setErrors] = useState({});
 
   // Tính tổng giá gốc các món đã chọn
   useEffect(() => {
@@ -74,6 +77,42 @@ const ModalCombo = ({
       }
       setCombo({ ...combo, image: file });
       setPreviewImage(URL.createObjectURL(file));
+    }
+  };
+
+  // Hàm lưu combo (tạo mới)
+  const handleSave = async () => {
+    setErrors({});
+    const formData = new FormData();
+    formData.append("name", combo.name || "");
+    formData.append("description", combo.description || "");
+    formData.append("original_total_price", combo.original_total_price || 0);
+    formData.append("selling_price", combo.selling_price || 0);
+    formData.append("is_active", combo.is_active ?? 1);
+    if (combo.image instanceof File) {
+      formData.append("image_url", combo.image);
+    }
+    // Thêm danh sách món ăn vào combo (nếu có)
+    if (combo.items && combo.items.length > 0) {
+      combo.items.forEach((item, idx) => {
+        formData.append(`items[${idx}][dish_id]`, item.id);
+        formData.append(`items[${idx}][quantity]`, item.quantity);
+      });
+    }
+
+    // Debug: In ra dữ liệu gửi lên
+    for (let pair of formData.entries()) {
+      console.log(pair[0]+ ', ' + pair[1]);
+    }
+
+    try {
+      await createCombo(formData);
+      toast.success("Thêm combo thành công!");
+      setModalOpen(false);
+      if (typeof onSave === "function") onSave();
+    } catch (error) {
+      console.log(error.response?.data);
+      toast.error(error.response?.data?.message || "Lỗi khi lưu combo!");
     }
   };
 
@@ -145,7 +184,13 @@ const ModalCombo = ({
                   id="selling_price"
                   type="number"
                   min={0}
-                  value={combo.selling_price || ""}
+                  value={
+                    isEdit
+                      ? combo.selling_price !== undefined
+                        ? combo.selling_price
+                        : ""
+                      : combo.selling_price || ""
+                  }
                   onChange={(e) => setCombo({ ...combo, selling_price: e.target.value })}
                   placeholder="Nhập giá bán combo"
                 />
@@ -185,117 +230,187 @@ const ModalCombo = ({
               </div>
               <div style={{ maxHeight: 420, overflowY: "auto", border: "1px solid #eee", borderRadius: 8, padding: 12, background: "#fafbfc" }}>
                 <div className="fw-bold mb-2">Danh sách món ăn</div>
-                {dishList.length === 0 && <div className="text-muted">Không có món ăn nào</div>}
-                {dishList.map(dish => {
-                  const found = combo.items?.find(i => i.id === dish.id);
-                  const quantity = found ? found.quantity : 0;
-                  return (
-                    <div
-                      key={dish.id}
-                      className="d-flex align-items-center justify-content-between mb-2"
+                {(combo.items && combo.items.length === 0) ? (
+                  <div className="d-flex flex-column align-items-center justify-content-center" style={{height: 220}}>
+                    <Button
+                      color="light"
                       style={{
-                        background: "#fff",
-                        borderRadius: 10,
-                        border: "1px solid #eee",
-                        padding: "10px 16px"
+                        borderRadius: "50%",
+                        width: 80,
+                        height: 80,
+                        fontSize: 40,
+                        color: "#bbb",
+                        border: "2px dashed #bbb",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        transition: "box-shadow 0.2s, background 0.2s"
+                      }}
+                      onClick={() => setShowAddDishModal(true)}
+                      onMouseOver={e => {
+                        e.currentTarget.style.background = "#f5f5f5";
+                        e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.16)";
+                      }}
+                      onMouseOut={e => {
+                        e.currentTarget.style.background = "#fff";
+                        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)";
                       }}
                     >
-                      <div className="d-flex align-items-center">
-                        {/* Ảnh món ăn hoặc icon */}
-                        <div
-                          style={{
-                            width: 44,
-                            height: 44,
-                            borderRadius: "50%",
-                            background: "#f3f3f3",
-                            marginRight: 14,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            overflow: "hidden"
-                          }}
-                        >
-                          {dish.image_url ? (
-                            <img
-                              src={dish.image_url}
-                              alt={dish.name}
-                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                            />
-                          ) : (
-                            <i className="mdi mdi-image" style={{ fontSize: 22, color: "#bbb" }}></i>
-                          )}
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 600 }}>{dish.name}</div>
-                          <div style={{ color: "#888", fontSize: 15 }}>
-                            {dish.selling_price?.toLocaleString()} đ{" "}
-                            {dish.category?.name && (
-                              <span
-                                style={{
-                                  background: "#f3f3f3",
-                                  borderRadius: 8,
-                                  padding: "2px 10px",
-                                  fontSize: 13,
-                                  marginLeft: 8,
-                                  color: "#333"
-                                }}
-                              >
-                                {dish.category.name}
-                              </span>
+                      +
+                    </Button>
+                    <div style={{marginTop: 12, color: "#888", fontSize: 16, fontWeight: 500}}>Thêm mặt hàng vào combo</div>
+                  </div>
+                ) : (
+                  <>
+                    {combo.items.map(item => (
+                      <div
+                        key={item.id}
+                        className="d-flex align-items-center justify-content-between mb-2"
+                        style={{
+                          background: "#fff",
+                          borderRadius: 10,
+                          border: "1px solid #eee",
+                          padding: "10px 16px"
+                        }}
+                      >
+                        <div className="d-flex align-items-center">
+                          {/* Ảnh món ăn hoặc icon */}
+                          <div
+                            style={{
+                              width: 44,
+                              height: 44,
+                              borderRadius: "50%",
+                              background: "#f3f3f3",
+                              marginRight: 14,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              overflow: "hidden"
+                            }}
+                          >
+                            {item.image_url ? (
+                              <img
+                                src={item.image_url}
+                                alt={item.name}
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              />
+                            ) : (
+                              <i className="mdi mdi-image" style={{ fontSize: 22, color: "#bbb" }}></i>
                             )}
                           </div>
+                          <div>
+                            <div style={{ fontWeight: 600 }}>{item.name}</div>
+                            <div style={{ color: "#888", fontSize: 15 }}>
+                              {item.selling_price?.toLocaleString()} đ{" "}
+                              {item.category?.name && (
+                                <span
+                                  style={{
+                                    background: "#f3f3f3",
+                                    borderRadius: 8,
+                                    padding: "2px 10px",
+                                    fontSize: 13,
+                                    marginLeft: 8,
+                                    color: "#333"
+                                  }}
+                                >
+                                  {item.category.name}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="d-flex align-items-center gap-2">
+                          <Button
+                            color="light"
+                            size="sm"
+                            style={{ borderRadius: 8, minWidth: 32, minHeight: 32, fontWeight: 700, fontSize: 18, border: "1px solid #ddd" }}
+                            disabled={item.quantity === 0}
+                            onClick={() => {
+                              let newItems = combo.items ? [...combo.items] : [];
+                              if (item.quantity > 1) {
+                                newItems = newItems.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i);
+                              } else if (item.quantity === 1) {
+                                newItems = newItems.filter(i => i.id !== item.id);
+                              }
+                              setCombo({ ...combo, items: newItems });
+                            }}
+                          >
+                            -
+                          </Button>
+                          <span style={{ minWidth: 24, textAlign: "center", fontWeight: 600 }}>{item.quantity}</span>
+                          <Button
+                            color="warning"
+                            size="sm"
+                            style={{ borderRadius: 8, minWidth: 32, minHeight: 32, fontWeight: 700, fontSize: 18, background: "#ff6600", border: "none" }}
+                            onClick={() => {
+                              let newItems = combo.items ? [...combo.items] : [];
+                              newItems = newItems.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
+                              setCombo({ ...combo, items: newItems });
+                            }}
+                          >
+                            +
+                          </Button>
                         </div>
                       </div>
-                      <div className="d-flex align-items-center gap-2">
-                        <Button
-                          color="light"
-                          size="sm"
-                          style={{ borderRadius: 8, minWidth: 32, minHeight: 32, fontWeight: 700, fontSize: 18, border: "1px solid #ddd" }}
-                          disabled={quantity === 0}
-                          onClick={() => {
-                            let newItems = combo.items ? [...combo.items] : [];
-                            if (quantity > 1) {
-                              newItems = newItems.map(i => i.id === dish.id ? { ...i, quantity: i.quantity - 1 } : i);
-                            } else if (quantity === 1) {
-                              newItems = newItems.filter(i => i.id !== dish.id);
-                            }
-                            setCombo({ ...combo, items: newItems });
-                          }}
-                        >
-                          -
-                        </Button>
-                        <span style={{ minWidth: 24, textAlign: "center", fontWeight: 600 }}>{quantity}</span>
-                        <Button
-                          color="warning"
-                          size="sm"
-                          style={{ borderRadius: 8, minWidth: 32, minHeight: 32, fontWeight: 700, fontSize: 18, background: "#ff6600", border: "none" }}
-                          onClick={() => {
-                            let newItems = combo.items ? [...combo.items] : [];
-                            if (quantity > 0) {
-                              newItems = newItems.map(i => i.id === dish.id ? { ...i, quantity: i.quantity + 1 } : i);
-                            } else {
-                              newItems.push({ ...dish, quantity: 1 });
-                            }
-                            setCombo({ ...combo, items: newItems });
-                          }}
-                        >
-                          +
-                        </Button>
-                      </div>
+                    ))}
+                    {/* Nút cộng lớn luôn hiển thị ở cuối danh sách */}
+                    <div className="d-flex flex-column align-items-center justify-content-center" style={{marginTop: 16}}>
+                      <Button
+                        color="light"
+                        style={{
+                          borderRadius: "50%",
+                          width: 56,
+                          height: 56,
+                          fontSize: 32,
+                          color: "#bbb",
+                          border: "2px dashed #bbb",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                          transition: "box-shadow 0.2s, background 0.2s"
+                        }}
+                        onClick={() => setShowAddDishModal(true)}
+                        onMouseOver={e => {
+                          e.currentTarget.style.background = "#f5f5f5";
+                          e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.16)";
+                        }}
+                        onMouseOut={e => {
+                          e.currentTarget.style.background = "#fff";
+                          e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)";
+                        }}
+                      >
+                        +
+                      </Button>
+                      <div style={{marginTop: 6, color: "#888", fontSize: 14, fontWeight: 500}}>Thêm món</div>
                     </div>
-                  );
-                })}
+                  </>
+                )}
                 {errors.items && <div className="text-danger small mt-1">{errors.items}</div>}
               </div>
             </Col>
           </Row>
         </Form>
+        <ModalAddDishToCombo
+          isOpen={showAddDishModal}
+          onClose={() => setShowAddDishModal(false)}
+          mode="create"
+          onSuccess={(selectedDishes) => {
+            const oldItems = combo.items || [];
+            const merged = [...oldItems];
+            selectedDishes.forEach(newItem => {
+              const idx = merged.findIndex(i => i.id === newItem.id);
+              if (idx > -1) {
+                merged[idx].quantity += newItem.quantity;
+              } else {
+                merged.push(newItem);
+              }
+            });
+            setCombo({ ...combo, items: merged });
+            toast.success("Đã thêm món ăn vào combo!");
+          }}
+        />
       </ModalBody>
       <ModalFooter>
         <Button color="secondary" onClick={() => setModalOpen(false)}>
           Hủy
         </Button>
-        <Button color="primary" onClick={onSave}>
+        <Button color="primary" onClick={handleSave}>
           {isEdit ? "Lưu thay đổi" : "Thêm mới"}
         </Button>
       </ModalFooter>

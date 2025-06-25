@@ -151,6 +151,7 @@ const ComboIndex = () => {
         }
     };
 
+    // eslint-disable-next-line
     const handleSave = async () => {
         setErrors({});
         const formData = new FormData();
@@ -406,7 +407,7 @@ const ComboIndex = () => {
                 combo={newCombo}
                 setCombo={setNewCombo}
                 dishList={dishList}
-                onSave={handleSave}
+                onSave={fetchCombos}
                 isEdit={isEdit}
                 errors={errors}
             />
