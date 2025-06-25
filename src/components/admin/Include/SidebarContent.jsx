@@ -202,18 +202,10 @@ const SidebarContent = (props) => {
             </li>
 
             <li>
-              <Link to="/#" className="has-arrow ">
+              <Link to="/combos">
                 <i className="bx bx-grid-alt"></i>
                 <span>{props.t("Quản Lí Combo")}</span>
               </Link>
-              <ul className="sub-menu" aria-expanded="false">
-                <li>
-                  <Link to="/invoices-list">{props.t("Danh Sách Combo")}</Link>
-                </li>
-                <li>
-                  <Link to="/invoices-detail">{props.t("Thêm Combo")}</Link>
-                </li>
-              </ul>
             </li>
             <li>
               <Link to="/#" className="has-arrow ">
