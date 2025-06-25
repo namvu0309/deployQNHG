@@ -93,7 +93,6 @@ const authProtectedRoutes = [
 
   { path: "/combos", component: <PageCombo /> },
 
-  { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
 ];
 
 const publicRoutes = [
