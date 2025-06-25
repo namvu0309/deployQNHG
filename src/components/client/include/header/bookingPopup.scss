@@ -112,37 +112,57 @@ textarea {
   }
 }
 
-.quantity{
+.quantity {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 8px;
+  background: #f9f9f9;
   overflow: hidden;
-  height: 36px;
+  height: 42px;
+  width: 120px; 
+  margin-right: 12px;
 
   button {
-    background-color: #eee;
+    width: 40px;
+    height: 100%;
     border: none;
-    width: 30px;
-    height: 36px;
-    font-size: 16px;
+    background-color: #e3f2e8;
+    font-size: 22px;
+    font-weight: bold;
+    color: #174229;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
-      background-color: #ddd;
+      background-color: #c6e4d4;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   }
 
   input {
-    width: 40px;
+    flex: 1;
+    height: 100%;
     border: none;
+    background: transparent;
     text-align: center;
+    font-size: 16px;
     font-weight: 600;
-    font-size: 14px;
-    background: #fff;
+    color: #333;
     pointer-events: none;
   }
 }
+
+
+
 
 .actions {
   display: flex;
@@ -185,3 +205,4 @@ textarea {
   color: #999;
   cursor: not-allowed;
 }
+
