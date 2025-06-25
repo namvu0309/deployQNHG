@@ -14,18 +14,30 @@ import {
   FormFeedback,
 } from "reactstrap";
 import { toast } from "react-toastify";
+import { getDishes } from "@services/admin/dishService";
 
 const ModalCombo = ({
   modalOpen,
   setModalOpen,
   combo,
   setCombo,
-  dishList = [],
   onSave,
   isEdit = false,
   errors = {},
 }) => {
   const [previewImage, setPreviewImage] = useState(null);
+  const [dishList, setDishList] = useState([]);
+
+  // Tính tổng giá gốc các món đã chọn
+  useEffect(() => {
+    if (combo.items && combo.items.length > 0) {
+      const total = combo.items.reduce((sum, item) => sum + (item.selling_price || 0) * (item.quantity || 1), 0);
+      setCombo({ ...combo, original_total_price: total });
+    } else {
+      setCombo({ ...combo, original_total_price: 0 });
+    }
+    // eslint-disable-next-line
+  }, [combo.items]);
 
   useEffect(() => {
     if (modalOpen) {
@@ -35,8 +47,19 @@ const ModalCombo = ({
       } else {
         setPreviewImage(null);
       }
+      fetchDishList();
     }
+    // eslint-disable-next-line
   }, [modalOpen, combo.image_url, isEdit]);
+
+  const fetchDishList = async () => {
+    try {
+      const res = await getDishes();
+      setDishList(res.data.data.items || []);
+    } catch {
+      toast.error("Không lấy được danh sách món ăn!");
+    }
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -55,16 +78,17 @@ const ModalCombo = ({
   };
 
   return (
-    <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)} size="lg" centered>
+    <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)} size="xl" centered>
       <ModalHeader toggle={() => setModalOpen(!modalOpen)}>
         {isEdit ? "Chỉnh sửa combo" : "Thêm mới combo"}
       </ModalHeader>
       <ModalBody>
         <Form>
           <Row>
-            {/* Image Upload */}
-            <Col md={12} className="text-center mb-4">
-              <FormGroup>
+            {/* Cột trái: Thông tin combo */}
+            <Col md={7}>
+              {/* Ảnh */}
+              <FormGroup className="text-center mb-4">
                 <Label for="image-upload-button">Hình ảnh</Label>
                 <div>
                   <Input
@@ -98,9 +122,7 @@ const ModalCombo = ({
                   </div>
                 )}
               </FormGroup>
-            </Col>
-            {/* Combo Name */}
-            <Col md={6}>
+              {/* Tên combo */}
               <FormGroup>
                 <Label for="name">
                   Tên combo <span className="text-danger">*</span>
@@ -114,50 +136,22 @@ const ModalCombo = ({
                 />
                 {errors.name && <FormFeedback>{errors.name}</FormFeedback>}
               </FormGroup>
-            </Col>
-            {/* Giá combo */}
-            <Col md={6}>
+              {/* Giá bán combo */}
               <FormGroup>
-                <Label for="price">
-                  Giá combo <span className="text-danger">*</span>
+                <Label for="selling_price">
+                  Giá bán combo <span className="text-danger">*</span>
                 </Label>
                 <Input
-                  id="price"
+                  id="selling_price"
                   type="number"
                   min={0}
-                  value={combo.price || ""}
-                  onChange={(e) => setCombo({ ...combo, price: e.target.value })}
-                  placeholder="Nhập giá combo"
-                  invalid={!!errors.price}
+                  value={combo.selling_price || ""}
+                  onChange={(e) => setCombo({ ...combo, selling_price: e.target.value })}
+                  placeholder="Nhập giá bán combo"
                 />
-                {errors.price && <FormFeedback>{errors.price}</FormFeedback>}
+                {errors.selling_price && <FormFeedback>{errors.selling_price}</FormFeedback>}
               </FormGroup>
-            </Col>
-            {/* Danh sách món */}
-            <Col md={12}>
-              <FormGroup>
-                <Label for="items">Danh sách món trong combo</Label>
-                <Input
-                  id="items"
-                  type="select"
-                  multiple
-                  value={combo.items?.map(i => i.id) || []}
-                  onChange={(e) => {
-                    const selectedOptions = Array.from(e.target.selectedOptions).map(opt => parseInt(opt.value));
-                    const selectedDishes = dishList.filter(d => selectedOptions.includes(d.id));
-                    setCombo({ ...combo, items: selectedDishes });
-                  }}
-                  invalid={!!errors.items}
-                >
-                  {dishList.map(dish => (
-                    <option key={dish.id} value={dish.id}>{dish.name}</option>
-                  ))}
-                </Input>
-                {errors.items && <FormFeedback>{errors.items}</FormFeedback>}
-              </FormGroup>
-            </Col>
-            {/* Mô tả */}
-            <Col md={12}>
+              {/* Mô tả */}
               <FormGroup>
                 <Label for="description">Mô tả</Label>
                 <Input
@@ -169,21 +163,130 @@ const ModalCombo = ({
                 />
                 {errors.description && <FormFeedback>{errors.description}</FormFeedback>}
               </FormGroup>
-            </Col>
-            {/* Trạng thái */}
-            <Col md={6}>
+              {/* Trạng thái */}
               <FormGroup>
-                <Label for="status">Trạng thái</Label>
+                <Label for="is_active">Trạng thái</Label>
                 <Input
-                  id="status"
+                  id="is_active"
                   type="select"
-                  value={combo.status || "active"}
-                  onChange={(e) => setCombo({ ...combo, status: e.target.value })}
+                  value={combo.is_active === 0 ? 0 : 1}
+                  onChange={(e) => setCombo({ ...combo, is_active: Number(e.target.value) })}
                 >
-                  <option value="active">Đang bán</option>
-                  <option value="inactive">Ngưng bán</option>
+                  <option value={1}>Đang bán</option>
+                  <option value={0}>Ngưng bán</option>
                 </Input>
               </FormGroup>
+            </Col>
+            {/* Cột phải: Danh sách món ăn và tổng giá */}
+            <Col md={5}>
+              {/* Tổng giá gốc các món */}
+              <div style={{ marginBottom: 16, background: "#fffbe6", borderRadius: 8, padding: 12, fontWeight: 600, fontSize: 18, color: "#ff6600", textAlign: "center", border: "1px solid #ffe58f" }}>
+                Tổng giá gốc: {combo.original_total_price?.toLocaleString()} đ
+              </div>
+              <div style={{ maxHeight: 420, overflowY: "auto", border: "1px solid #eee", borderRadius: 8, padding: 12, background: "#fafbfc" }}>
+                <div className="fw-bold mb-2">Danh sách món ăn</div>
+                {dishList.length === 0 && <div className="text-muted">Không có món ăn nào</div>}
+                {dishList.map(dish => {
+                  const found = combo.items?.find(i => i.id === dish.id);
+                  const quantity = found ? found.quantity : 0;
+                  return (
+                    <div
+                      key={dish.id}
+                      className="d-flex align-items-center justify-content-between mb-2"
+                      style={{
+                        background: "#fff",
+                        borderRadius: 10,
+                        border: "1px solid #eee",
+                        padding: "10px 16px"
+                      }}
+                    >
+                      <div className="d-flex align-items-center">
+                        {/* Ảnh món ăn hoặc icon */}
+                        <div
+                          style={{
+                            width: 44,
+                            height: 44,
+                            borderRadius: "50%",
+                            background: "#f3f3f3",
+                            marginRight: 14,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            overflow: "hidden"
+                          }}
+                        >
+                          {dish.image_url ? (
+                            <img
+                              src={dish.image_url}
+                              alt={dish.name}
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            />
+                          ) : (
+                            <i className="mdi mdi-image" style={{ fontSize: 22, color: "#bbb" }}></i>
+                          )}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 600 }}>{dish.name}</div>
+                          <div style={{ color: "#888", fontSize: 15 }}>
+                            {dish.selling_price?.toLocaleString()} đ{" "}
+                            {dish.category?.name && (
+                              <span
+                                style={{
+                                  background: "#f3f3f3",
+                                  borderRadius: 8,
+                                  padding: "2px 10px",
+                                  fontSize: 13,
+                                  marginLeft: 8,
+                                  color: "#333"
+                                }}
+                              >
+                                {dish.category.name}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <Button
+                          color="light"
+                          size="sm"
+                          style={{ borderRadius: 8, minWidth: 32, minHeight: 32, fontWeight: 700, fontSize: 18, border: "1px solid #ddd" }}
+                          disabled={quantity === 0}
+                          onClick={() => {
+                            let newItems = combo.items ? [...combo.items] : [];
+                            if (quantity > 1) {
+                              newItems = newItems.map(i => i.id === dish.id ? { ...i, quantity: i.quantity - 1 } : i);
+                            } else if (quantity === 1) {
+                              newItems = newItems.filter(i => i.id !== dish.id);
+                            }
+                            setCombo({ ...combo, items: newItems });
+                          }}
+                        >
+                          -
+                        </Button>
+                        <span style={{ minWidth: 24, textAlign: "center", fontWeight: 600 }}>{quantity}</span>
+                        <Button
+                          color="warning"
+                          size="sm"
+                          style={{ borderRadius: 8, minWidth: 32, minHeight: 32, fontWeight: 700, fontSize: 18, background: "#ff6600", border: "none" }}
+                          onClick={() => {
+                            let newItems = combo.items ? [...combo.items] : [];
+                            if (quantity > 0) {
+                              newItems = newItems.map(i => i.id === dish.id ? { ...i, quantity: i.quantity + 1 } : i);
+                            } else {
+                              newItems.push({ ...dish, quantity: 1 });
+                            }
+                            setCombo({ ...combo, items: newItems });
+                          }}
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+                {errors.items && <div className="text-danger small mt-1">{errors.items}</div>}
+              </div>
             </Col>
           </Row>
         </Form>

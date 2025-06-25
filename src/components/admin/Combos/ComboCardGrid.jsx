@@ -5,6 +5,7 @@ import { FaStar, FaEye, FaTrash, FaEdit, FaPlus, FaPowerOff, FaEllipsisV } from 
 const fullUrl = "http://localhost:8000/storage/";
 
 const ComboCardGrid = ({ data = [], onDetail, onEdit, onDelete, onAddDish, onToggleStatus }) => {
+   
     return (
         <Row className="g-4">
             {data.length === 0 ? (
@@ -18,7 +19,7 @@ const ComboCardGrid = ({ data = [], onDetail, onEdit, onDelete, onAddDish, onTog
     );
 };
 
-const ComboCard = ({ combo, onDetail, onEdit, onDelete, onAddDish, onToggleStatus }) => {
+const ComboCard = ({ combo, onDetail, onEdit, onDelete, onAddDish  }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     return (
         <Col xs={12} sm={6} md={4} lg={3} xl={3}>
@@ -31,7 +32,7 @@ const ComboCard = ({ combo, onDetail, onEdit, onDelete, onAddDish, onToggleStatu
                                 src={`${fullUrl}${combo.image_url}`}
                                 alt={combo.name}
                                 style={{ width: "100%", height: 180, objectFit: "cover" }}
-                                onError={e => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/300x180?text=No+Image"; }}
+                                onError={e => { e.target.onerror = null; e.target.src = ""; }}
                             />
                         ) : (
                             <span style={{ fontSize: 32 }}>No Image</span>
@@ -39,12 +40,12 @@ const ComboCard = ({ combo, onDetail, onEdit, onDelete, onAddDish, onToggleStatu
                     </div>
                     {/* Badge trạng thái */}
                     <Badge
-                        color={combo.is_active === 1 ? "success" : "secondary"}
+                        color={Number(combo.is_active) === 1 ? "success" : "secondary"}
                         className="d-flex align-items-center"
                         style={{ position: "absolute", top: 12, left: 12, fontSize: 14, borderRadius: 20, padding: "6px 16px", fontWeight: 500, boxShadow: "0 2px 8px #0001" }}
                     >
                         <i className="mdi mdi-check-circle-outline me-1" style={{ fontSize: 12 }}></i>
-                        {combo.is_active === 1 ? "Áp dụng" : "Ngừng áp dụng"}
+                        {Number(combo.is_active) === 1 ? "Đang áp dụng" : "Ngừng áp dụng"}
                     </Badge>
                     {/* Badge giảm giá giả lập */}
                     {combo.discount_percent && (
@@ -103,9 +104,14 @@ const ComboCard = ({ combo, onDetail, onEdit, onDelete, onAddDish, onToggleStatu
                                 <DropdownMenu end style={{ minWidth: 180 }}>
                                     <div className="px-3 py-2 fw-bold text-dark">Thao tác</div>
                                     <DropdownItem onClick={() => onEdit && onEdit(combo.id)}><FaEdit className="me-2" />Chỉnh sửa</DropdownItem>
-                                    <DropdownItem onClick={() => onAddDish && onAddDish(combo.id)}><FaPlus className="me-2" />Thêm món ăn</DropdownItem>
-                                    <DropdownItem onClick={() => onToggleStatus && onToggleStatus(combo.id)}><FaPowerOff className="me-2" />Tắt hoạt động</DropdownItem>
-                                    <DropdownItem divider />
+                                    <DropdownItem onClick={() => {
+                                        if (onAddDish) {
+                                            onAddDish(combo.id);
+                                        }
+                                    }}>
+                                        <FaPlus className="me-2" />Thêm món ăn
+                                    </DropdownItem>
+                                
                                     <DropdownItem onClick={() => onDelete && onDelete(combo.id)} className="text-danger"><FaTrash className="me-2" />Xóa tạm thời</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>

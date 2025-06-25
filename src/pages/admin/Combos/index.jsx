@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import { getCombos, createCombo, updateCombo, softDeleteCombo, getComboDetail } from "@services/admin/comboService";
 import Swal from "sweetalert2";
 import ComboCardGrid from "@components/admin/Combos/ComboCardGrid";
+import ModalAddDishToCombo from "@components/admin/Combos/ModalAddDishToCombo";
 
 const statusOptions = [
     { value: "all", label: "Tất cả", badgeColor: "secondary" },
@@ -55,9 +56,11 @@ const ComboIndex = () => {
     const [isEdit, setIsEdit] = useState(false);
     const [editComboId, setEditComboId] = useState(null);
     const [activeTab, setActiveTab] = useState("list");
-    const [dishList] = useState([]); // TODO: fetch danh sách món ăn
+    const [dishList] = useState([]);
     const [selectedCombo, setSelectedCombo] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
+    const [showAddDishModal, setShowAddDishModal] = useState(false);
+    const [currentComboId, setCurrentComboId] = useState(null);
 
     const fetchCombos = async (page = 1) => {
         setLoading(true);
@@ -218,7 +221,8 @@ const ComboIndex = () => {
     };
 
     const handleAddDish = (comboId) => {
-        toast.info(`Thêm món ăn cho combo #${comboId} (demo)`);
+        setCurrentComboId(comboId);
+        setShowAddDishModal(true);
     };
 
     const handleToggleStatus = (comboId) => {
@@ -228,8 +232,23 @@ const ComboIndex = () => {
     const handleShowDetailCombo = async (comboId) => {
         try {
             const res = await getComboDetail(comboId);
-            setSelectedCombo(res.data.data.combo);
+            setSelectedCombo({
+                ...res.data.data.combo,
+                items: res.data.data.items
+            });
             setShowDetailModal(true);
+        } catch {
+            toast.error("Không lấy được thông tin combo!");
+        }
+    };
+
+    const reloadComboDetail = async (comboId) => {
+        try {
+            const res = await getComboDetail(comboId);
+            setSelectedCombo({
+                ...res.data.data.combo,
+                items: res.data.data.items
+            });
         } catch {
             toast.error("Không lấy được thông tin combo!");
         }
@@ -343,6 +362,15 @@ const ComboIndex = () => {
                                         onAddDish={handleAddDish}
                                         onToggleStatus={handleToggleStatus}
                                     />
+                                    <ModalAddDishToCombo
+                                        isOpen={showAddDishModal}
+                                        onClose={() => setShowAddDishModal(false)}
+                                        comboId={currentComboId}
+                                        onSuccess={() => {
+                                            setShowAddDishModal(false);
+                                            if (currentComboId) reloadComboDetail(currentComboId);
+                                        }}
+                                    />
                                     {/* Phân trang */}
                                     {meta.totalPage > 1 && (
                                         <div className="d-flex justify-content-end mt-4">
@@ -383,20 +411,105 @@ const ComboIndex = () => {
                 errors={errors}
             />
             {/* Modal chi tiết combo */}
-            <Modal isOpen={showDetailModal} toggle={() => setShowDetailModal(false)} size="lg" centered>
+            <Modal isOpen={showDetailModal} toggle={() => setShowDetailModal(false)} size="xl" centered>
                 <div className="modal-header">
-                    <h5 className="modal-title">Chi tiết combo</h5>
+                    <h4 className="modal-title">Chi tiết combo</h4>
                     <button type="button" className="btn-close" onClick={() => setShowDetailModal(false)}></button>
                 </div>
                 <div className="modal-body">
                     {selectedCombo ? (
                         <div>
-                            <div className="mb-3"><b>Tên combo:</b> {selectedCombo.name}</div>
-                            <div className="mb-3"><b>Giá bán:</b> {selectedCombo.selling_price?.toLocaleString()} đ</div>
-                            <div className="mb-3"><b>Mô tả:</b> {selectedCombo.description}</div>
-                            <div className="mb-3"><b>Trạng thái:</b> {selectedCombo.is_active === 1 ? "Áp dụng" : "Ngừng áp dụng"}</div>
-                            <div className="mb-3"><b>Ngày tạo:</b> {selectedCombo.created_at ? new Date(selectedCombo.created_at).toLocaleDateString('vi-VN') : ""}</div>
-                            {/* Thêm các trường khác nếu muốn */}
+                            {/* Thông tin combo */}
+                            <div className="row mb-4">
+                                <div className="col-md-5 d-flex align-items-center justify-content-center">
+                                    {selectedCombo.image_url ? (
+                                        <img
+                                            src={selectedCombo.image_url}
+                                            alt={selectedCombo.name}
+                                            style={{ width: "100%", maxWidth: 320, borderRadius: 12, background: "#f5f5f5" }}
+                                        />
+                                    ) : (
+                                        <div style={{ width: 280, height: 200, background: "#f5f5f5", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            <i className="mdi mdi-image" style={{ fontSize: 48, color: "#ccc" }}></i>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="col-md-7">
+                                    <h4><b>{selectedCombo.name}</b></h4>
+                                    <div className="mb-2">{selectedCombo.description}</div>
+                                    <div className="row mb-2">
+                                        <div className="col-6">
+                                            <div style={{ background: "#f8f9fa", borderRadius: 8, padding: 12 }}>
+                                                <div style={{ color: "#888" }}>Giá gốc</div>
+                                                <div style={{ fontWeight: 600, fontSize: 18, textDecoration: "line-through" }}>{selectedCombo.original_total_price?.toLocaleString()} đ</div>
+                                            </div>
+                                        </div>
+                                        <div className="col-6">
+                                            <div style={{ background: "#e6f9ed", borderRadius: 8, padding: 12 }}>
+                                                <div style={{ color: "#28a745" }}>Giá bán</div>
+                                                <div style={{ fontWeight: 600, fontSize: 18, color: "#28a745" }}>{selectedCombo.selling_price?.toLocaleString()} đ</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="mb-2" style={{ background: "#fff6ed", borderRadius: 8, padding: 12 }}>
+                                        <span style={{ color: "#ff6600", fontWeight: 600, fontSize: 18 }}>Mức giảm giá {selectedCombo.discount_percent || 0}%</span>
+                                    </div>
+                                    <div className="row mt-2">
+                                        <div className="col-6">
+                                            <div style={{ background: "#eafaf3", borderRadius: 8, padding: 12, textAlign: "center" }}>
+                                                <div style={{ color: "#28a745", fontWeight: 600, fontSize: 24 }}>{selectedCombo.orders || 0}</div>
+                                                <div>Đơn hàng</div>
+                                            </div>
+                                        </div>
+                                        <div className="col-6">
+                                            <div style={{ background: "#f8f9fa", borderRadius: 8, padding: 12, textAlign: "center" }}>
+                                                <div style={{ color: "#888", fontSize: 14 }}>Trạng thái</div>
+                                                {selectedCombo.is_active === 1 ? (
+                                                    <div className="d-flex align-items-center justify-content-center mt-1">
+                                                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#28a745", marginRight: 6 }}></div>
+                                                        <span style={{ fontWeight: 600, color: "#28a745" }}>Đang hoạt động</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="d-flex align-items-center justify-content-center mt-1">
+                                                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#6c757d", marginRight: 6 }}></div>
+                                                        <span style={{ fontWeight: 600, color: "#6c757d" }}>Ngừng áp dụng</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Món ăn trong combo */}
+                            <div className="d-flex justify-content-between align-items-center mb-2 mt-4">
+                                <h5 className="mb-0">Món ăn trong combo</h5>
+                                <Button color="warning" onClick={() => {
+                                    if (selectedCombo && selectedCombo.id) {
+                                        setCurrentComboId(selectedCombo.id);
+                                        setShowAddDishModal(true);
+                                    } else {
+                                        toast.error("Chưa có thông tin combo!");
+                                    }
+                                }}>
+                                    <i className="mdi mdi-plus"></i> Thêm món
+                                </Button>
+                            </div>
+                            <div style={{ minHeight: 120, background: "#fafbfc", borderRadius: 8, padding: 16 }}>
+                                {selectedCombo.items && selectedCombo.items.length > 0 ? (
+                                    <ul className="mb-0" style={{ listStyle: "none", padding: 0 }}>
+                                        {selectedCombo.items.map((item, idx) => (
+                                            <li key={idx} className="d-flex align-items-center justify-content-between mb-2 p-2" style={{ fontSize: 14, background: "#fff", borderRadius: 6, border: "1px solid #e9ecef" }}>
+                                                <div >{item.dish_name}</div>
+                                                <div>
+                                                    Số lượng: <b>{item.quantity}</b>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <div className="text-center text-muted">Chưa có món ăn nào trong combo này</div>
+                                )}
+                            </div>
                         </div>
                     ) : (
                         <div>Đang tải...</div>

@@ -455,7 +455,7 @@ const DishIndex = () => {
                   paginate={{
                     page: meta.current_page, 
                     perPage: meta.per_page,
-                    totalPage: meta.total,
+                    totalPage: meta.last_page,
                   }}
                   data={dishes}
                   onDelete={handleDeleteClick}
