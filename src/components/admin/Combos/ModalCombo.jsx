@@ -16,7 +16,7 @@ import {
 import { toast } from "react-toastify";
 import { getDishes } from "@services/admin/dishService";
 import ModalAddDishToCombo from "@components/admin/Combos/ModalAddDishToCombo";
-import { createCombo } from "@services/admin/comboService";
+import { createCombo, updateCombo } from "@services/admin/comboService";
 
 const ModalCombo = ({
   modalOpen,
@@ -106,8 +106,15 @@ const ModalCombo = ({
     }
 
     try {
-      await createCombo(formData);
-      toast.success("Thêm combo thành công!");
+      if (isEdit) {
+        // Gọi API cập nhật combo
+        await updateCombo(combo.id, formData);
+        toast.success("Cập nhật combo thành công!");
+      } else {
+        // Gọi API tạo mới combo
+        await createCombo(formData);
+        toast.success("Thêm combo thành công!");
+      }
       setModalOpen(false);
       if (typeof onSave === "function") onSave();
     } catch (error) {
@@ -115,6 +122,8 @@ const ModalCombo = ({
       toast.error(error.response?.data?.message || "Lỗi khi lưu combo!");
     }
   };
+
+  console.log(combo);
 
   return (
     <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)} size="xl" centered>
@@ -186,10 +195,8 @@ const ModalCombo = ({
                   min={0}
                   value={
                     isEdit
-                      ? combo.selling_price !== undefined
-                        ? combo.selling_price
-                        : ""
-                      : combo.selling_price || ""
+                      ? (combo.selling_price !== undefined ? combo.selling_price : "")
+                      : ""
                   }
                   onChange={(e) => setCombo({ ...combo, selling_price: e.target.value })}
                   placeholder="Nhập giá bán combo"

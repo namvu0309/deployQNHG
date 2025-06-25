@@ -134,24 +134,25 @@ const ComboIndex = () => {
         try {
             const res = await getComboDetail(comboId);
             const combo = res.data.data.combo;
+            console.log("combo detail:", combo);
             setNewCombo({
+                id: combo.id,
                 name: combo.name || "",
-                price: combo.price || "",
-                status: combo.status || "active",
+                selling_price: combo.selling_price || 0,
+                original_total_price: combo.original_total_price || 0,
                 description: combo.description || "",
-                items: combo.items || [],
+                is_active: combo.is_active ?? 1,
                 image_url: combo.image_url || "",
+                items: combo.items || [],
             });
             setEditComboId(combo.id);
             setIsEdit(true);
             setModalOpen(true);
-            setErrors({});
         } catch {
             toast.error("Không lấy được thông tin combo!");
         }
     };
 
-    // eslint-disable-next-line
     const handleSave = async () => {
         setErrors({});
         const formData = new FormData();
