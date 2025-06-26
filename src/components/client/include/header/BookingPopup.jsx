@@ -5,6 +5,16 @@ import { createBooking } from "../../../../services/client/bookingService";
 import SuccessModal from "./SuccessModal";
 import ArrivalTimeSelect from "./ArrivalTimeSelect";
 
+// Hàm chuyển đổi từ "HH:MM AM/PM" sang "HH:MM" (24h)
+const convertTo24Hour = (time12h) => {
+  if (!time12h) return "";
+  const [time, modifier] = time12h.split(" ");
+  let [hours, minutes] = time.split(":");
+  if (hours === "12") hours = "00";
+  if (modifier === "PM") hours = String(parseInt(hours, 10) + 12);
+  return `${hours.padStart(2, "0")}:${minutes}`;
+};
+
 const BookingPopup = ({ isOpen, onClose }) => {
   const [guestCount, setGuestCount] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -56,10 +66,9 @@ const BookingPopup = ({ isOpen, onClose }) => {
       return;
     }
 
-    const fullReservationTime = `${orderTable.reservation_date} ${orderTable.reservation_time}`;
     const submissionData = {
       ...orderTable,
-      reservation_time: fullReservationTime,
+      reservation_time: convertTo24Hour(orderTable.reservation_time), // Chuyển đổi sang 24h
     };
 
     try {
@@ -68,7 +77,6 @@ const BookingPopup = ({ isOpen, onClose }) => {
       setShowSuccess(true);
     } catch (error) {
       console.error("Đặt bàn thất bại:", error.response?.data || error.message);
-      alert("❌ Có lỗi xảy ra khi đặt bàn. Vui lòng thử lại.");
     }
   };
 

@@ -42,6 +42,7 @@ import PageTable from "@pages/admin/Tables/index";
 import PageReservation from "@pages/admin/Reservations/index";
 import PageTableArea from "@pages/admin/TableAreas/index";
 import PageOrder from "@pages/admin/Orders/index";
+import PageCombo from "@pages/admin/Combos/index";
 import PageCategory from "@pages/admin/Categories/index";
 
 const authProtectedRoutes = [
@@ -89,6 +90,8 @@ const authProtectedRoutes = [
   { path: "/dishes", component: <PageDishes /> },
   //   // //profile
   { path: "/profile", component: <UserProfile /> },
+
+  { path: "/combos", component: <PageCombo /> },
 
 ];
 
