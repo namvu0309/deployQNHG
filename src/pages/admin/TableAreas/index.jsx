@@ -318,9 +318,9 @@ const TableAreaIndex = () => {
                             </Col>
                             <Col md={6}>
                                 <FormGroup>
-                                    <Label for="status">Trạng thái</Label>
+                                    <Label for="statuses">Trạng thái</Label>
                                     <Input
-                                        id="status"
+                                        id="statuses"
                                         type="select"
                                         value={formData.status}
                                         onChange={(e) => setFormData({ ...formData, status: e.target.value })}

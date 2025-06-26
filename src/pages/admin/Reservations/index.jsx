@@ -531,7 +531,7 @@ const TableBookingIndex = () => {
                                                     <td>#{item.id}</td>
                                                     <td>{item.customer_name}</td>
                                                     <td>{item.customer_phone || item.phone_number}</td>
-                                                    <td>{item.booking_date || item.reservation_date}</td>
+                                                    <td>{item.reservation_date ? new Date(item.reservation_date).toLocaleDateString('vi-VN') : ''}</td>
                                                     <td>{item.number_of_guests} người</td>
                                                     <td>{new Date(item.deleted_at).toLocaleDateString('vi-VN')}</td>
                                                     <td>

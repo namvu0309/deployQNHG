@@ -1,17 +1,17 @@
 import axios from "axios";
-import accessToken from "./jwt-token-access/accessToken";
+// import accessToken from "./jwt-token-access/accessToken";
 
 //pass new generated access token here
-const token = accessToken;
+// const token = accessToken;
 
 //apply base url for axios
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = "";
 
 const axiosApi = axios.create({
   baseURL: API_URL,
 });
 
-axiosApi.defaults.headers.common["Authorization"] = token;
+// axiosApi.defaults.headers.common["Authorization"] = token;
 
 axiosApi.interceptors.response.use(
   (response) => response,

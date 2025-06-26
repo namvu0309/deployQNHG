@@ -1,10 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-// File Manager
-import FileManager from "@pages/admin/FileManager/index";
-
-// Profile
 import UserProfile from "@pages/admin/Authentication/user-profile";
 
 // Authentication related pages
@@ -35,55 +31,9 @@ import AdminLogin from "@pages/admin/Users/AdminLogin.jsx";
 // Dashboard
 import Dashboard from "@pages/admin/Dashboard/index";
 
-// Forms
-import FormElements from "@pages/admin/Forms/FormElements";
-import FormLayouts from "@pages/admin/Forms/FormLayouts";
-import FormAdvanced from "@pages/admin/Forms/FormAdvanced/index";
-import FormEditors from "@pages/admin/Forms/FormEditors";
-import FormValidations from "@pages/admin/Forms/FormValidations";
-import FormMask from "@pages/admin/Forms/FormMask";
-import FormRepeater from "@pages/admin/Forms/FormRepeater";
-import FormUpload from "@pages/admin/Forms/FormUpload";
-import FormWizard from "@pages/admin/Forms/FormWizard";
-
-// UI
-import UiAlert from "@pages/admin/Ui/UiAlerts/index";
-import UiButtons from "@pages/admin/Ui/UiButtons/index";
-import UiCards from "@pages/admin/Ui/UiCard/index";
-import UiCarousel from "@pages/admin/Ui/UiCarousel";
-import UiColors from "@pages/admin/Ui/UiColors";
-import UiDropdown from "@pages/admin/Ui/UiDropdown/index";
-import UiOffCanvas from "@pages/admin/Ui/UiOffCanvas";
-import UiGeneral from "@pages/admin/Ui/UiGeneral";
-import UiGrid from "@pages/admin/Ui/UiGrid";
-import UiImages from "@pages/admin/Ui/UiImages";
-import UiLightbox from "@pages/admin/Ui/UiLightbox";
-import UiModal from "@pages/admin/Ui/UiModal/index";
-import UiTabsAccordions from "@pages/admin/Ui/UiTabsAccordions";
-import UiTypography from "@pages/admin/Ui/UiTypography";
-import UiVideo from "@pages/admin/Ui/UiVideo";
-import UiSessionTimeout from "@pages/admin/Ui/UiSessionTimeout";
-import UiRating from "@pages/admin/Ui/UiRating";
-import UiRangeSlider from "@pages/admin/Ui/UiRangeSlider";
-import UiNotifications from "@pages/admin/Ui/UINotifications";
-import UiPlaceholders from "@pages/admin/Ui/UiPlaceholders";
-import UiToasts from "@pages/admin/Ui/UiToast";
-import UiUtilities from "@pages/admin/Ui/UiUtilities";
-import SwitchUI from "@components/admin/ui/SwitchUI";
-
-// Utility Pages
-import PagesStarter from "@pages/admin/Utility/pages-starter";
-import PagesMaintenance from "@pages/admin/Utility/pages-maintenance";
-import PagesComingsoon from "@pages/admin/Utility/pages-comingsoon";
-import PagesTimeline from "@pages/admin/Utility/pages-timeline";
-import PagesFaqs from "@pages/admin/Utility/pages-faqs";
-import PagesPricing from "@pages/admin/Utility/pages-pricing";
-import Pages404 from "@pages/admin/Utility/pages-404";
-import Pages500 from "@pages/admin/Utility/pages-500";
-
-// Custom Pages
 import PageCustomer from "@pages/admin/Customers/index";
 import UpdateCustomer from "@components/admin/Customers/UpdateCustomer";
+import PageDishes  from "@pages/admin/Dishes/index";
 import ListRole from "@pages/admin/Role/ListRole.jsx";
 import ListPermissionGroup from "@pages/admin/PermissionGroup/ListPermissionGroup.jsx";
 import ListPermission from "@pages/admin/Permission/ListPermission.jsx";
@@ -92,6 +42,9 @@ import ListUserRole from "@pages/admin/UserRole/ListUserRole.jsx";
 import PageTable from "@pages/admin/Tables/index";
 import PageReservation from "@pages/admin/Reservations/index";
 import PageTableArea from "@pages/admin/TableAreas/index";
+import PageOrder from "@pages/admin/Orders/index";
+import PageCombo from "@pages/admin/Combos/index";
+import PageCategory from "@pages/admin/Categories/index";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -109,6 +62,7 @@ const authProtectedRoutes = [
 
   // Table routes
   { path: "/table", component: <PageTable /> },
+  { path: "/categories", component: <PageCategory /> },
 
   // Reservation routes
   { path: "/reservations", component: <PageReservation /> },
@@ -117,60 +71,29 @@ const authProtectedRoutes = [
   { path: "/reservations/create", component: <PageReservation /> },
   { path: "/reservations/:id/edit", component: <PageReservation /> },
   { path: "/reservations/trash", component: <PageReservation /> },
+  
+  // Quản lý khu vực bàn
+  { path: "/table-areas", component: <PageTableArea  /> },
+  { path: "/table-areas/list", component: <PageTableArea  /> },
+  { path: "/table-areas/:id/detail", component: <PageTableArea  /> },
+  { path: "/table-areas/create", component: <PageTableArea  /> },
+  { path: "/table-areas/:id/update", component: <PageTableArea  /> },
+  { path: "/table-areas/:id/delete", component: <PageTableArea  /> },
 
-  // Table areas
-  { path: "/table-areas", component: <PageTableArea /> },
+  // Quản lý đơn hàng
+  { path: "/orders", component: <PageOrder /> },
+  { path: "/orders/list", component: <PageOrder /> },
+  { path: "/orders/:id/detail", component: <PageOrder /> },
+  { path: "/orders/create", component: <PageOrder /> },
+  { path: "/orders/:id/edit", component: <PageOrder /> },
+  { path: "/orders/track", component: <PageOrder /> },
 
-  // File Manager
-  { path: "/apps-filemanager", component: <FileManager /> },
-
-  // Profile
+  { path: "/dishes", component: <PageDishes /> },
+  //   // //profile
   { path: "/profile", component: <UserProfile /> },
 
-  // Forms
-  { path: "/form-elements", component: <FormElements /> },
-  { path: "/form-layouts", component: <FormLayouts /> },
-  { path: "/form-advanced", component: <FormAdvanced /> },
-  { path: "/form-editors", component: <FormEditors /> },
-  { path: "/form-mask", component: <FormMask /> },
-  { path: "/form-repeater", component: <FormRepeater /> },
-  { path: "/form-uploads", component: <FormUpload /> },
-  { path: "/form-wizard", component: <FormWizard /> },
-  { path: "/form-validation", component: <FormValidations /> },
+  { path: "/combos", component: <PageCombo /> },
 
-  // UI
-  { path: "/ui-alerts", component: <UiAlert /> },
-  { path: "/ui-buttons", component: <UiButtons /> },
-  { path: "/ui-cards", component: <UiCards /> },
-  { path: "/ui-carousel", component: <UiCarousel /> },
-  { path: "/ui-colors", component: <UiColors /> },
-  { path: "/ui-dropdowns", component: <UiDropdown /> },
-  { path: "/ui-offcanvas", component: <UiOffCanvas /> },
-  { path: "/ui-general", component: <UiGeneral /> },
-  { path: "/ui-grid", component: <UiGrid /> },
-  { path: "/ui-images", component: <UiImages /> },
-  { path: "/ui-lightbox", component: <UiLightbox /> },
-  { path: "/ui-modals", component: <UiModal /> },
-  { path: "/ui-tabs-accordions", component: <UiTabsAccordions /> },
-  { path: "/ui-typography", component: <UiTypography /> },
-  { path: "/ui-video", component: <UiVideo /> },
-  { path: "/ui-session-timeout", component: <UiSessionTimeout /> },
-  { path: "/ui-rating", component: <UiRating /> },
-  { path: "/ui-rangeslider", component: <UiRangeSlider /> },
-  { path: "/ui-notifications", component: <UiNotifications /> },
-  { path: "/ui-placeholders", component: <UiPlaceholders /> },
-  { path: "/ui-toasts", component: <UiToasts /> },
-  { path: "/ui-utilities", component: <UiUtilities /> },
-  { path: "/ui-switch", component: <SwitchUI /> },
-
-  // Utility
-  { path: "/pages-starter", component: <PagesStarter /> },
-  { path: "/pages-timeline", component: <PagesTimeline /> },
-  { path: "/pages-faqs", component: <PagesFaqs /> },
-  { path: "/pages-pricing", component: <PagesPricing /> },
-
-  // Default redirect
-  { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
 ];
 
 const publicRoutes = [
@@ -180,12 +103,7 @@ const publicRoutes = [
   { path: "/register", component: <Register /> },
   { path: "/admin/login", component: <AdminLogin /> },
 
-  { path: "/pages-maintenance", component: <PagesMaintenance /> },
-  { path: "/pages-comingsoon", component: <PagesComingsoon /> },
-  { path: "/pages-404", component: <Pages404 /> },
-  { path: "/pages-500", component: <Pages500 /> },
 
-  // Inner Authentication
   { path: "/pages-login", component: <Login1 /> },
   { path: "/pages-login-2", component: <Login2 /> },
   { path: "/pages-register", component: <Register1 /> },
