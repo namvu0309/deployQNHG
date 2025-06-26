@@ -18,11 +18,10 @@ const convertTo24Hour = (time12h) => {
 const BookingPopup = ({ isOpen, onClose }) => {
   const [guestCount, setGuestCount] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
-  const customer_id = 1;
   const navigate = useNavigate();
 
   const [orderTable, setOrderTable] = useState({
-    customer_id,
+    customer_id:"",
     customer_name: "",
     customer_phone: "",
     customer_email: "",
