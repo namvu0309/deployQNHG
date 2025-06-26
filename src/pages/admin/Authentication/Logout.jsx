@@ -1,25 +1,22 @@
 import React, { useEffect } from "react";
-import PropTypes from "prop-types";
-import withRouter from "@components/admin/ui/withRouter";
-import { logoutUser } from "@store/admin/actions";
-
-//redux
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { logoutUser } from "@store/admin/actions";
 
 const Logout = () => {
-  const history = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(logoutUser(history));
-  }, [dispatch, history]);
+    dispatch(logoutUser(() => {
+      Swal.fire("Đăng xuất", "Bạn đã đăng xuất thành công!", "success").then(() => {
+        navigate("/admin/login");
+      });
+    }));
+  }, [dispatch, navigate]);
 
-  return <></>;
+  return <div>Đang đăng xuất...</div>;
 };
 
-Logout.propTypes = {
-  history: PropTypes.object,
-};
-
-export default withRouter(Logout);
+export default Logout;

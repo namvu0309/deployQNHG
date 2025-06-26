@@ -30,6 +30,7 @@ import EmailVerification from "@pages/admin/AuthenticationInner/auth-email-verif
 import EmailVerification2 from "@pages/admin/AuthenticationInner/auth-email-verification-2";
 import TwostepVerification from "@pages/admin/AuthenticationInner/auth-two-step-verification";
 import TwostepVerification2 from "@pages/admin/AuthenticationInner/auth-two-step-verification-2";
+import AdminLogin from "@pages/admin/Users/AdminLogin.jsx";
 
 // Dashboard
 import Dashboard from "@pages/admin/Dashboard/index";
@@ -177,6 +178,7 @@ const publicRoutes = [
   { path: "/login", component: <Login /> },
   { path: "/forgot-password", component: <ForgetPwd /> },
   { path: "/register", component: <Register /> },
+  { path: "/admin/login", component: <AdminLogin /> },
 
   { path: "/pages-maintenance", component: <PagesMaintenance /> },
   { path: "/pages-comingsoon", component: <PagesComingsoon /> },
