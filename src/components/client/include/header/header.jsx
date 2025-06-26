@@ -1,13 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./header.scss";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../../../assets/client/images/header/logo.jpg";
-import BookingPopup from "./BookingPopup"; // Import popup đặt bàn
+import BookingPopup from "./BookingPopup";
+import HeaderService from "../../../../services/client/HeaderService"; 
 
 const Header = () => {
   const [showNoti, setShowNoti] = useState(true);
-  const [showPopup, setShowPopup] = useState(false); // State để mở popup
+  const [showPopup, setShowPopup] = useState(false);
+  const [categories, setCategories] = useState([]); // Danh mục cha
   const location = useLocation();
+
+  // Gọi API lấy danh mục cha khi load header
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await HeaderService.getParentCategories();
+        setCategories(data);
+        console.log("✅ Danh mục cha:", data);
+      } catch (error) {
+        console.error("❌ Không thể tải danh mục cha:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <header className="header-wrapper">
@@ -48,49 +65,46 @@ const Header = () => {
             </Link>
             <Link
               to="/menu-page"
-              className={`nav-link ${
-                location.pathname.includes("/menu-page") ? "active" : ""
-              }`}
+              className={`nav-link ${location.pathname.includes("/menu-page") ? "active" : ""}`}
             >
               Thực Đơn
             </Link>
             <Link
               to="/branch-page"
-              className={`nav-link ${
-                location.pathname.includes("/branch-page") ? "active" : ""
-              }`}
+              className={`nav-link ${location.pathname.includes("/branch-page") ? "active" : ""}`}
             >
               Cơ Sở
             </Link>
             <Link
               to="/endow-page"
-              className={`nav-link ${
-                location.pathname.includes("/endow-page") ? "active" : ""
-              }`}
+              className={`nav-link ${location.pathname.includes("/endow-page") ? "active" : ""}`}
             >
               Ưu Đãi
             </Link>
             <Link
               to="/contact-page"
-              className={`nav-link ${
-                location.pathname.includes("/contact-page") ? "active" : ""
-              }`}
+              className={`nav-link ${location.pathname.includes("/contact-page") ? "active" : ""}`}
             >
               Liên Hệ
             </Link>
 
             {/* Nút Đặt Bàn mở popup */}
-            <button
-              className="nav-button"
-              onClick={() => setShowPopup(true)}
-            >
+            <button className="nav-button" onClick={() => setShowPopup(true)}>
               ĐẶT BÀN
             </button>
           </div>
+
+          {/* ❗️(Tuỳ chọn): hiển thị danh mục cha nếu cần */}
+          {/* <ul className="dropdown-menu">
+            {categories.map((item) => (
+              <li key={item.id}>
+                <Link to={`/menu-page?category=${item.id}`}>{item.name}</Link>
+              </li>
+            ))}
+          </ul> */}
         </div>
       </div>
 
-      {/* Hiển thị popup khi showPopup === true */}
       {showPopup && (
         <BookingPopup isOpen={showPopup} onClose={() => setShowPopup(false)} />
       )}
