@@ -237,37 +237,9 @@ const ModalCombo = ({
               </div>
               <div style={{ maxHeight: 420, overflowY: "auto", border: "1px solid #eee", borderRadius: 8, padding: 12, background: "#fafbfc" }}>
                 <div className="fw-bold mb-2">Danh sách món ăn</div>
-                {(combo.items && combo.items.length === 0) ? (
-                  <div className="d-flex flex-column align-items-center justify-content-center" style={{height: 220}}>
-                    <Button
-                      color="light"
-                      style={{
-                        borderRadius: "50%",
-                        width: 80,
-                        height: 80,
-                        fontSize: 40,
-                        color: "#bbb",
-                        border: "2px dashed #bbb",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                        transition: "box-shadow 0.2s, background 0.2s"
-                      }}
-                      onClick={() => setShowAddDishModal(true)}
-                      onMouseOver={e => {
-                        e.currentTarget.style.background = "#f5f5f5";
-                        e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.16)";
-                      }}
-                      onMouseOut={e => {
-                        e.currentTarget.style.background = "#fff";
-                        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)";
-                      }}
-                    >
-                      +
-                    </Button>
-                    <div style={{marginTop: 12, color: "#888", fontSize: 16, fontWeight: 500}}>Thêm mặt hàng vào combo</div>
-                  </div>
-                ) : (
+                {(combo.items && combo.items.length > 0) ? (
                   <>
-                    {combo.items.map(item => (
+                    {combo.items.map((item) => (
                       <div
                         key={item.id}
                         className="d-flex align-items-center justify-content-between mb-2"
@@ -279,7 +251,6 @@ const ModalCombo = ({
                         }}
                       >
                         <div className="d-flex align-items-center">
-                          {/* Ảnh món ăn hoặc icon */}
                           <div
                             style={{
                               width: 44,
@@ -300,11 +271,11 @@ const ModalCombo = ({
                                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
                               />
                             ) : (
-                              <i className="mdi mdi-image" style={{ fontSize: 22, color: "#bbb" }}></i>
+                              <i className="mdi mdi-food" style={{ fontSize: 22, color: "#bbb" }}></i>
                             )}
                           </div>
                           <div>
-                            <div style={{ fontWeight: 600 }}>{item.name}</div>
+                            <div style={{ fontWeight: 600 }}>{item.name || item.dish_name}</div>
                             <div style={{ color: "#888", fontSize: 15 }}>
                               {item.selling_price?.toLocaleString()} đ{" "}
                               {item.category?.name && (
@@ -329,15 +300,18 @@ const ModalCombo = ({
                             color="light"
                             size="sm"
                             style={{ borderRadius: 8, minWidth: 32, minHeight: 32, fontWeight: 700, fontSize: 18, border: "1px solid #ddd" }}
-                            disabled={item.quantity === 0}
+                            disabled={item.quantity <= 1}
                             onClick={() => {
                               let newItems = combo.items ? [...combo.items] : [];
-                              if (item.quantity > 1) {
-                                newItems = newItems.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i);
-                              } else if (item.quantity === 1) {
-                                newItems = newItems.filter(i => i.id !== item.id);
+                              const itemIndex = newItems.findIndex(i => i.id === item.id);
+                              if (itemIndex > -1) {
+                                if (newItems[itemIndex].quantity > 1) {
+                                  newItems[itemIndex].quantity -= 1;
+                                } else {
+                                  newItems.splice(itemIndex, 1);
+                                }
+                                setCombo({ ...combo, items: newItems });
                               }
-                              setCombo({ ...combo, items: newItems });
                             }}
                           >
                             -
@@ -349,8 +323,11 @@ const ModalCombo = ({
                             style={{ borderRadius: 8, minWidth: 32, minHeight: 32, fontWeight: 700, fontSize: 18, background: "#ff6600", border: "none" }}
                             onClick={() => {
                               let newItems = combo.items ? [...combo.items] : [];
-                              newItems = newItems.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
-                              setCombo({ ...combo, items: newItems });
+                              const itemIndex = newItems.findIndex(i => i.id === item.id);
+                              if (itemIndex > -1) {
+                                newItems[itemIndex].quantity += 1;
+                                setCombo({ ...combo, items: newItems });
+                              }
                             }}
                           >
                             +
@@ -387,6 +364,34 @@ const ModalCombo = ({
                       <div style={{marginTop: 6, color: "#888", fontSize: 14, fontWeight: 500}}>Thêm món</div>
                     </div>
                   </>
+                ) : (
+                  <div className="d-flex flex-column align-items-center justify-content-center" style={{height: 220}}>
+                    <Button
+                      color="light"
+                      style={{
+                        borderRadius: "50%",
+                        width: 80,
+                        height: 80,
+                        fontSize: 40,
+                        color: "#bbb",
+                        border: "2px dashed #bbb",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        transition: "box-shadow 0.2s, background 0.2s"
+                      }}
+                      onClick={() => setShowAddDishModal(true)}
+                      onMouseOver={e => {
+                        e.currentTarget.style.background = "#f5f5f5";
+                        e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.16)";
+                      }}
+                      onMouseOut={e => {
+                        e.currentTarget.style.background = "#fff";
+                        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)";
+                      }}
+                    >
+                      +
+                    </Button>
+                    <div style={{marginTop: 12, color: "#888", fontSize: 16, fontWeight: 500}}>Thêm mặt hàng vào combo</div>
+                  </div>
                 )}
                 {errors.items && <div className="text-danger small mt-1">{errors.items}</div>}
               </div>
@@ -425,4 +430,4 @@ const ModalCombo = ({
   );
 };
 
-export default ModalCombo; 
+export default ModalCombo;
