@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import "./menu.scss";
 import { combos, dishs, drinks } from "./data-menu";
 import plush from "@assets/client/images/menu/plush.svg";
+import NavbarCategory from "../../../components/client/include/header/NavbarCategory";
+
 
 const Menu = () => {
+
   const [cart, setCart] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -34,6 +37,8 @@ const Menu = () => {
 
   return (
     <div className="td-menu">
+            <NavbarCategory />
+
       <div className="menuList">
         <div className="widthCT">
           {totalItems > 0 && (
