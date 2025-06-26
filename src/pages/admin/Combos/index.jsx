@@ -153,6 +153,7 @@ const ComboIndex = () => {
         }
     };
 
+    // eslint-disable-next-line
     const handleSave = async () => {
         setErrors({});
         const formData = new FormData();
