@@ -26,6 +26,7 @@ const Header = () => {
     fetchCategories();
   }, []);
 
+
   return (
     <header className="header-wrapper">
       {showNoti && (
