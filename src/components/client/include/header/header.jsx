@@ -2,6 +2,13 @@ import React, { useState } from "react";
 import "./header.scss";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../../../assets/client/images/header/logo.jpg";
+import {
+  FaPhoneAlt,
+  FaRegClock,
+  FaGift,
+  FaUserPlus,
+  FaUser,
+} from "react-icons/fa";
 import BookingPopup from "./BookingPopup"; // Import popup đặt bàn
 
 const Header = () => {
@@ -25,7 +32,37 @@ const Header = () => {
           </button>
         </div>
       )}
+      {/* Header Top mới */}
+      <section className="header-top-bar">
+        <div className="header-top-left">
+          <span className="icon">
+            <FaPhoneAlt />
+          </span>
+          <span className="top-text">
+            Hotline: <b>*2005</b>
+          </span>
+          <span className="icon">
+            <FaRegClock />
+          </span>{" "}
+          <span className="top-text">16:00 - 23:00</span>
+        </div>
+        <div className="header-top-right">
+          <span className="icon">
+            <FaGift />
+          </span>
 
+          <span className="divider-vertical" />
+          <span className="icon">
+            <FaUser />
+          </span>
+          <span className="top-link">Đăng nhập</span>
+          <span className="divider-vertical" />
+          <span className="icon">
+            <FaUserPlus />
+          </span>
+          <span className="top-link">Đăng ký</span>
+        </div>
+      </section>
       <div className="header-main">
         <div className="header-left">
           <Link to="/" className="logo">
@@ -42,7 +79,9 @@ const Header = () => {
           <div className="nav-links">
             <Link
               to="/"
-              className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
+              className={`nav-link ${
+                location.pathname === "/" ? "active" : ""
+              }`}
             >
               Trang Chủ
             </Link>
@@ -80,10 +119,7 @@ const Header = () => {
             </Link>
 
             {/* Nút Đặt Bàn mở popup */}
-            <button
-              className="nav-button"
-              onClick={() => setShowPopup(true)}
-            >
+            <button className="nav-button" onClick={() => setShowPopup(true)}>
               ĐẶT BÀN
             </button>
           </div>
