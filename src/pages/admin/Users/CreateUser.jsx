@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { createUser, updateUser } from "@services/admin/userService";
+import { getRoles } from "@services/admin/roleService";
 
 export default function CreateUser({ user, onSuccess, onClose }) {
     const [formData, setFormData] = useState({
@@ -10,23 +11,40 @@ export default function CreateUser({ user, onSuccess, onClose }) {
         email: "",
         phone_number: "",
         avatar: null,
-        status: "active",
+        role_id: "",
     });
 
+    const [roleOptions, setRoleOptions] = useState([]);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [previewAvatar, setPreviewAvatar] = useState(null);
 
     useEffect(() => {
+        async function fetchRoles() {
+            try {
+                const res = await getRoles();
+                setRoleOptions(res.data.data.items || []);
+            } catch (error) {
+                console.error("Không thể load vai trò", error);
+                setRoleOptions([]);
+            }
+        }
+
+        fetchRoles();
+    }, []);
+
+
+    useEffect(() => {
         if (user) {
             setFormData({
                 username: user.username || "",
-                password: "", // Không dùng trong cập nhật
+                password: "",
                 full_name: user.full_name || "",
                 email: user.email || "",
                 phone_number: user.phone_number || "",
                 avatar: null,
                 status: user.status || "active",
+                role_id: user.role_id || "",
             });
 
             if (user.avatar) {
@@ -66,26 +84,19 @@ export default function CreateUser({ user, onSuccess, onClose }) {
         setLoading(true);
 
         const payload = new FormData();
-
         for (const key in formData) {
-            if (user && key === "password") continue; // Không gửi password khi update
+            if (user && key === "password") continue; // Không gửi password khi cập nhật
             if (formData[key]) {
                 payload.append(key, formData[key]);
             }
         }
 
         try {
-            if (user?.id) {
-                await updateUser(user.id, payload); // Gọi update
-            } else {
-                await createUser(payload); // Gọi create
-            }
+            const res = user?.id
+                ? await updateUser(user.id, payload)
+                : await createUser(payload);
 
-            Swal.fire(
-                "Thành công!",
-                user ? "Cập nhật người dùng thành công!" : "Thêm người dùng thành công!",
-                "success"
-            );
+            Swal.fire("Thành công!", res.data.message || "Thành công", "success");
             onSuccess?.();
         } catch (err) {
             const errs = err.response?.data?.errors || {};
@@ -98,6 +109,7 @@ export default function CreateUser({ user, onSuccess, onClose }) {
             setLoading(false);
         }
     };
+
 
     return (
         <form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -148,7 +160,6 @@ export default function CreateUser({ user, onSuccess, onClose }) {
                     value={formData.email}
                     onChange={handleChange}
                 />
-
                 {errors.email && <div className="invalid-feedback">{errors.email[0]}</div>}
             </div>
 
@@ -162,6 +173,26 @@ export default function CreateUser({ user, onSuccess, onClose }) {
                     onChange={handleChange}
                 />
                 {errors.phone_number && <div className="invalid-feedback">{errors.phone_number[0]}</div>}
+            </div>
+
+            <div className="mb-3">
+                <label className="form-label">Vai trò</label>
+                <select
+                    name="role_id"
+                    className={`form-select ${errors.role_id ? "is-invalid" : ""}`}
+                    value={formData.role_id}
+                    onChange={handleChange}
+                >
+                    <option value="">-- Chọn vai trò --</option>
+                    {Array.isArray(roleOptions) &&
+                        roleOptions.map((role) => (
+                            <option key={role.id} value={role.id}>
+                                {role.role_name}
+                            </option>
+                        ))}
+                </select>
+
+                {errors.role_id && <div className="invalid-feedback">{errors.role_id[0]}</div>}
             </div>
 
             <div className="mb-3">
