@@ -17,19 +17,21 @@ import {
     Modal,
 } from "reactstrap";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
-import ListCombo from "@components/admin/Combos/ListCombo";
 import ListTrashCombo from "@components/admin/Combos/ListTrashCombo";
 import ModalCombo from "@components/admin/Combos/ModalCombo";
 import { toast } from "react-toastify";
-import { getCombos, createCombo, updateCombo, softDeleteCombo, getComboDetail } from "@services/admin/comboService";
+import { getCombos, softDeleteCombo, getComboDetail } from "@services/admin/comboService";
+import { getDishes } from "@services/admin/dishService";
 import Swal from "sweetalert2";
 import ComboCardGrid from "@components/admin/Combos/ComboCardGrid";
 import ModalAddDishToCombo from "@components/admin/Combos/ModalAddDishToCombo";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const statusOptions = [
     { value: "all", label: "Tất cả", badgeColor: "secondary" },
-    { value: "active", label: "Đang bán", badgeColor: "success" },
-    { value: "inactive", label: "Ngưng bán", badgeColor: "danger" },
+    { value: 1, label: "Đang bán", badgeColor: "success" },
+    { value: 0, label: "Ngưng áp dụng", badgeColor: "danger" },
 ];
 
 const ComboIndex = () => {
@@ -54,9 +56,9 @@ const ComboIndex = () => {
     });
     const [errors, setErrors] = useState({});
     const [isEdit, setIsEdit] = useState(false);
-    const [editComboId, setEditComboId] = useState(null);
+    const [,setEditComboId] = useState(null);
     const [activeTab, setActiveTab] = useState("list");
-    const [dishList, setDishList] = useState([]);
+    const [dishList] = useState([]);
     const [selectedCombo, setSelectedCombo] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [showAddDishModal, setShowAddDishModal] = useState(false);
@@ -70,7 +72,7 @@ const ComboIndex = () => {
                 per_page: 8,
                 search: search || undefined,
             };
-            if (status !== "all") params.status = status;
+            if (status !== "all") params.is_active = status;
             const res = await getCombos(params);
             const items = res.data?.data?.items;
             if (Array.isArray(items)) {
@@ -134,14 +136,30 @@ const ComboIndex = () => {
         try {
             const res = await getComboDetail(comboId);
             const combo = res.data.data.combo;
-            console.log("combo detail:", combo);
+            const items = res.data.data.items || [];
+            // Lấy danh sách món ăn để map thêm thông tin cho từng item
+            const dishRes = await getDishes();
+            const dishList = dishRes.data.data.items || [];
+            const mappedItems = items.map(item => {
+                const dish = dishList.find(d => Number(d.id) === Number(item.dish_id));
+                return {
+                    ...item,
+                    id: Number(item.dish_id),
+                    dish_id: Number(item.dish_id),
+                    dish_name: item.dish_name || (dish ? dish.name : ""),
+                    selling_price: dish ? dish.selling_price : 0,
+                    category: dish ? dish.category : null,
+                    image_url: dish ? dish.image_url : "",
+                    quantity: item.quantity || 1,
+                };
+            });
             setNewCombo({
                 id: combo.id,
                 name: combo.name || "",
                 selling_price: combo.selling_price || "",
                 status: combo.is_active === 1 ? "active" : "inactive",
                 description: combo.description || "",
-                items: res.data.data.items || [],
+                items: mappedItems,
                 image_url: combo.image_url || "",
             });
             setEditComboId(combo.id);
@@ -149,41 +167,6 @@ const ComboIndex = () => {
             setModalOpen(true);
         } catch {
             toast.error("Không lấy được thông tin combo!");
-        }
-    };
-
-    const handleSave = async () => {
-        setErrors({});
-        const formData = new FormData();
-        formData.append("name", newCombo.name || "");
-        formData.append("description", newCombo.description || "");
-        formData.append("selling_price", newCombo.selling_price || "");
-        formData.append("is_active", newCombo.status === "active" ? 1 : 0);
-        if (newCombo.image instanceof File) {
-            formData.append("image_url", newCombo.image);
-        }
-        if (newCombo.items && newCombo.items.length > 0) {
-            newCombo.items.forEach((item, idx) => {
-                formData.append(`items[${idx}][dish_id]`, item.id);
-                formData.append(`items[${idx}][quantity]`, item.quantity || 1);
-            });
-        }
-        try {
-            let response;
-            if (isEdit) {
-                response = await updateCombo(editComboId, formData);
-                if (response) toast.success("Cập nhật combo thành công!");
-            } else {
-                response = await createCombo(formData);
-                if (response) toast.success("Thêm combo thành công!");
-            }
-            setModalOpen(false);
-            resetNewCombo();
-            fetchCombos(meta.page);
-        } catch (error) {
-            const apiErrors = error.response?.data?.errors;
-            if (apiErrors) setErrors(apiErrors);
-            toast.error(error.response?.data?.message || "Lỗi khi lưu combo!");
         }
     };
 
@@ -291,7 +274,7 @@ const ComboIndex = () => {
                         <CardHeader className="bg-white border-bottom-0">
                             <Row className="align-items-center">
                                 <Col md={7} sm={12} className="mb-2 mb-md-0 d-flex align-items-center">
-                                    <div style={{ display: "flex" }}>
+                                    <div style={{ display: "flex", gap: 24, margin: "24px 0 12px 0" }}>
                                         {statusOptions.map((opt) => (
                                             <button
                                                 key={opt.value}
@@ -300,10 +283,10 @@ const ComboIndex = () => {
                                                     background: "none",
                                                     border: "none",
                                                     padding: "8px 24px",
-                                                    fontWeight: status === opt.value ? 600 : 400,
-                                                    color: status === opt.value ? "#007bff" : "#333",
-                                                    borderBottom: status === opt.value ? "3px solid #007bff" : "3px solid transparent",
-                                                    fontSize: 16,
+                                                    fontWeight: status === opt.value ? 700 : 400,
+                                                    color: status === opt.value ? "#1976d2" : "#222",
+                                                    borderBottom: status === opt.value ? "3px solid #1976d2" : "3px solid transparent",
+                                                    fontSize: 15,
                                                     cursor: "pointer",
                                                     display: "flex",
                                                     alignItems: "center",
@@ -314,9 +297,11 @@ const ComboIndex = () => {
                                                     color={opt.badgeColor}
                                                     pill
                                                     className="ms-2"
-                                                    style={{ fontSize: 13, minWidth: 28 }}
+                                                    style={{ fontSize: 15, minWidth: 28 }}
                                                 >
-                                                    {opt.value === "all" ? meta.total : combos.filter(c => c.status === opt.value).length}
+                                                    {opt.value === "all"
+                                                        ? meta.total
+                                                        : combos.filter(c => Number(c.is_active) === Number(opt.value)).length}
                                                 </Badge>
                                             </button>
                                         ))}
@@ -428,7 +413,11 @@ const ComboIndex = () => {
                                 <div className="col-md-5 d-flex align-items-center justify-content-center">
                                     {selectedCombo.image_url ? (
                                         <img
-                                            src={selectedCombo.image_url}
+                                            src={
+                                                selectedCombo.image_url.startsWith("http")
+                                                    ? selectedCombo.image_url
+                                                    : `http://localhost:8000/storage/${selectedCombo.image_url}`
+                                            }
                                             alt={selectedCombo.name}
                                             style={{ width: "100%", maxWidth: 320, borderRadius: 12, background: "#f5f5f5" }}
                                         />
@@ -520,6 +509,7 @@ const ComboIndex = () => {
                     )}
                 </div>
             </Modal>
+            <ToastContainer position="top-right" autoClose={3000} />
         </div>
     );
 };

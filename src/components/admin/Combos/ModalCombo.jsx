@@ -27,7 +27,7 @@ const ModalCombo = ({
   onSave,
 }) => {
   const [previewImage, setPreviewImage] = useState(null);
-  const [ setDishList] = useState([]);
+  const [setDishList] = useState([]);
   const [showAddDishModal, setShowAddDishModal] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -45,7 +45,7 @@ const ModalCombo = ({
   useEffect(() => {
     if (modalOpen) {
       const fullImageUrl = "http://localhost:8000/storage/";
-      if (isEdit && combo.image_url && typeof combo.image_url === "string") {
+      if (combo.image_url && typeof combo.image_url === "string") {
         setPreviewImage(`${fullImageUrl}${combo.image_url}`);
       } else {
         setPreviewImage(null);
@@ -58,9 +58,27 @@ const ModalCombo = ({
   const fetchDishList = async () => {
     try {
       const res = await getDishes();
-      setDishList(res.data.data.items || []);
-    } catch {
-      toast.error("Không lấy được danh sách món ăn!");
+      const dishList = res.data.data.items || [];
+      const items = (combo.items || []).map(item => {
+        const dish = dishList.find(d => Number(d.id) === Number(item.dish_id || item.id));
+        return {
+          ...item,
+          id: Number(item.dish_id || item.id),
+          dish_id: Number(item.dish_id || item.id),
+          dish_name: item.dish_name || item.name || (dish ? dish.name : ""),
+          selling_price: dish ? dish.selling_price : 0,
+          category: dish ? dish.category : null,
+          image_url: dish ? dish.image_url : "",
+          quantity: item.quantity || 1,
+        };
+      });
+      setDishList(dishList);
+      setCombo({ ...combo, items });
+    } catch  {
+      if (isEdit && (!combo.items || combo.items.length === 0)) {
+        toast.error("Không lấy được danh sách món ăn!");
+      }
+      setDishList([]);
     }
   };
 
@@ -83,47 +101,49 @@ const ModalCombo = ({
   // Hàm lưu combo (tạo mới)
   const handleSave = async () => {
     setErrors({});
+    // Log danh sách món ăn hiện tại trong combo
+    console.log("[LOG] Danh sách combo.items hiện tại:", combo.items);
     const formData = new FormData();
     formData.append("name", combo.name || "");
     formData.append("description", combo.description || "");
     formData.append("original_total_price", combo.original_total_price || 0);
-    formData.append("selling_price", combo.selling_price || 0);
+    formData.append("selling_price", combo.selling_price);
     formData.append("is_active", combo.is_active ?? 1);
     if (combo.image instanceof File) {
       formData.append("image_url", combo.image);
     }
     // Thêm danh sách món ăn vào combo (nếu có)
     if (combo.items && combo.items.length > 0) {
-      combo.items.forEach((item, idx) => {
-        formData.append(`items[${idx}][dish_id]`, item.id);
-        formData.append(`items[${idx}][quantity]`, item.quantity);
-      });
+      const itemsArray = combo.items.map(item => ({
+        dish_id: Number(item.dish_id || item.id),
+        quantity: Number(item.quantity) || 1,
+      }));
+      // Log dữ liệu items sẽ gửi lên API
+      console.log("[LOG] Dữ liệu items gửi lên API:", itemsArray);
+      formData.append("items", JSON.stringify(itemsArray));
     }
-
     // Debug: In ra dữ liệu gửi lên
     for (let pair of formData.entries()) {
-      console.log(pair[0]+ ', ' + pair[1]);
+      console.log(pair[0] + ', ' + pair[1]);
     }
 
     try {
       if (isEdit) {
-        // Gọi API cập nhật combo
         await updateCombo(combo.id, formData);
         toast.success("Cập nhật combo thành công!");
       } else {
-        // Gọi API tạo mới combo
         await createCombo(formData);
         toast.success("Thêm combo thành công!");
       }
       setModalOpen(false);
       if (typeof onSave === "function") onSave();
     } catch (error) {
-      console.log(error.response?.data);
+      const apiErrors = error.response?.data?.errors;
+      if (apiErrors) setErrors(apiErrors);
       toast.error(error.response?.data?.message || "Lỗi khi lưu combo!");
     }
   };
 
-  console.log(combo);
 
   return (
     <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)} size="xl" centered>
@@ -136,39 +156,70 @@ const ModalCombo = ({
             {/* Cột trái: Thông tin combo */}
             <Col md={7}>
               {/* Ảnh */}
-              <FormGroup className="text-center mb-4">
-                <Label for="image-upload-button">Hình ảnh</Label>
-                <div>
-                  <Input
-                    id="image_url"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    invalid={!!errors.image}
-                    style={{ display: "none" }}
-                  />
-                  <Button
-                    id="image-upload-button"
-                    color="primary"
-                    onClick={() => document.getElementById("image_url").click()}
+              <FormGroup className="mb-4">
+                <Label>Hình ảnh</Label>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 24,
+                    justifyContent: "center",
+                  }}
+                >
+                  {/* Khung ảnh cố định */}
+                  <div
+                    style={{
+                      width: 150,
+                      height: 150,
+                      border: "1px solid #eee",
+                      borderRadius: 12,
+                      background: "#fafbfc",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden",
+                    }}
                   >
-                    Chọn hình ảnh
-                  </Button>
-                </div>
-                {previewImage && (
-                  <div className="mt-3">
-                    <img
-                      src={previewImage}
-                      alt="Preview"
-                      style={{ maxWidth: "200px", maxHeight: "200px", objectFit: "contain" }}
+                    {previewImage ? (
+                      <img
+                        src={previewImage}
+                        alt="Preview"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "contain",
+                          display: "block",
+                        }}
+                      />
+                    ) : (
+                      <i className="mdi mdi-image" style={{ fontSize: 48, color: "#ccc" }}></i>
+                    )}
+                  </div>
+                  {/* Nút chọn hình ảnh */}
+                  <div>
+                    <Input
+                      id="image_url"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      invalid={!!errors.image}
+                      style={{ display: "none" }}
                     />
+                    <Button
+                      id="image-upload-button"
+                      color="primary"
+                      onClick={() => document.getElementById("image_url").click()}
+                      style={{ minWidth: 120 }}
+                    >
+                      Chọn hình ảnh
+                    </Button>
+                    {errors.image && (
+                      <div className="text-danger small mt-2">
+                        {Array.isArray(errors.image) ? errors.image.join(", ") : errors.image}
+                      </div>
+                    )}
                   </div>
-                )}
-                {errors.image && (
-                  <div className="text-danger small mt-1">
-                    {Array.isArray(errors.image) ? errors.image.join(", ") : errors.image}
-                  </div>
-                )}
+                </div>
               </FormGroup>
               {/* Tên combo */}
               <FormGroup>
@@ -182,7 +233,11 @@ const ModalCombo = ({
                   placeholder="Nhập tên combo"
                   invalid={!!errors.name}
                 />
-                {errors.name && <FormFeedback>{errors.name}</FormFeedback>}
+                {errors.name && (
+                  <FormFeedback>
+                    {Array.isArray(errors.name) ? errors.name.join(", ") : errors.name}
+                  </FormFeedback>
+                )}
               </FormGroup>
               {/* Giá bán combo */}
               <FormGroup>
@@ -193,15 +248,45 @@ const ModalCombo = ({
                   id="selling_price"
                   type="number"
                   min={0}
+                  step="1"
                   value={
-                    isEdit
-                      ? (combo.selling_price !== undefined ? combo.selling_price : "")
+                    combo.selling_price !== undefined && combo.selling_price !== null
+                      ? combo.selling_price
                       : ""
                   }
-                  onChange={(e) => setCombo({ ...combo, selling_price: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Nếu value là rỗng thì cho phép xóa
+                    if (value === "") {
+                      setCombo({ ...combo, selling_price: "" });
+                      return;
+                    }
+                    // Kiểm tra nếu là số nguyên dương
+                    if (/^\d+$/.test(value)) {
+                      setCombo({ ...combo, selling_price: Number(value) });
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    // Chỉ cho phép phím số, phím điều hướng, backspace, delete
+                    if (
+                      !(
+                        (e.key >= "0" && e.key <= "9") ||
+                        ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                      )
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
                   placeholder="Nhập giá bán combo"
+                  invalid={!!errors.selling_price}
                 />
-                {errors.selling_price && <FormFeedback>{errors.selling_price}</FormFeedback>}
+                {errors.selling_price && (
+                  <FormFeedback>
+                    {Array.isArray(errors.selling_price)
+                      ? errors.selling_price.join(", ")
+                      : errors.selling_price}
+                  </FormFeedback>
+                )}
               </FormGroup>
               {/* Mô tả */}
               <FormGroup>
@@ -239,9 +324,9 @@ const ModalCombo = ({
                 <div className="fw-bold mb-2">Danh sách món ăn</div>
                 {(combo.items && combo.items.length > 0) ? (
                   <>
-                    {combo.items.map((item) => (
+                    {combo.items.map((item, idx) => (
                       <div
-                        key={item.id}
+                        key={item.dish_id || item.id || idx}
                         className="d-flex align-items-center justify-content-between mb-2"
                         style={{
                           background: "#fff",
@@ -336,7 +421,7 @@ const ModalCombo = ({
                       </div>
                     ))}
                     {/* Nút cộng lớn luôn hiển thị ở cuối danh sách */}
-                    <div className="d-flex flex-column align-items-center justify-content-center" style={{marginTop: 16}}>
+                    <div className="d-flex flex-column align-items-center justify-content-center" style={{ marginTop: 16 }}>
                       <Button
                         color="light"
                         style={{
@@ -361,11 +446,11 @@ const ModalCombo = ({
                       >
                         +
                       </Button>
-                      <div style={{marginTop: 6, color: "#888", fontSize: 14, fontWeight: 500}}>Thêm món</div>
+                      <div style={{ marginTop: 6, color: "#888", fontSize: 14, fontWeight: 500 }}>Thêm món</div>
                     </div>
                   </>
                 ) : (
-                  <div className="d-flex flex-column align-items-center justify-content-center" style={{height: 220}}>
+                  <div className="d-flex flex-column align-items-center justify-content-center" style={{ height: 220 }}>
                     <Button
                       color="light"
                       style={{
@@ -390,7 +475,7 @@ const ModalCombo = ({
                     >
                       +
                     </Button>
-                    <div style={{marginTop: 12, color: "#888", fontSize: 16, fontWeight: 500}}>Thêm mặt hàng vào combo</div>
+                    <div style={{ marginTop: 12, color: "#888", fontSize: 16, fontWeight: 500 }}>Thêm mặt hàng vào combo</div>
                   </div>
                 )}
                 {errors.items && <div className="text-danger small mt-1">{errors.items}</div>}
@@ -406,11 +491,23 @@ const ModalCombo = ({
             const oldItems = combo.items || [];
             const merged = [...oldItems];
             selectedDishes.forEach(newItem => {
-              const idx = merged.findIndex(i => i.id === newItem.id);
+              const id = Number(newItem.dish_id || newItem.id);
+              const idx = merged.findIndex(i => Number(i.dish_id || i.id) === id);
               if (idx > -1) {
                 merged[idx].quantity += newItem.quantity;
+                merged[idx].selling_price = newItem.selling_price;
+                merged[idx].category = newItem.category;
+                merged[idx].image_url = newItem.image_url;
               } else {
-                merged.push(newItem);
+                merged.push({
+                  ...newItem,
+                  id,
+                  dish_id: id,
+                  quantity: newItem.quantity || 1,
+                  selling_price: newItem.selling_price,
+                  category: newItem.category,
+                  image_url: newItem.image_url,
+                });
               }
             });
             setCombo({ ...combo, items: merged });
