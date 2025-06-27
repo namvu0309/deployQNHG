@@ -14,7 +14,6 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 const ROWS_PER_PAGE = 10;
-const fullUrl = "http://localhost:8000/storage/";
 
 const ListTrashCombo = () => {
     const [combos, setCombos] = useState([]);
@@ -113,7 +112,6 @@ const ListTrashCombo = () => {
                                     <th>Ảnh</th>
                                     <th>Tên combo</th>
                                     <th>Giá</th>
-                                    <th>Trạng thái</th>
                                     <th>Danh sách món</th>
                                     <th style={{ width: 120 }}>Hành động</th>
                                 </tr>
@@ -132,34 +130,26 @@ const ListTrashCombo = () => {
                                             <td>
                                                 {combo.image_url ? (
                                                     <img
-                                                        src={`${fullUrl}${combo.image_url}`}
+                                                        src={`http://localhost:8000/storage/${combo.image_url}`}
                                                         alt={combo.name}
-                                                        style={{ width: 50, height: 50, objectFit: "cover" }}
+                                                        style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 8 }}
                                                     />
                                                 ) : (
-                                                    <span>Không có ảnh</span>
+                                                    <span style={{ color: '#bbb', fontStyle: 'italic' }}>Không có ảnh</span>
                                                 )}
                                             </td>
                                             <td>{combo.name}</td>
                                             <td>
                                                 <strong style={{ color: "#28a745", fontSize: "1.1em" }}>
-                                                    {combo.price ? `${combo.price.toLocaleString()} VNĐ` : "N/A"}
+                                                    {combo.selling_price ? `${Number(combo.selling_price).toLocaleString()} đ` : "N/A"}
                                                 </strong>
                                             </td>
-                                            <td>
-                                                {combo.status === "active" ? (
-                                                    <span className="badge bg-success">Đang bán</span>
-                                                ) : (
-                                                    <span className="badge bg-danger">Ngưng bán</span>
-                                                )}
-                                            </td>
+                                        
                                             <td>
                                                 {combo.items && combo.items.length > 0 ? (
-                                                    <ul style={{ paddingLeft: 18, marginBottom: 0 }}>
-                                                        {combo.items.map(item => (
-                                                            <li key={item.id}>{item.name} {item.quantity ? `x${item.quantity}` : ''}</li>
-                                                        ))}
-                                                    </ul>
+                                                    <span>
+                                                        {combo.items.map(item => item.dish_name || item.name).filter(Boolean).join(", ")}
+                                                    </span>
                                                 ) : (
                                                     <span style={{ color: "#bdbdbd", fontStyle: "italic" }}>Chưa có món</span>
                                                 )}

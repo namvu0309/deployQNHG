@@ -29,13 +29,24 @@ const ComboCard = ({ combo, onDetail, onEdit, onDelete, onAddDish  }) => {
                     <div style={{ width: "100%", height: 150, background: combo.image_url ? undefined : "#eee", display: "flex", alignItems: "center", justifyContent: "center", color: "#bbb", borderTopLeftRadius: 8, borderTopRightRadius: 8, overflow: "hidden" }}>
                         {combo.image_url ? (
                             <img
-                                src={`${fullUrl}${combo.image_url}`}
+                                src={
+                                    combo.image_url
+                                        ? combo.image_url.startsWith("http")
+                                            ? combo.image_url
+                                            : `${fullUrl}${combo.image_url}`
+                                        : "https://via.placeholder.com/300x150?text=Không+có+ảnh"
+                                }
                                 alt={combo.name}
-                                style={{ width: "100%", height: 180, objectFit: "cover" }}
-                                onError={e => { e.target.onerror = null; e.target.src = ""; }}
+                                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                                onError={e => { 
+                                    e.target.onerror = null; 
+                                    e.target.src = "https://via.placeholder.com/300x150?text=Không+có+ảnh"; 
+                                    // Ghi log lỗi khi không load được ảnh
+                                    console.error("Lỗi tải ảnh combo:", combo.image_url, e);
+                                }}
                             />
                         ) : (
-                            <span style={{ fontSize: 32 }}>No Image</span>
+                            <span style={{ fontSize: 32, color: "#bbb" }}>Không có ảnh</span>
                         )}
                     </div>
                     {/* Badge trạng thái */}

@@ -34,10 +34,12 @@ const ModalAddDishToCombo = ({ isOpen, onClose, comboId, onSuccess, mode = "edit
     const handleIncreaseDish = (dish) => {
         setSelectedDishes(prev => {
             const found = prev.find(d => d.id === dish.id);
+            // Lấy object đầy đủ từ dishList
+            const dishFull = dishList.find(d => d.id === dish.id) || dish;
             if (found) {
                 return prev.map(d => d.id === dish.id ? { ...d, quantity: d.quantity + 1 } : d);
             }
-            return [...prev, { ...dish, quantity: 1 }];
+            return [...prev, { ...dishFull, quantity: 1 }];
         });
     };
 
@@ -67,15 +69,24 @@ const ModalAddDishToCombo = ({ isOpen, onClose, comboId, onSuccess, mode = "edit
             return;
         }
         try {
-            await Promise.all(selectedDishes.map(dish =>
-                addItemToCombo(comboId, {
-                    dish_id: dish.id,
-                    quantity: dish.quantity,
-                })
-            ));
+            const merged = [];
+            await Promise.all(selectedDishes.map(async (dish) => {
+                const newItem = {
+                    ...dish,
+                    id: Number(dish.id || dish.dish_id),
+                    dish_id: Number(dish.id || dish.dish_id),
+                    dish_name: dish.name || dish.dish_name,
+                    quantity: dish.quantity || 1,
+                };
+                merged.push(newItem);
+                await addItemToCombo(comboId, {
+                    dish_id: newItem.dish_id,
+                    quantity: newItem.quantity,
+                });
+            }));
             toast.success("Thêm món ăn vào combo thành công!");
             onClose();
-            if (onSuccess) onSuccess();
+            if (onSuccess) onSuccess(merged);
         } catch  {
             toast.error("Lỗi khi thêm món ăn vào combo!");
         }
