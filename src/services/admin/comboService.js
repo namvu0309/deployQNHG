@@ -14,10 +14,9 @@ export const createCombo = (data) => {
     return axios.post(`${API_URL}/combos/create`, data);
 };
 
+// Hàm cập nhật combo (bỏ header vì có ảnh)
 export const updateCombo = (id, data) => {
-    return axios.post(`${API_URL}/combos/${id}/update`, data, {
-        headers: { "Content-Type": "application/json" },
-    });
+    return axios.post(`${API_URL}/combos/${id}/update`, data);
 };
 
 export const getTrashedCombos = (params) => {

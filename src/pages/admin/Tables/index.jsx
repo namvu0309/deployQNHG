@@ -31,6 +31,7 @@ import "./Table.scss";
 import { getTables, createTable, updateTable, deleteTable, getTable } from "../../../services/admin/tableService";
 import { getTableAreas } from "../../../services/admin/tableAreaService";
 import DeleteModal from "@components/admin/ui/DeleteModal";
+import PaginateUi from "@components/admin/ui/PaginateUi";
 
 const TableIndex = () => {
   const [tables, setTables] = useState([]);
@@ -64,6 +65,8 @@ const TableIndex = () => {
   const [editTableId, setEditTableId] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTableId, setDeleteTableId] = useState(null);
+  const [dishPage, setDishPage] = useState(1);
+  const dishPerPage = 5;
 
   const statusOptions = [
     { value: "all", label: "Tất cả" },
@@ -562,36 +565,11 @@ const TableIndex = () => {
                   </div>
                 )}
               </div>
-              {meta.total > meta.per_page && (
-                <div className="d-flex justify-content-center my-3">
-                  <Pagination>
-                    <PaginationItem disabled={currentPage === 1}>
-                      <PaginationLink
-                        previous
-                        onClick={() => handlePageChange(currentPage - 1)}
-                      />
-                    </PaginationItem>
-                    {[...Array(totalPages)].map((_, idx) => (
-                      <PaginationItem
-                        key={idx + 1}
-                        active={currentPage === idx + 1}
-                      >
-                        <PaginationLink
-                          onClick={() => handlePageChange(idx + 1)}
-                        >
-                          {idx + 1}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-                    <PaginationItem disabled={currentPage === totalPages}>
-                      <PaginationLink
-                        next
-                        onClick={() => handlePageChange(currentPage + 1)}
-                      />
-                    </PaginationItem>
-                  </Pagination>
-                </div>
-              )}
+              <PaginateUi
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             </>
           )}
         </CardBody>

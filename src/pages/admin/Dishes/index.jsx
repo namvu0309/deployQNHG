@@ -14,6 +14,9 @@ import {
   NavLink,
   TabContent,
   TabPane,
+  Pagination,
+  PaginationItem,
+  PaginationLink,
 } from "reactstrap";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import ListDish from "@components/admin/Dishes/ListDish";
@@ -26,6 +29,7 @@ import { getDishes, createDish, updateDish, deleteSoftDish, getDish } from "@ser
 import { getCategories } from "@services/admin/categoryService";
 import DeleteModal from "@components/admin/ui/DeleteModal";
 import Swal from "sweetalert2";
+import PaginateUi from "@components/admin/ui/PaginateUi";
 
 const DishIndex = () => {
   const [dishes, setDishes] = useState([]);
@@ -466,6 +470,12 @@ const DishIndex = () => {
               )}
             </CardBody>
           </Card>
+          {/* Sử dụng component phân trang tái sử dụng */}
+          <PaginateUi
+            currentPage={meta.current_page}
+            totalPages={meta.last_page}
+            onPageChange={handlePageChange}
+          />
         </TabPane>
 
         <TabPane tabId="trash">
