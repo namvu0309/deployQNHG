@@ -45,6 +45,7 @@ import PageTableArea from "@pages/admin/TableAreas/index";
 import PageOrder from "@pages/admin/Orders/index";
 import PageCombo from "@pages/admin/Combos/index";
 import PageCategory from "@pages/admin/Categories/index";
+import PageKitchenOrders from "@pages/admin/KitchenOrders/index";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -93,6 +94,8 @@ const authProtectedRoutes = [
   { path: "/profile", component: <UserProfile /> },
 
   { path: "/combos", component: <PageCombo /> },
+
+  { path: "/kitchen-orders", component: <PageKitchenOrders /> },
 
 ];
 
