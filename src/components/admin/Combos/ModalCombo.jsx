@@ -385,14 +385,12 @@ const ModalCombo = ({
                             color="light"
                             size="sm"
                             style={{ borderRadius: 8, minWidth: 32, minHeight: 32, fontWeight: 700, fontSize: 18, border: "1px solid #ddd" }}
-                            disabled={item.quantity <= 1}
                             onClick={() => {
                               let newItems = combo.items ? [...combo.items] : [];
                               const itemIndex = newItems.findIndex(i => i.id === item.id);
                               if (itemIndex > -1) {
-                                if (newItems[itemIndex].quantity > 1) {
-                                  newItems[itemIndex].quantity -= 1;
-                                } else {
+                                newItems[itemIndex].quantity -= 1;
+                                if (newItems[itemIndex].quantity <= 0) {
                                   newItems.splice(itemIndex, 1);
                                 }
                                 setCombo({ ...combo, items: newItems });
