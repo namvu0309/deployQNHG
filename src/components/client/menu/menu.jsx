@@ -1,14 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import "./menu.scss";
-import { combos, dishs, drinks } from "./data-menu";
+import { getMenuList, getAllDishes } from "@services/client/menuService";
+import { getDishDetail } from "@services/client/dishDetailService";
 import plush from "@assets/client/images/menu/plush.svg";
+import defaultDishImg from "@assets/client/images/branch/anh-caugiay.jpg";
+import NavbarCategory from "../../../components/client/include/header/NavbarCategory";
+import DishDetailPopsup from "../dishDetail/DishDetailPopsup";
 
 const Menu = () => {
   const [cart, setCart] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [menuData, setMenuData] = useState([]);
+  const [showDetail, setShowDetail] = useState(false);
+  const [selectedDish, setSelectedDish] = useState(null);
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const categoryId = searchParams.get("category");
+
+  useEffect(() => {
+    const fetchMenu = async () => {
+      try {
+        let data;
+        if (categoryId) {
+          data = await getMenuList(categoryId);
+        } else {
+          data = await getAllDishes();
+        }
+        setMenuData(Array.isArray(data.data) ? data.data : []);
+      } catch (e) {
+        console.error("Lỗi lấy menu:", e);
+      }
+    };
+    fetchMenu();
+  }, [categoryId]);
 
   const handleAdd = (item) => {
-    const priceNumber = Number(item.price.toString().replace(/[^\d]/g, ""));
+    const priceNumber = Number(item.price?.toString().replace(/[^\d]/g, ""));
     setCart((prevCart) => {
       const existingItem = prevCart.find((i) => i.id === item.id);
       if (existingItem) {
@@ -26,6 +55,18 @@ const Menu = () => {
     setIsModalOpen(false);
   };
 
+  // Hàm mở popup chi tiết sản phẩm
+  const handleShowDetail = async (id) => {
+    try {
+      const res = await getDishDetail(id);
+      setSelectedDish(res.data || null);
+      setShowDetail(true);
+    } catch (e) {
+      setSelectedDish(null);
+      setShowDetail(false);
+    }
+  };
+
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.quantity * item.price,
@@ -34,6 +75,7 @@ const Menu = () => {
 
   return (
     <div className="td-menu">
+      <NavbarCategory />
       <div className="menuList">
         <div className="widthCT">
           {totalItems > 0 && (
@@ -45,91 +87,48 @@ const Menu = () => {
           )}
 
           <div className="menuBox">
-            <h2 className="title-menu">Combo</h2>
+            <h2 className="title-menu">Menu</h2>
             <ul className="list-food-menu">
-              {combos.map((combo) => (
-                <li key={combo.id}>
-                  <div className="food-menu">
-                    <a href="#" className="thumb">
-                      <img src={combo.image} alt={combo.title} />
-                    </a>
-                    <div className="info-box">
-                      <a href="#" className="title-food">
-                        {combo.title}
+              {Array.isArray(menuData) && menuData.length > 0 ? (
+                menuData.map((item) => (
+                  <li key={item.id}>
+                    <div className="food-menu">
+                      <a
+                        href="#"
+                        className="thumb"
+                        onClick={e => {
+                          e.preventDefault();
+                          handleShowDetail(item.id);
+                        }}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <img
+                          src={item.image_url ? item.image_url : defaultDishImg}
+                          alt={item.name || item.title || "Món ăn"}
+                          onError={e => { e.target.onerror = null; e.target.src = defaultDishImg; }}
+                        />
                       </a>
-                      <div className="price-food">{combo.price}</div>
-                      <div className="funcsBox">
-                        <button
-                          className="add-to-card"
-                          onClick={() => handleAdd(combo)}
-                        >
-                          <img src={plush} alt="" />
-                          <span className="txt">Đặt</span>
-                        </button>
+                      <div className="info-box">
+                        <a href="#" className="title-food">
+                          {item.name || item.title || item.description}
+                        </a>
+                        <div className="price-food">{item.selling_price ? item.selling_price.toLocaleString() + "₫" : item.price}</div>
+                        <div className="funcsBox">
+                          <button
+                            className="add-to-card"
+                            onClick={() => handleAdd(item)}
+                          >
+                            <img src={plush} alt="" />
+                            <span className="txt">Đặt</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="menuBox">
-            <h2 className="title-menu">Món mới</h2>
-            <ul className="list-food-menu dish">
-              {dishs.map((dish) => (
-                <li key={dish.id}>
-                  <div className="food-menu-dish">
-                    <a href="#" className="thumb">
-                      <img src={dish.image} alt={dish.description} />
-                    </a>
-                    <div className="info-box">
-                      <a href="#" className="title-food">
-                        {dish.description}
-                      </a>
-                      <div className="price-food">{dish.price}</div>
-                      <div className="funcsBox">
-                        <button
-                          className="add-to-card"
-                          onClick={() => handleAdd(dishs)}
-                        >
-                          <img src={plush} alt="" />
-                          <span className="txt">Đặt</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="menuBox">
-            <h2 className="title-menu">Đồ Uống</h2>
-            <ul className="list-food-menu drink">
-              {drinks.map((drink) => (
-                <li key={drink.id}>
-                  <div className="food-menu-dish">
-                    <a href="#" className="thumb">
-                      <img src={drink.image} alt={drink.name} />
-                    </a>
-                    <div className="info-box">
-                      <a href="#" className="title-food">
-                        {drink.name}
-                      </a>
-                      <div className="price-food">{drink.price}</div>
-                      <div className="funcsBox">
-                        <button
-                          className="add-to-card"
-                          onClick={() => handleAdd(drink)}
-                        >
-                          <img src={plush} alt="" />
-                          <span className="txt">Đặt</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                ))
+              ) : (
+                <li>Không có dữ liệu menu.</li>
+              )}
             </ul>
           </div>
 
@@ -144,12 +143,11 @@ const Menu = () => {
                   ×
                 </button>
               </div>
-              
 
               <ul className="cart-list">
                 {cart.map((item) => (
                   <li key={item.id} className="cart-item">
-                    <div className="name">{item.title || item.description}</div>
+                    <div className="name">{item.title || item.description || item.name}</div>
                     <div className="quantity-control">
                       <span>{item.quantity}</span>
                     </div>
@@ -159,8 +157,16 @@ const Menu = () => {
                   </li>
                 ))}
               </ul>
+              <button className="remove-all-btn" onClick={handleRemoveAll} style={{marginTop: '16px', background: '#e74c3c', color: '#fff', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer'}}>Xóa hết</button>
             </div>
           )}
+
+          {/* Popup chi tiết sản phẩm */}
+          <DishDetailPopsup
+            isOpen={showDetail}
+            onClose={() => setShowDetail(false)}
+            dish={selectedDish}
+          />
         </div>
       </div>
     </div>

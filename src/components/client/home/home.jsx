@@ -9,6 +9,7 @@ import DishDetailPopsup from "../dishDetail/DishDetailPopsup";
 import BookingPopup from "../include/header/BookingPopup";
 import Footer from "../include/footer/footer";
 import { getFeaturedDishes } from "@services/client/dishDetailService";
+import dish1 from "@assets/client/images/home/dish1.webp";
 // import plush from "@assets/client/images/menu/plush.svg";
 
 // Đã xóa import Header
@@ -77,7 +78,7 @@ console.log(dishes)
                 style={{ cursor: "pointer" }}
               >
                 <div className="card-image">
-                  <img src={d.image_url} alt={d.name} />
+                  <img src={d.image_url ? d.image_url : dish1} alt={d.name} />
                 </div>
                 <div className="card-info">
                   <h3>{d.name}</h3>

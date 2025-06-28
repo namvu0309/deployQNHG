@@ -14,3 +14,9 @@ export const getFeaturedDishes = async () => {
   const response = await axiosInstance.get("/dishes/featured");
   return response.data;
 };
+
+// Lấy chi tiết món ăn
+export const getDishDetail = async (id) => {
+  const response = await axiosInstance.get(`/dishes/${id}`);
+  return response.data;
+};
