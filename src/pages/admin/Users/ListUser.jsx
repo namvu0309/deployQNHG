@@ -1,13 +1,36 @@
 import React, { useEffect, useState } from "react";
 import {
+    Card,
+    CardHeader,
+    Row,
+    Col,
+    Button,
+    ButtonGroup,
+    Badge,
+    Input,
+    Offcanvas,
+    OffcanvasHeader,
+    OffcanvasBody,
+    Form,
+    FormGroup,
+    Label,
+} from "reactstrap";
+import Swal from "sweetalert2";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
+import CreateUser from "./CreateUser";
+import {
     getUsers,
     deleteUser,
     blockUser,
     unblockUser,
-} from "@services/admin/userService.js";
-import Swal from "sweetalert2";
-import CreateUser from "./CreateUser";
-import Breadcrumbs from "@components/admin/ui/Breadcrumb.jsx";
+} from "@services/admin/userService";
+
+const userStatusOptions = [
+    { label: "Tất cả", value: "all", badgeColor: "secondary" },
+    { label: "Đang hoạt động", value: "active", badgeColor: "success" },
+    { label: "Dừng hoạt động", value: "inactive", badgeColor: "secondary" },
+    { label: "Đã khóa", value: "blocked", badgeColor: "danger" },
+];
 
 export default function ListUser() {
     const [users, setUsers] = useState([]);
@@ -17,18 +40,31 @@ export default function ListUser() {
     const [editingUser, setEditingUser] = useState(null);
     const [keyword, setKeyword] = useState("");
     const [filterStatus, setFilterStatus] = useState("all");
+    const [showFilter, setShowFilter] = useState(false);
+    const [filterUsername, setFilterUsername] = useState("");
+    const [filterEmail, setFilterEmail] = useState("");
 
     useEffect(() => {
         fetchUsers();
     }, [keyword, filterStatus]);
 
-    const fetchUsers = () => {
+    const fetchUsers = (page = 1) => {
         setLoading(true);
-        const params = { keyword };
+        const params = { page, keyword };
+
         if (filterStatus !== "all") {
             params.status = filterStatus;
         }
 
+        if (filterUsername) {
+            params.username = filterUsername;
+        }
+
+        if (filterEmail) {
+            params.email = filterEmail;
+        }
+
+        console.log("🔍 Params gửi lên BE:", params);
         getUsers(params)
             .then((res) => {
                 const result = res.data.data;
@@ -89,148 +125,243 @@ export default function ListUser() {
 
     return (
         <div className="page-content">
-            <Breadcrumbs title="Danh sách nhân viên" breadcrumbItem="Danh sách nhân viên" />
+            <Breadcrumbs title="Danh sách nhân viên" breadcrumbItem="Quản lý người dùng" />
 
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <button
-                    className="btn btn-primary"
+                <Button
+                    color="primary"
                     onClick={() => {
                         setEditingUser(null);
                         setShowModal(true);
                     }}
                 >
                     + Thêm mới
-                </button>
+                </Button>
             </div>
 
-            {/* Tabs lọc trạng thái */}
-            <ul className="nav nav-tabs mb-3">
-                {["all", "active", "inactive", "blocked"].map((status) => (
-                    <li className="nav-item" key={status}>
-                        <button
-                            className={`nav-link ${filterStatus === status ? "active" : ""}`}
-                            onClick={() => setFilterStatus(status)}
-                        >
-                            {{
-                                all: "Tất cả",
-                                active: "Đang hoạt động",
-                                inactive: "Dừng hoạt động",
-                                blocked: "Đã khóa",
-                            }[status]}
-                        </button>
-                    </li>
-                ))}
-            </ul>
+            <Card className="mb-4">
+                <CardHeader className="bg-white border-bottom-0">
+                    <Row className="align-items-center">
+                        <Col md="8" sm="12" className="mb-2 mb-md-0 d-flex flex-wrap gap-2">
+                            {userStatusOptions.map((opt) => (
+                                <button
+                                    key={opt.value}
+                                    onClick={() => setFilterStatus(opt.value)}
+                                    className="btn btn-light border"
+                                    style={{
+                                        fontWeight: filterStatus === opt.value ? "bold" : "normal",
+                                        borderColor: filterStatus === opt.value ? "#0d6efd" : "#ccc",
+                                        color: filterStatus === opt.value ? "#0d6efd" : "#333",
+                                    }}
+                                >
+                                    {opt.label}
+                                    <Badge
+                                        color={opt.badgeColor}
+                                        pill
+                                        className="ms-2"
+                                        style={{ fontSize: 13 }}
+                                    >
+                                        0
+                                    </Badge>
+                                </button>
+                            ))}
+                        </Col>
+                        <Col md="4" sm="12" className="d-flex justify-content-md-end justify-content-start gap-2">
+                            <Input
+                                type="search"
+                                placeholder="Tìm kiếm người dùng..."
+                                value={keyword}
+                                onChange={(e) => setKeyword(e.target.value)}
+                                style={{ maxWidth: 250 }}
+                            />
+                            <Button
+                                color="light"
+                                className="border"
+                                onClick={() => setShowFilter(true)}
+                            >
+                                <i className="mdi mdi-filter-variant me-1"></i> Lọc nâng cao
+                            </Button>
+                        </Col>
+                    </Row>
+                </CardHeader>
+            </Card>
 
-            {/* Tìm kiếm */}
-            <input
-                type="text"
-                className="form-control mb-3"
-                placeholder="Tìm kiếm người dùng..."
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-            />
-
-            {/* Danh sách người dùng */}
             {loading ? (
                 <p>Đang tải...</p>
             ) : (
-                <table className="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Ảnh đại diện</th>
-                        <th>Tên</th>
-                        <th>Họ Và Tên</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Trạng thái</th>
-                        <th>Hành động</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {users.length === 0 ? (
+                <div className="table-responsive">
+                    <table className="table table-bordered align-middle">
+                        <thead>
                         <tr>
-                            <td colSpan="8" className="text-center">
-                                Không có dữ liệu
-                            </td>
+                            <th>ID</th>
+                            <th>Ảnh đại diện</th>
+                            <th>Tên đăng nhập</th>
+                            <th>Họ và tên</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
                         </tr>
-                    ) : (
-                        users.map((user) => (
-                            <tr key={user.id}>
-                                <td>{user.id}</td>
-                                <td>
-                                    {user.avatar ? (
-                                        <img
-                                            src={`http://localhost:8000/storage/${user.avatar}`}
-                                            alt="avatar"
-                                            style={{
-                                                width: 40,
-                                                height: 40,
-                                                borderRadius: "50%",
-                                                objectFit: "cover",
-                                            }}
-                                        />
-                                    ) : (
-                                        <span className="text-muted">Không có</span>
-                                    )}
+                        </thead>
+                        <tbody>
+                        {users.length === 0 ? (
+                            <tr>
+                                <td colSpan="8" className="text-center">
+                                    Không có dữ liệu
                                 </td>
-                                <td>{user.username}</td>
-                                <td>{user.full_name}</td>
-                                <td>{user.email}</td>
-                                <td>{user.phone_number}</td>
-                                <td>
-                                    {user.status === "blocked" ? (
-                                        <span className="badge bg-danger">Đã khóa</span>
-                                    ) : user.status === "inactive" ? (
-                                        <span className="badge bg-secondary">Dừng hoạt động</span>
-                                    ) : (
-                                        <span className="badge bg-success">Hoạt động</span>
-                                    )}
-                                </td>
-                                <td>
-                                    {user.status === "inactive" ? (
-                                        <span className="text-muted">Đã xóa</span>
-                                    ) : user.status === "blocked" ? (
-                                        <button
-                                            className="btn btn-sm btn-success"
-                                            onClick={() => handleUnblock(user.id)}
-                                        >
-                                            Mở khóa
-                                        </button>
-                                    ) : (
-                                        <>
-                                            <button
-                                                className="btn btn-sm btn-warning me-2"
-                                                onClick={() => {
-                                                    setEditingUser(user);
-                                                    setShowModal(true);
-                                                }}
-                                            >
-                                                Sửa
-                                            </button>
-                                            <button
-                                                className="btn btn-sm btn-danger me-2"
-                                                onClick={() => handleDelete(user.id)}
-                                            >
-                                                Xóa
-                                            </button>
-                                            <button
-                                                className="btn btn-sm btn-secondary"
-                                                onClick={() => handleBlock(user.id)}
-                                            >
-                                                Khóa
-                                            </button>
-                                        </>
-                                    )}
-                                </td>
-
                             </tr>
-                        ))
-                    )}
-                    </tbody>
-                </table>
+                        ) : (
+                            users.map((user) => (
+                                <tr key={user.id}>
+                                    <td>{user.id}</td>
+                                    <td>
+                                        {user.avatar ? (
+                                            <img
+                                                src={`http://localhost:8000/storage/${user.avatar}`}
+                                                alt="avatar"
+                                                style={{
+                                                    width: 40,
+                                                    height: 40,
+                                                    borderRadius: "50%",
+                                                    objectFit: "cover",
+                                                }}
+                                            />
+                                        ) : (
+                                            <span className="text-muted">Không có</span>
+                                        )}
+                                    </td>
+                                    <td>{user.username}</td>
+                                    <td>{user.full_name}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.phone_number}</td>
+                                    <td>
+                                        {user.status === "blocked" ? (
+                                            <Badge color="danger">Đã khóa</Badge>
+                                        ) : user.status === "inactive" ? (
+                                            <Badge color="secondary">Dừng hoạt động</Badge>
+                                        ) : (
+                                            <Badge color="success">Hoạt động</Badge>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {user.status === "inactive" ? (
+                                            <span className="text-muted">Đã xóa</span>
+                                        ) : user.status === "blocked" ? (
+                                            <Button
+                                                color="success"
+                                                size="sm"
+                                                onClick={() => handleUnblock(user.id)}
+                                                title="Mở khóa"
+                                            >
+                                                <i className="bi bi-unlock"></i>
+                                            </Button>
+                                        ) : (
+                                            <div className="d-flex gap-2">
+                                                <Button
+                                                    color="light"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setEditingUser(user);
+                                                        setShowModal(true);
+                                                    }}
+                                                    title="Sửa"
+                                                >
+                                                    <i className="bi bi-pencil-square"></i>
+                                                </Button>
+                                                <Button
+                                                    color="light"
+                                                    size="sm"
+                                                    onClick={() => handleDelete(user.id)}
+                                                    title="Xóa"
+                                                >
+                                                    <i className="bi bi-trash"></i>
+                                                </Button>
+                                                <Button
+                                                    color="light"
+                                                    size="sm"
+                                                    onClick={() => handleBlock(user.id)}
+                                                    title="Khóa"
+                                                >
+                                                    <i className="bi bi-lock"></i>
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                        </tbody>
+                    </table>
+                </div>
             )}
+
+            {/* Paginate */}
+            {meta.total > meta.per_page && (
+                <div className="d-flex justify-content-end mt-3 align-items-center gap-2">
+                    <Button
+                        color="light"
+                        disabled={!meta.prev_page_url}
+                        onClick={() => fetchUsers(meta.current_page - 1)}
+                    >
+                        Trước
+                    </Button>
+                    <span>
+                        Trang {meta.current_page} / {meta.last_page}
+                    </span>
+                    <Button
+                        color="light"
+                        disabled={!meta.next_page_url}
+                        onClick={() => fetchUsers(meta.current_page + 1)}
+                    >
+                        Sau
+                    </Button>
+                </div>
+            )}
+
+            {/* Offcanvas bộ lọc nâng cao */}
+            <Offcanvas
+                direction="end"
+                isOpen={showFilter}
+                toggle={() => setShowFilter(false)}
+            >
+                <OffcanvasHeader toggle={() => setShowFilter(false)}>
+                    Bộ lọc nâng cao
+                </OffcanvasHeader>
+                <OffcanvasBody>
+                    <Form>
+                        <FormGroup>
+                            <Label for="filterName">Tên đăng nhập</Label>
+                            <Input
+                                id="filterName"
+                                placeholder="Nhập tên đăng nhập..."
+                                value={filterUsername}
+                                onChange={(e) => setFilterUsername(e.target.value)}
+                            />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label for="filterEmail">Email</Label>
+                            <Input
+                                id="filterEmail"
+                                placeholder="Nhập email..."
+                                value={filterEmail}
+                                onChange={(e) => setFilterEmail(e.target.value)}
+                            />
+                        </FormGroup>
+                        <Button
+                            color="primary"
+                            className="mt-3"
+                            block
+                            onClick={() => {
+                                setShowFilter(false); // đóng bộ lọc
+                                fetchUsers(1);        // gọi lại API từ trang 1
+                            }}
+                        >
+                            Áp dụng lọc
+                        </Button>
+                    </Form>
+
+                </OffcanvasBody>
+            </Offcanvas>
 
             {/* Modal thêm/sửa */}
             {showModal && (

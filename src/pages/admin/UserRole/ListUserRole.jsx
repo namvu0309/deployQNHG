@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
-    getUserRoleList,
-    deleteUserRole
-} from "@services/admin/userRoleService";
+    Button,
+    Input,
+    Card,
+    CardHeader
+} from "reactstrap";
 import Swal from "sweetalert2";
+import { getUserRoleList, deleteUserRole } from "@services/admin/userRoleService";
 import CreateUserRole from "./CreateUserRole";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb.jsx";
 
@@ -12,21 +15,20 @@ export default function ListUserRole() {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingUserRole, setEditingUserRole] = useState(null);
+    const [keyword, setKeyword] = useState("");
 
     useEffect(() => {
         fetchUserRoles();
-    }, []);
+    }, [keyword]);
 
     const fetchUserRoles = () => {
         setLoading(true);
-        getUserRoleList()
+        getUserRoleList({ keyword })
             .then((res) => {
-                console.log("Dữ liệu phân quyền:", res.data);
-                setUserRoles(res.data?.data?.items || []); // ✅ lấy đúng mảng items
+                setUserRoles(res.data?.data?.items || []);
             })
             .finally(() => setLoading(false));
     };
-
 
     const handleDelete = (id) => {
         Swal.fire({
@@ -46,73 +48,92 @@ export default function ListUserRole() {
 
     return (
         <div className="page-content">
-            <Breadcrumbs title="Phân quyền" breadcrumbItem="Danh sách phân quyền" />
+            <Breadcrumbs title="Phân quyền người dùng" breadcrumbItem="Danh sách phân quyền" />
 
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <button
-                    className="btn btn-primary"
-                    onClick={() => {
-                        setEditingUserRole(null);
-                        setShowModal(true);
-                    }}
-                >
+                <Button color="primary" onClick={() => {
+                    setEditingUserRole(null);
+                    setShowModal(true);
+                }}>
                     + Thêm phân quyền
-                </button>
+                </Button>
             </div>
 
+            <Card className="mb-4">
+                <CardHeader className="bg-white border-bottom-0 d-flex justify-content-between">
+                    <Input
+                        type="search"
+                        placeholder="Tìm theo username hoặc email..."
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        style={{ maxWidth: 250 }}
+                    />
+                </CardHeader>
+            </Card>
+
             {loading ? (
-                <p>Đang tải...</p>
+                <p>Đang tải dữ liệu...</p>
             ) : (
-                <table className="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Vai trò</th>
-                        <th>Mô tả vai trò</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {userRoles.length === 0 ? (
+                <div className="table-responsive">
+                    <table className="table table-bordered align-middle">
+                        <thead className="table-light">
                         <tr>
-                            <td colSpan="7" className="text-center">Không có dữ liệu</td>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Vai trò</th>
+                            <th>Mô tả vai trò</th>
+                            <th>Thao tác</th>
                         </tr>
-                    ) : (
-                        userRoles.map((item) => (
-                            <tr key={item.id}>
-                                <td>{item.id}</td>
-                                <td>{item.username}</td>
-                                <td>{item.email}</td>
-                                <td>{item.role_name}</td>
-                                <td>{item.role_description}</td>
-                                <td>{item.status === 'active' ? 'Hoạt động' : 'Đã khóa'}</td>
-                                <td>
-                                    <button
-                                        className="btn btn-sm btn-warning me-2"
-                                        onClick={() => {
-                                            setEditingUserRole(item); // set item đang sửa
-                                            setShowModal(true);       // mở modal
-                                        }}
-                                    >
-                                        Sửa
-                                    </button>
-                                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(item.id)}>
-                                        Xóa
-                                    </button>
-                                </td>
+                        </thead>
+                        <tbody>
+                        {userRoles.length === 0 ? (
+                            <tr>
+                                <td colSpan="6" className="text-center">Không có dữ liệu</td>
                             </tr>
-                        ))
-                    )}
-                    </tbody>
-                </table>
+                        ) : (
+                            userRoles.map((item) => (
+                                <tr key={item.id}>
+                                    <td>{item.id}</td>
+                                    <td>{item.username}</td>
+                                    <td>{item.email}</td>
+                                    <td>{item.role_name}</td>
+                                    <td>{item.role_description}</td>
+                                    <td>
+                                        <div className="d-flex gap-2">
+                                            <Button
+                                                size="sm"
+                                                color="light"
+                                                title="Sửa"
+                                                onClick={() => {
+                                                    setEditingUserRole(item);
+                                                    setShowModal(true);
+                                                }}
+                                            >
+                                                <i className="bi bi-pencil-square"></i>
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                color="light"
+                                                title="Xóa"
+                                                onClick={() => handleDelete(item.id)}
+                                            >
+                                                <i className="bi bi-trash"></i>
+                                            </Button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                        </tbody>
+                    </table>
+                </div>
             )}
 
+            {/* Modal */}
             {showModal && (
                 <div className="modal d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
-                    <div className="modal-dialog">
+                    <div className="modal-dialog modal-lg">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">
@@ -126,8 +147,12 @@ export default function ListUserRole() {
                                     onSuccess={() => {
                                         fetchUserRoles();
                                         setShowModal(false);
+                                        setEditingUserRole(null);
                                     }}
-                                    onClose={() => setShowModal(false)}
+                                    onClose={() => {
+                                        setShowModal(false);
+                                        setEditingUserRole(null);
+                                    }}
                                 />
                             </div>
                         </div>
