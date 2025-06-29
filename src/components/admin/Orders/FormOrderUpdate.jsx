@@ -22,7 +22,15 @@ import { getTableAreas } from "@services/admin/tableAreaService";
 import { getOrderDetail, updateOrder } from "@services/admin/orderService";
 import { useLocation } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
+import OrderItemsModal from "./OrderItemsModal";
+import "./OrderItemsModal.scss";
 import "./FormOrder.scss";
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import dishDefaultImg from "@assets/admin/images/dish/dish-default.webp";
+import { formatPriceToVND } from "@helpers/formatPriceToVND";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const FormOrderUpdate = () => {
   const location = useLocation();
@@ -53,20 +61,38 @@ const FormOrderUpdate = () => {
   const [selectedArea, setSelectedArea] = useState(null);
   const [loadingOrder, setLoadingOrder] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showItemsModal, setShowItemsModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const fullUrl = `http://localhost:8000/storage/`;
 
-  const statusOptions = [
-    "pending_confirmation",
-    "confirmed",
-    "preparing",
-    "ready_to_serve",
-    "served",
-    "ready_for_pickup",
-    "delivering",
-    "completed",
-    "cancelled",
-    "payment_failed",
-  ];
+  const statusOptionsMap = {
+    "dine-in": [
+      { value: "pending", label: "Chờ xác nhận" },
+      { value: "confirmed", label: "Đã xác nhận" },
+      { value: "preparing", label: "Đang chuẩn bị" },
+      { value: "ready", label: "Sẵn sàng" },
+      { value: "served", label: "Đã phục vụ" },
+      { value: "completed", label: "Hoàn tất" },
+      { value: "cancelled", label: "Đã hủy" },
+    ],
+    "takeaway": [
+      { value: "pending", label: "Chờ xác nhận" },
+      { value: "confirmed", label: "Đã xác nhận" },
+      { value: "preparing", label: "Đang chuẩn bị" },
+      { value: "ready", label: "Sẵn sàng" },
+      { value: "completed", label: "Hoàn tất" },
+      { value: "cancelled", label: "Đã hủy" },
+    ],
+    "delivery": [
+      { value: "pending", label: "Chờ xác nhận" },
+      { value: "confirmed", label: "Đã xác nhận" },
+      { value: "preparing", label: "Đang chuẩn bị" },
+      { value: "ready", label: "Sẵn sàng" },
+      { value: "delivering", label: "Đang giao hàng" },
+      { value: "completed", label: "Hoàn tất" },
+      { value: "cancelled", label: "Đã hủy" },
+    ],
+  };
 
   useEffect(() => {
     if (orderId) {
@@ -165,7 +191,16 @@ const FormOrderUpdate = () => {
 
   const addToOrder = (dish) => {
     setOrderItems((prevItems) => {
-      const existingIndex = prevItems.findIndex((item) => item.id === dish.id);
+      const existingIndex = prevItems.findIndex((item) => {
+        // So sánh id món ăn thực sự
+        if (item.dish_id && typeof item.dish_id === 'object') {
+          return item.dish_id.id === dish.id;
+        }
+        if (item.dish_id && typeof item.dish_id === 'number') {
+          return item.dish_id === dish.id;
+        }
+        return item.id === dish.id;
+      });
       if (existingIndex !== -1) {
         const updatedItems = [...prevItems];
         updatedItems[existingIndex].quantity += 1;
@@ -215,21 +250,36 @@ const FormOrderUpdate = () => {
   const handleEditTables = () => {
     setShowTableModal(true);
 
-    if (tableAreas.length === 0) {
-      setLoadingTables(true);
-      getTableAreas()
-        .then((res) => {
-          const areas = (res.data?.data?.items || []).filter(
-            (area) => area.status === "active"
-          );
-          setTableAreas(areas);
-          if (!selectedArea && areas.length > 0) {
-            setSelectedArea(areas[0]?.id || null);
-          }
-        })
-        .catch(() => setTableAreas([]))
-        .finally(() => setLoadingTables(false));
-    }
+    setLoadingTables(true);
+    getTableAreas()
+      .then((res) => {
+        const areas = (res.data?.data?.items || []).filter(
+          (area) => area.status === "active"
+        );
+        setTableAreas(areas);
+        let areaId = selectedArea;
+        if (!areaId && areas.length > 0) {
+          areaId = areas[0]?.id;
+          setSelectedArea(areaId);
+        }
+        // Fetch tables for the selected area
+        if (areaId) {
+          getTables({ table_area_id: areaId })
+            .then((res) => {
+              setTableList(res.data?.data?.items || []);
+            })
+            .catch(() => setTableList([]))
+            .finally(() => setLoadingTables(false));
+        } else {
+          setTableList([]);
+          setLoadingTables(false);
+        }
+      })
+      .catch(() => {
+        setTableAreas([]);
+        setTableList([]);
+        setLoadingTables(false);
+      });
   };
 
   const handleCloseTableModal = () => setShowTableModal(false);
@@ -247,19 +297,16 @@ const FormOrderUpdate = () => {
       setLoadingTables(true);
       getTables({ table_area_id: selectedArea })
         .then((res) => {
-          const fetchedTables = res.data?.data?.items || [];
-          // Merge with existing tableList to preserve orderData.tables
-          const mergedTables = [
-            ...tableList.filter((t) =>
-              selectedTables.includes(String(t.id))
-            ),
-            ...fetchedTables.filter(
-              (t) => !tableList.some((ot) => ot.id === t.id)
-            ),
-          ];
-          setTableList(mergedTables);
+          const allTables = res.data?.data?.items || [];
+          // Chỉ hiển thị bàn đang trống hoặc đã được chọn trong order
+          const filteredTables = allTables.filter(
+            (table) =>
+              table.status === "available" ||
+              selectedTables.includes(String(table.id))
+          );
+          setTableList(filteredTables);
         })
-        .catch(() => setTableList(tableList)) // Preserve existing tableList on error
+        .catch(() => setTableList([]))
         .finally(() => setLoadingTables(false));
     }
   }, [showTableModal, selectedArea]);
@@ -289,10 +336,18 @@ const FormOrderUpdate = () => {
       console.log('Dữ liệu cập nhật gửi đi:', orderData);
 
       await updateOrder(orderId, orderData);
-      alert("Order updated successfully!");
+      toast.success("Cập nhật đơn hàng thành công!");
     } catch (error) {
       console.error("Error updating order:", error);
-      alert("Failed to update order.");
+      const apiErrors = error.response?.data?.errors;
+      if (apiErrors) {
+        const errorMessages = Object.values(apiErrors)
+          .map((e) => (Array.isArray(e) ? e.join(", ") : e))
+          .join("; ");
+        toast.error(errorMessages || "Lỗi khi cập nhật đơn hàng!");
+      } else {
+        toast.error(error.response?.data?.message || "Lỗi khi cập nhật đơn hàng!");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -300,6 +355,9 @@ const FormOrderUpdate = () => {
 
   return (
     <div className="page-content">
+      <div className="mb-3">
+        <Breadcrumbs title="Quản lý đơn hàng" breadcrumbItem="Chỉnh sửa đơn hàng" />
+      </div>
       {loadingOrder ? (
         <div className="text-center my-5">
           <Spinner color="primary" />
@@ -307,7 +365,7 @@ const FormOrderUpdate = () => {
       ) : (
         <Row>
           {/* Product Catalog */}
-          <Col md={9}>
+          <Col md={8}>
             <Row className="align-items-center g-2 mb-3">
               <Col md={8} sm={12}>
                 <div className="input-group">
@@ -343,7 +401,7 @@ const FormOrderUpdate = () => {
                     <Card className="menu-card d-flex flex-row align-items-stretch shadow-sm border-0">
                       <div className="menu-card-img-block">
                         <img
-                          src={`${fullUrl}${dish.image_url}` || "không có ảnh"}
+                          src={dish.image_url ? `${fullUrl}${dish.image_url}` : dishDefaultImg}
                           alt={dish.name}
                           className="menu-card-img"
                         />
@@ -353,9 +411,7 @@ const FormOrderUpdate = () => {
                           {dish.name || "Unnamed Dish"}
                         </div>
                         <div className="menu-card-price mb-2">
-                          {dish.selling_price
-                            ? dish.selling_price.toLocaleString("vi-VN")
-                            : "0"}
+                          {formatPriceToVND(dish.selling_price || 0)}
                         </div>
                         <Button
                           color="light"
@@ -399,15 +455,20 @@ const FormOrderUpdate = () => {
           </Col>
 
           {/* Order Summary */}
-          <Col md={3} className="order-sidebar">
+          <Col md={4} className="order-sidebar">
             <div className="order-sidebar-inner">
               <div className="order-sidebar-header mb-3">
-                <div className="order-sidebar-title">Edit Order</div>
+                <div className="order-sidebar-title d-flex align-items-center">
+                  Chỉnh sửa đơn hàng
+                  <Button color="link" size="sm" className="ms-2 p-0" onClick={() => setShowItemsModal(true)} title="Xem danh sách món ăn">
+                    <FaEdit size={20} />
+                  </Button>
+                </div>
               </div>
               <div className="order-sidebar-list order-sidebar-list-scroll mb-3">
                 {orderItems.length === 0 ? (
                   <div className="text-muted text-center py-4 small">
-                    No items in the order yet.
+                    Chưa có món nào trong đơn hàng.
                   </div>
                 ) : (
                   orderItems.map((item) => (
@@ -448,10 +509,7 @@ const FormOrderUpdate = () => {
                         </div>
                       </div>
                       <div className="order-item-price fw-bold ms-3 mt-1">
-                        $
-                        {(
-                          (item.unit_price || item.price) * item.quantity
-                        ).toFixed(2)}
+                        {formatPriceToVND((item.unit_price || item.price) * item.quantity)}
                       </div>
                     </div>
                   ))
@@ -469,7 +527,7 @@ const FormOrderUpdate = () => {
                   }}
                 >
                   <div className="d-flex justify-content-between align-items-center mb-1">
-                    <div className="order-sidebar-label">Order Note</div>
+                    <div className="order-sidebar-label">Ghi chú đơn hàng</div>
                     <Button
                       color="link"
                       size="sm"
@@ -496,7 +554,7 @@ const FormOrderUpdate = () => {
                     />
                   ) : (
                     <div className="text-muted small">
-                      {orderNotes ? orderNotes : "No notes added"}
+                      {orderNotes ? orderNotes : "Chưa có ghi chú"}
                     </div>
                   )}
                 </div>
@@ -511,7 +569,7 @@ const FormOrderUpdate = () => {
                   }}
                 >
                   <Label className="order-sidebar-label mb-1">
-                    Order Method
+                    Hình thức đơn hàng
                   </Label>
                   <Input
                     type="select"
@@ -520,9 +578,9 @@ const FormOrderUpdate = () => {
                     className="order-method-select"
                     style={{ width: "100%" }}
                   >
-                    <option value="dine-in">Dine In</option>
-                    <option value="takeaway">Takeaway</option>
-                    <option value="delivery">Delivery</option>
+                    <option value="dine-in">Ăn tại chỗ</option>
+                    <option value="takeaway">Mang đi</option>
+                    <option value="delivery">Giao hàng</option>
                   </Input>
                 </div>
 
@@ -536,7 +594,7 @@ const FormOrderUpdate = () => {
                   }}
                 >
                   <Label className="order-sidebar-label mb-1">
-                    Order Status
+                    Trạng thái đơn hàng
                   </Label>
                   <Input
                     type="select"
@@ -545,11 +603,9 @@ const FormOrderUpdate = () => {
                     className="order-status-select"
                     style={{ width: "100%" }}
                   >
-                    {statusOptions.map((status) => (
-                      <option key={status} value={status}>
-                        {status
-                          .replace(/_/g, " ")
-                          .replace(/\b\w/g, (c) => c.toUpperCase())}
+                    {(statusOptionsMap[orderMethod] || []).map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
                       </option>
                     ))}
                   </Input>
@@ -575,9 +631,9 @@ const FormOrderUpdate = () => {
                             return found ? `Bàn ${found.table_number}` : null;
                           })
                           .filter((tableStr) => tableStr !== null)
-                          .join(", ") || "No table selected"
+                          .join(", ") || "Chưa chọn bàn nào"
                       ) : (
-                        <span className="text-muted">No table selected</span>
+                        <span className="text-muted">Chưa chọn bàn nào</span>
                       )}
                     </span>
 
@@ -596,29 +652,48 @@ const FormOrderUpdate = () => {
               </div>
 
               <div className="order-sidebar-totals mb-3">
-                <div className="d-flex justify-content-between small mb-1">
-                  <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                <div className="d-flex justify-content-between mb-1" style={{fontSize: '1.1rem', fontWeight: 500}}>
+                  <span>Tạm tính</span>
+                  <span>{formatPriceToVND(subtotal)}</span>
                 </div>
-                <div className="d-flex justify-content-between small mb-1">
+                <div className="d-flex justify-content-between mb-1" style={{fontSize: '1.1rem', fontWeight: 500}}>
                   <span>VAT</span>
-                  <span>${vat.toFixed(2)}</span>
+                  <span>{formatPriceToVND(vat)}</span>
                 </div>
-                <div className="d-flex justify-content-between fw-bold">
-                  <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                <div className="d-flex justify-content-between" style={{fontSize: '1.25rem', fontWeight: 700}}>
+                  <span>Tổng cộng</span>
+                  <span>{formatPriceToVND(total)}</span>
                 </div>
               </div>
 
-              <Button
-                color="primary"
-                block
-                className="order-sidebar-btn"
-                onClick={handleUpdateOrder}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? <Spinner size="sm" /> : "Update Order"}
-              </Button>
+              <div className="d-flex gap-2">
+                <button
+                  type="button"
+                  className="btn btn-primary w-100"
+                  onClick={handleUpdateOrder}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? <Spinner size="sm" /> : "Lưu lại"}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger w-100"
+                  onClick={() => setShowPaymentModal(true)}
+                  disabled={isSubmitting}
+                >
+                  Lưu & Thanh toán
+                </button>
+              </div>
+              <Modal isOpen={showPaymentModal} toggle={() => setShowPaymentModal(false)}>
+                <ModalHeader toggle={() => setShowPaymentModal(false)}>Chọn phương thức thanh toán</ModalHeader>
+                <ModalBody>
+                  <div className="d-flex flex-column gap-3">
+                    <Button color="primary" onClick={() => { setShowPaymentModal(false); handleUpdateOrder(/* paymentMethod: 'cash' */); }}>Tiền mặt</Button>
+                    <Button color="info" onClick={() => { setShowPaymentModal(false); handleUpdateOrder(/* paymentMethod: 'bank' */); }}>Chuyển khoản</Button>
+                    <Button color="secondary" onClick={() => setShowPaymentModal(false)}>Hủy</Button>
+                  </div>
+                </ModalBody>
+              </Modal>
             </div>
           </Col>
 
@@ -741,8 +816,15 @@ const FormOrderUpdate = () => {
               </Button>
             </ModalFooter>
           </Modal>
+
+          <OrderItemsModal
+            isOpen={showItemsModal}
+            toggle={() => setShowItemsModal(false)}
+            items={orderItems}
+          />
         </Row>
       )}
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

@@ -26,6 +26,10 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
+import OrderItemsModal from "./OrderItemsModal";
+import dishDefaultImg from "@assets/admin/images/dish/dish-default.webp";
+import { formatPriceToVND } from "@helpers/formatPriceToVND";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 const FormOrderCreate = () => {
   const [orderItems, setOrderItems] = useState([]);
@@ -56,6 +60,8 @@ const FormOrderCreate = () => {
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
+  const [showItemsModal, setShowItemsModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -263,9 +269,12 @@ const FormOrderCreate = () => {
   return (
     <div className="page-content">
       <ToastContainer />
+      <div className="mb-3">
+        <Breadcrumbs title="Quản lý đơn hàng" breadcrumbItem="Tạo đơn hàng mới" />
+      </div>
       <Row>
         {/* Product Catalog */}
-        <Col md={9}>
+        <Col md={8}>
           {/* Search & Category Filter */}
           <Row className="align-items-center g-2 mb-3">
             <Col md={8} sm={12}>
@@ -302,7 +311,7 @@ const FormOrderCreate = () => {
                   <Card className="menu-card d-flex flex-row align-items-stretch shadow-sm border-0">
                     <div className="menu-card-img-block">
                       <img
-                        src={`${fullUrl}${dish.image_url}` || "không có ảnh"}
+                        src={dish.image_url ? `${fullUrl}${dish.image_url}` : dishDefaultImg}
                         alt={dish.name}
                         className="menu-card-img"
                       />
@@ -312,9 +321,7 @@ const FormOrderCreate = () => {
                         {dish.name || "Unnamed Dish"}
                       </div>
                       <div className="menu-card-price mb-2">
-                        {dish.selling_price
-                          ? dish.selling_price.toLocaleString("vi-VN")
-                          : "0"}
+                        {formatPriceToVND(dish.selling_price || 0)}
                       </div>
                       <Button
                         color="light"
@@ -359,16 +366,21 @@ const FormOrderCreate = () => {
         </Col>
 
         {/* Order Summary */}
-        <Col md={3} className="order-sidebar">
+        <Col md={4} className="order-sidebar">
           <div className="order-sidebar-inner">
             <div className="order-sidebar-header mb-3">
-              <div className="order-sidebar-title">New Order</div>
+              <div className="order-sidebar-title d-flex align-items-center">
+                Tạo đơn hàng mới
+                <Button color="link" size="sm" className="ms-2 p-0" onClick={() => setShowItemsModal(true)} title="Xem danh sách món ăn">
+                  <FaEdit size={20} />
+                </Button>
+              </div>
             </div>
             {/* Existing Items */}
             <div className="order-sidebar-list order-sidebar-list-scroll mb-3">
               {orderItems.length === 0 ? (
                 <div className="text-muted text-center py-4 small">
-                  No items in the order yet.
+                  Chưa có món nào trong đơn hàng.
                 </div>
               ) : (
                 orderItems.map((item) => (
@@ -407,7 +419,7 @@ const FormOrderCreate = () => {
                       </div>
                     </div>
                     <div className="order-item-price fw-bold ms-3 mt-1">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {formatPriceToVND(item.price * item.quantity)}
                     </div>
                   </div>
                 ))
@@ -425,7 +437,7 @@ const FormOrderCreate = () => {
                 }}
               >
                 <div className="d-flex justify-content-between align-items-center mb-1">
-                  <div className="order-sidebar-label">Order Note</div>
+                  <div className="order-sidebar-label">Ghi chú đơn hàng</div>
                   <Button
                     color="link"
                     size="sm"
@@ -452,7 +464,7 @@ const FormOrderCreate = () => {
                   />
                 ) : (
                   <div className="text-muted small">
-                    {orderNotes ? orderNotes : "No notes added"}
+                    {orderNotes ? orderNotes : "Chưa có ghi chú"}
                   </div>
                 )}
               </div>
@@ -466,7 +478,7 @@ const FormOrderCreate = () => {
                   borderBottom: "1px solid #ececec",
                 }}
               >
-                <Label className="order-sidebar-label mb-1">Order Method</Label>
+                <Label className="order-sidebar-label mb-1">Hình thức đơn hàng</Label>
                 <Input
                   type="select"
                   value={orderMethod}
@@ -474,9 +486,9 @@ const FormOrderCreate = () => {
                   className="order-method-select"
                   style={{ width: "100%" }}
                 >
-                  <option value="Dine In">Dine In</option>
-                  <option value="Takeaway">Takeaway</option>
-                  <option value="Delivery">Delivery</option>
+                  <option value="Dine In">Ăn tại chỗ</option>
+                  <option value="Takeaway">Mang đi</option>
+                  <option value="Delivery">Giao hàng</option>
                 </Input>
               </div>
 
@@ -490,31 +502,31 @@ const FormOrderCreate = () => {
                     borderBottom: "1px solid #ececec",
                   }}
                 >
-                  <Label className="order-sidebar-label mb-1">Delivery Info</Label>
+                  <Label className="order-sidebar-label mb-1">Thông tin giao hàng</Label>
                   <Input
                     type="text"
-                    placeholder="Delivery Address"
+                    placeholder="Địa chỉ giao hàng"
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
                     className="mb-2"
                   />
                   <Input
                     type="text"
-                    placeholder="Contact Name"
+                    placeholder="Tên người nhận"
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     className="mb-2"
                   />
                   <Input
                     type="email"
-                    placeholder="Contact Email"
+                    placeholder="Email liên hệ"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     className="mb-2"
                   />
                   <Input
                     type="tel"
-                    placeholder="Contact Phone"
+                    placeholder="Số điện thoại liên hệ"
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                   />
@@ -540,7 +552,7 @@ const FormOrderCreate = () => {
                         })
                         .join(", ")
                     ) : (
-                      <span className="text-muted">No table selected</span>
+                      <span className="text-muted">Chưa chọn bàn nào</span>
                     )}
                   </span>
                   <Button
@@ -687,30 +699,53 @@ const FormOrderCreate = () => {
             </div>
 
             <div className="order-sidebar-totals mb-3">
-              <div className="d-flex justify-content-between small mb-1">
-                <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+              <div className="d-flex justify-content-between mb-1" style={{fontSize: '1.1rem', fontWeight: 500}}>
+                <span>Tạm tính</span>
+                <span>{formatPriceToVND(subtotal)}</span>
               </div>
-              <div className="d-flex justify-content-between small mb-1">
+              <div className="d-flex justify-content-between mb-1" style={{fontSize: '1.1rem', fontWeight: 500}}>
                 <span>VAT</span>
-                <span>${vat.toFixed(2)}</span>
+                <span>{formatPriceToVND(vat)}</span>
               </div>
-              <div className="d-flex justify-content-between fw-bold">
-                <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+              <div className="d-flex justify-content-between" style={{fontSize: '1.25rem', fontWeight: 700}}>
+                <span>Tổng cộng</span>
+                <span>{formatPriceToVND(total)}</span>
               </div>
             </div>
-            <Button
-              color="primary"
-              block
-              className="order-sidebar-btn"
-              onClick={handleCreateOrder}
-            >
-              Process Order
-            </Button>
+            <div className="d-flex gap-2">
+              <button
+                type="button"
+                className="btn btn-primary w-100"
+                onClick={handleCreateOrder}
+              >
+                Lưu lại
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger w-100"
+                onClick={() => setShowPaymentModal(true)}
+              >
+                Lưu & Thanh toán
+              </button>
+            </div>
+            <Modal isOpen={showPaymentModal} toggle={() => setShowPaymentModal(false)}>
+              <ModalHeader toggle={() => setShowPaymentModal(false)}>Chọn phương thức thanh toán</ModalHeader>
+              <ModalBody>
+                <div className="d-flex flex-column gap-3">
+                  <Button color="primary" onClick={() => { setShowPaymentModal(false); handleCreateOrder(/* paymentMethod: 'cash' */); }}>Tiền mặt</Button>
+                  <Button color="info" onClick={() => { setShowPaymentModal(false); handleCreateOrder(/* paymentMethod: 'bank' */); }}>Chuyển khoản</Button>
+                  <Button color="secondary" onClick={() => setShowPaymentModal(false)}>Hủy</Button>
+                </div>
+              </ModalBody>
+            </Modal>
           </div>
         </Col>
       </Row>
+      <OrderItemsModal
+        isOpen={showItemsModal}
+        toggle={() => setShowItemsModal(false)}
+        items={orderItems}
+      />
     </div>
   );
 };
