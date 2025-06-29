@@ -43,6 +43,8 @@ import PageTable from "@pages/admin/Tables/index";
 import PageReservation from "@pages/admin/Reservations/index";
 import PageTableArea from "@pages/admin/TableAreas/index";
 import PageOrder from "@pages/admin/Orders/index";
+import FormOrderCreate from "@components/admin/Orders/FormOrderCreate";
+import FormOrderUpdate from "@components/admin/Orders/FormOrderUpdate";
 import PageCombo from "@pages/admin/Combos/index";
 import PageCategory from "@pages/admin/Categories/index";
 
@@ -81,12 +83,10 @@ const authProtectedRoutes = [
   { path: "/table-areas/:id/delete", component: <PageTableArea  /> },
 
   // Quản lý đơn hàng
-  { path: "/orders", component: <PageOrder /> },
   { path: "/orders/list", component: <PageOrder /> },
-  { path: "/orders/:id/detail", component: <PageOrder /> },
-  { path: "/orders/create", component: <PageOrder /> },
-  { path: "/orders/:id/edit", component: <PageOrder /> },
-  { path: "/orders/track", component: <PageOrder /> },
+  { path: "/orders/form/create", component: <FormOrderCreate /> },
+  { path: "/orders/form/edit", component: <FormOrderUpdate /> },
+
 
   { path: "/dishes", component: <PageDishes /> },
   //   // //profile

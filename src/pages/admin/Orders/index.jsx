@@ -16,18 +16,18 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
+  ModalFooter,
   FormGroup,
   Label,
   Offcanvas,
   OffcanvasHeader,
   OffcanvasBody,
   Form,
-  ModalFooter,
   Button,
 } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import OrderGrid from "@components/admin/Orders/grid-order";
-import ModalOrder from "@components/admin/Orders/ModalOrder"; // Import the new component
 import { getListOrders, createOrder, trackOrder } from "@services/admin/orderService";
 import Swal from "sweetalert2";
 
@@ -48,26 +48,15 @@ const OrderIndex = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("1");
-  const [showCreate, setShowCreate] = useState(false); // Added missing state
   const [showTrack, setShowTrack] = useState(false);
-  const [showFilter, setShowFilter] = useState(false); // Added for offcanvas filter
+  const [showFilter, setShowFilter] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [trackCode, setTrackCode] = useState("");
   const [trackResult, setTrackResult] = useState(null);
-  const [createForm, setCreateForm] = useState({
-    order_type: "dine-in",
-    customer_name: "",
-    customer_phone: "",
-    customer_email: "",
-    table_id: "",
-    notes: "",
-    items: [],
-    delivery_address: "",
-    delivery_contact_name: "",
-    delivery_contact_phone: "",
-  });
-  const [currentPage, setCurrentPage] = useState(1); // Added for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const navigate = useNavigate();
 
   // Lọc dữ liệu theo search và filter
   const filteredData = orderData.items.filter((order) => {
@@ -152,8 +141,20 @@ const OrderIndex = () => {
     try {
       await createOrder(payload);
       fetchOrders(currentPage);
+      Swal.fire({
+        title: "Thành công!",
+        text: "Đã tạo đơn hàng thành công",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
     } catch (error) {
-      throw error; // Let ModalOrder handle the error display
+      console.error("Error creating order:", error);
+      Swal.fire({
+        title: "Lỗi!",
+        text: error.response?.data?.message || error.message || "Không thể tạo đơn hàng",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 
@@ -196,6 +197,27 @@ const OrderIndex = () => {
     if (pageNumber > 0 && pageNumber <= orderData.meta.last_page) {
       setCurrentPage(pageNumber);
     }
+  };
+
+  const navigateToCreateOrder = () => {
+    const initialFormData = {
+      order_type: "dine-in",
+      table_id: "",
+      reservation_id: "",
+      customer_id: "",
+      notes: "",
+      delivery_address: "",
+      contact_name: "",
+      contact_email: "",
+      contact_phone: "",
+      items: [],
+      tables: [],
+    };
+    navigate("/orders/form/create", { state: { initialFormData } });
+  };
+
+  const handleEditOrder = (orderDetail) => {
+    navigate("/orders/form/edit", { state: { orderDetail } });
   };
 
   return (
@@ -246,10 +268,7 @@ const OrderIndex = () => {
             >
               <Button
                 color="success"
-                onClick={() => {
-                  setCreateForm({ ...createForm, items: [] }); // Reset items
-                  setShowCreate(true); // Open the modal
-                }}
+                onClick={navigateToCreateOrder}
                 className="d-flex align-items-center"
                 size="sm"
               >
@@ -300,7 +319,7 @@ const OrderIndex = () => {
                         }}
                         onClick={() => {
                           setStatusFilter(opt.value);
-                          setCurrentPage(1); // Reset to first page on filter change
+                          setCurrentPage(1);
                         }}
                       >
                         {opt.label}
@@ -336,7 +355,7 @@ const OrderIndex = () => {
                       value={searchTerm}
                       onChange={(e) => {
                         setSearchTerm(e.target.value);
-                        setCurrentPage(1); // Reset to first page on search
+                        setCurrentPage(1);
                       }}
                     />
                   </div>
@@ -349,7 +368,7 @@ const OrderIndex = () => {
                       value={statusFilter}
                       onChange={(e) => {
                         setStatusFilter(e.target.value);
-                        setCurrentPage(1); 
+                        setCurrentPage(1);
                       }}
                     >
                       <option value="all">Tất cả trạng thái</option>
@@ -387,6 +406,7 @@ const OrderIndex = () => {
               data={filteredData}
               onDelete={handleDelete}
               onUpdate={handleUpdate}
+              onEdit={handleEditOrder}
               menuItems={menuItems}
               paginate={{
                 page: orderData.meta.current_page,
@@ -484,15 +504,6 @@ const OrderIndex = () => {
           </Form>
         </OffcanvasBody>
       </Offcanvas>
-
-      {/* Modal Tạo đơn hàng (replaced with ModalOrder) */}
-      <ModalOrder
-        isOpen={showCreate}
-        toggle={() => setShowCreate(false)}
-        onSave={handleCreate}
-        formData={createForm}
-        setFormData={setCreateForm}
-      />
 
       {/* Modal Theo dõi đơn hàng */}
       <Modal isOpen={showTrack} toggle={() => setShowTrack(false)}>
