@@ -28,7 +28,6 @@ import OrderCard from "./card-order";
 import PrintableReceipt from "./printable-receipt";
 import {
     updateOrder,
-    addOrderItem,
 } from "@services/admin/orderService";
 import "./grid-order.css";
 
@@ -39,6 +38,7 @@ const OrderGrid = ({
     onPageChange,
     onUpdate,
     menuItems = [],
+    onEdit,
 }) => {
     const [showDelete, setShowDelete] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
@@ -254,7 +254,7 @@ const OrderGrid = ({
                             <Col key={order.id} xs={12} sm={6} md={4} lg={3} xl={3}>
                                 <OrderCard
                                     order={order}
-                                    onEdit={openEditModal}
+                                    onEdit={() => onEdit(order)}
                                     onView={openViewModal}
                                     onDelete={handleCardDelete}
                                     onStatusChange={handleStatusChange}
