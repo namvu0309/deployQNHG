@@ -6,6 +6,7 @@ import {
     Button,
     Row,
     Col,
+    Input,
 } from "reactstrap";
 import { MdModeEdit, MdVisibility } from "react-icons/md";
 import { FaTrash, FaCheck, FaTimes, FaUsers, FaCalendarAlt, FaClock, FaStickyNote } from "react-icons/fa";
@@ -19,6 +20,7 @@ const ReservationCard = ({
     onDelete,
     onStatusChange,
     onTimeChange,
+    onStatusChangeLocal,
 }) => {
     const getStatusBadge = (status) => {
         const statusConfig = {
@@ -42,9 +44,9 @@ const ReservationCard = ({
         return date.toLocaleDateString('vi-VN');
     };
 
+   
 
-
-
+    
 
     return (
         <Card className="h-100 reservation-card shadow-sm">
@@ -76,7 +78,7 @@ const ReservationCard = ({
                         </div>
                         <div className="ms-4">
                             <strong>
-                                {formatDate(reservation.reservation_time)}
+                                {formatDate(reservation.reservation_date || reservation.booking_date)}
                             </strong>
                         </div>
                     </div>
@@ -222,7 +224,7 @@ const ReservationCard = ({
                                             try {
                                                 await confirmReservation(reservation.id);
                                                 toast.success("Đã xác nhận đơn đặt bàn!");
-                                                if (onStatusChange) onStatusChange(reservation.id, "confirmed");
+                                                if (onStatusChangeLocal) onStatusChangeLocal(reservation.id, "confirmed");
                                             } catch {
                                                 toast.error("Xác nhận thất bại!");
                                             }

@@ -42,6 +42,7 @@ const ReservationGrid = ({
     const [editForm, setEditForm] = useState({});
     const [loadingEdit, setLoadingEdit] = useState(false);
     const [apiErrors, setApiErrors] = useState({});
+    const [localData, setLocalData] = useState(data);
 
     const currentPage = paginate.page || 1;
     const totalPages = paginate.totalPage || 1;
@@ -62,7 +63,7 @@ const ReservationGrid = ({
     const handleStatusChange = async (id, newStatus) => {
         try {
             // Tìm reservation hiện tại trong data
-            const reservation = data.find(item => item.id === id);
+            const reservation = localData.find(item => item.id === id);
             if (!reservation) {
                 toast.error("Không tìm thấy đơn đặt bàn");
                 return;
@@ -85,7 +86,7 @@ const ReservationGrid = ({
             const combinedDateTime = `${reservation.reservation_date || reservation.booking_date || ''} ${timeValue}:00`;
             // Tạo payload đúng chuẩn backend
             const payload = {
-                customer_id: reservation.customer_id || 1,
+                customer_id: reservation.customer_id || reservation.customer?.id || selectedItem?.customer_id || 1,
                 customer_name: reservation.customer_name,
                 customer_phone: reservation.customer_phone || reservation.phone_number,
                 customer_email: reservation.customer_email || reservation.email,
@@ -105,12 +106,19 @@ const ReservationGrid = ({
         }
     };
 
+    const handleStatusChangeLocal = (id, newStatus) => {
+        setLocalData(prevData => prevData.map(item =>
+            item.id === id ? { ...item, status: newStatus } : item
+        ));
+    };
+
     const handleEdit = async () => {
         setLoadingEdit(true);
         setApiErrors({});
         try {
             // Convert 12h format to 24h format if needed
             let timeValue = editForm.reservation_time;
+            console.log('Giá trị reservation_time gửi lên backend:', timeValue);
             if (timeValue.includes('CH') || timeValue.includes('SA')) {
                 // Convert 12h to 24h format
                 const time12h = timeValue.replace(' CH', '').replace(' SA', '');
@@ -126,21 +134,23 @@ const ReservationGrid = ({
                 timeValue = `${hours24.toString().padStart(2, '0')}:${minutes}`;
             }
 
-            // Combine date and time into datetime format
-            const combinedDateTime = `${editForm.reservation_date} ${timeValue}:00`;
+            // Combine date and time into datetime format (KHÔNG cần cho reservation_time)
+            // const combinedDateTime = `${editForm.reservation_date} ${timeValue}:00`;
 
             const payload = {
                 customer_id: selectedItem.customer_id || 1, // Add customer_id
                 customer_name: editForm.customer_name,
                 customer_phone: editForm.customer_phone,
                 customer_email: editForm.customer_email,
-                reservation_time: combinedDateTime,
+                reservation_date: editForm.reservation_date,
+                reservation_time: timeValue, // chỉ HH:mm
                 number_of_guests: editForm.number_of_guests,
                 table_id: editForm.table_area_id || null,
                 notes: editForm.notes,
                 status: editForm.status,
                 user_id: selectedItem.user_id || 2, // Add user_id if available
             };
+            console.log('Payload gửi lên backend:', payload);
 
             await updateReservation(selectedItem.id, payload);
             toast.success("Đã cập nhật đơn đặt bàn thành công");
@@ -226,13 +236,13 @@ const ReservationGrid = ({
         <>
             {/* Grid Layout */}
             <div className="reservation-grid">
-                {data.length === 0 ? (
+                {localData.length === 0 ? (
                     <Alert color="info" className="text-center">
                         Không có đơn đặt bàn nào
                     </Alert>
                 ) : (
                     <Row className="g-4">
-                        {data.map((reservation) => (
+                        {localData.map((reservation) => (
                             <Col key={reservation.id} xs={12} sm={6} md={4} lg={3} xl={3}>
                                 <CardReservation
                                     reservation={reservation}
@@ -240,6 +250,7 @@ const ReservationGrid = ({
                                     onView={openViewModal}
                                     onDelete={handleCardDelete}
                                     onStatusChange={handleStatusChange}
+                                    onStatusChangeLocal={handleStatusChangeLocal}
                                 />
                             </Col>
                         ))}
@@ -384,18 +395,24 @@ const ReservationGrid = ({
                                             id="reservation_date"
                                             type="date"
                                             value={
-                                                editForm.reservation_date
+                                                // Ưu tiên editForm, sau đó selectedItem.reservation_date, cuối cùng là ''
+                                                editForm.reservation_date !== undefined
                                                     ? editForm.reservation_date
                                                     : (
                                                         selectedItem.reservation_date
                                                         || selectedItem.booking_date
-                                                        || (selectedItem.reservation_time ? selectedItem.reservation_time.slice(0, 10) : '')
+                                                        || (selectedItem.reservation_time && selectedItem.reservation_time.length >= 10
+                                                            ? selectedItem.reservation_time.slice(0, 10)
+                                                            : '')
                                                         || ''
                                                     ).slice(0, 10)
                                             }
-                                            onChange={(e) =>
-                                                setEditForm({ ...editForm, reservation_date: e.target.value })
-                                            }
+                                            onChange={(e) => {
+                                                setEditForm({
+                                                    ...editForm,
+                                                    reservation_date: e.target.value
+                                                });
+                                            }}
                                         />
                                         {getFieldError('reservation_date')}
                                     </FormGroup>
@@ -405,49 +422,63 @@ const ReservationGrid = ({
                                         <Label for="reservation_time">Giờ đặt</Label>
                                         <Input
                                             id="reservation_time"
-                                            type="time"
-                                            value={
-                                                editForm.reservation_time
-                                                    ? editForm.reservation_time
-                                                    : (() => {
-                                                        // Lấy giờ từ reservation_date (hoặc reservation_time nếu có)
-                                                        let dateStr = selectedItem.reservation_date || selectedItem.booking_date || '';
-                                                        // Nếu reservation_date có định dạng "YYYY-MM-DD HH:mm:ss"
-                                                        if (dateStr && dateStr.includes(' ')) {
-                                                            const parts = dateStr.split(' ');
-                                                            if (parts[1]) {
-                                                                // Lấy phần giờ và phút
-                                                                const timeMatch = parts[1].match(/(\d{2}):(\d{2})/);
-                                                                if (timeMatch) {
-                                                                    return `${timeMatch[1]}:${timeMatch[2]}`;
-                                                                }
-                                                            }
+                                            type="select"
+                                            value={editForm.reservation_time !== undefined ? editForm.reservation_time : (() => {
+                                                let timeStr = selectedItem.reservation_time || '';
+                                                if (timeStr) {
+                                                    // Nếu là ISO string
+                                                    if (timeStr.includes("T")) {
+                                                        const d = new Date(timeStr);
+                                                        return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false });
+                                                    }
+                                                    // Nếu là dạng "YYYY-MM-DD HH:mm:ss"
+                                                    const match = timeStr.match(/(\d{2}):(\d{2})/);
+                                                    if (match) {
+                                                        return `${match[1]}:${match[2]}`;
+                                                    }
+                                                    // Nếu chỉ là "HH:mm" hoặc "HH:mm:ss"
+                                                    if (/^\d{2}:\d{2}(:\d{2})?$/.test(timeStr)) {
+                                                        return timeStr.slice(0, 5);
+                                                    }
+                                                }
+                                                let dateStr = selectedItem.reservation_date || selectedItem.booking_date || '';
+                                                if (dateStr && dateStr.includes(' ')) {
+                                                    const parts = dateStr.split(' ');
+                                                    if (parts[1]) {
+                                                        const timeMatch = parts[1].match(/(\d{2}):(\d{2})/);
+                                                        if (timeMatch) {
+                                                            return `${timeMatch[1]}:${timeMatch[2]}`;
                                                         }
-                                                        // Nếu reservation_time có, lấy giờ từ đó
-                                                        let timeStr = selectedItem.reservation_time || '';
-                                                        if (timeStr) {
-                                                            // Nếu là ISO string
-                                                            if (timeStr.includes("T")) {
-                                                                const d = new Date(timeStr);
-                                                                return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false });
-                                                            }
-                                                            // Nếu là dạng "YYYY-MM-DD HH:mm:ss"
-                                                            const match = timeStr.match(/(\d{2}):(\d{2})/);
-                                                            if (match) {
-                                                                return `${match[1]}:${match[2]}`;
-                                                            }
-                                                            // Nếu chỉ là "HH:mm" hoặc "HH:mm:ss"
-                                                            if (/^\d{2}:\d{2}(:\d{2})?$/.test(timeStr)) {
-                                                                return timeStr.slice(0, 5);
-                                                            }
-                                                        }
-                                                        return '';
-                                                    })()
-                                            }
-                                            onChange={(e) =>
-                                                setEditForm({ ...editForm, reservation_time: e.target.value })
-                                            }
-                                        />
+                                                    }
+                                                }
+                                                return '';
+                                            })()}
+                                            onChange={(e) => {
+                                                setEditForm({
+                                                    ...editForm,
+                                                    reservation_time: e.target.value
+                                                });
+                                            }}
+                                        >
+                                            <option value="">Chọn giờ</option>
+                                            {(() => {
+                                                // Tạo các mốc giờ từ 09:00 đến 20:00, mỗi 30 phút
+                                                const times = [];
+                                                let start = 9 * 60; // 9:00
+                                                let end = 20 * 60; // 20:00
+                                                for (let mins = start; mins <= end; mins += 30) {
+                                                    const h = Math.floor(mins / 60);
+                                                    const m = mins % 60;
+                                                    // Hiển thị dạng 12h
+                                                    const ampm = h < 12 ? 'AM' : 'PM';
+                                                    const h12 = h % 12 === 0 ? 12 : h % 12;
+                                                    const label = `${h12.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
+                                                    const value = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                                                    times.push(<option key={value} value={value}>{label}</option>);
+                                                }
+                                                return times;
+                                            })()}
+                                        </Input>
                                         {getFieldError('reservation_time')}
                                     </FormGroup>
                                 </Col>

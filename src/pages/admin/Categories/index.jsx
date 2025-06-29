@@ -19,7 +19,7 @@ import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import ListCategory from "@components/admin/Categories/ListCategory";
 import ListTrashCategory from "@components/admin/Categories/ListTrashCategory";
 import ModalCategory from "@components/admin/Categories/ModalCategory";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Categories.scss";
 import { getCategories, createCategory, updateCategory, deleteSoftCategory, getCategory } from "@services/admin/categoryService";
@@ -223,7 +223,6 @@ const CategoryIndex = () => {
 
   return (
     <div className="page-content">
-      <ToastContainer />
       <Breadcrumbs title="Quản Lý Danh Mục" breadcrumbItem={activeTab === "list" ? "Danh sách danh mục" : "Thùng rác"} />
 
       <Card className="mb-4">

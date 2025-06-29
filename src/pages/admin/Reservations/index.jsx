@@ -38,6 +38,7 @@ import {
     forceDeleteReservation
 } from "@services/admin/reservationService";
 import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 
 // Danh sách trạng thái đơn đặt bàn, khi bấm vào sẽ lọc theo trạng thái đó
 const bookingStatusOptions = [
@@ -50,23 +51,6 @@ const bookingStatusOptions = [
     { label: "Đã ngồi", value: "seated", badgeColor: "primary" },
 ];
 
-// Component hiển thị các nút trạng thái để lọc
-const BookingStatusFilter = ({ currentStatus, onChange }) => (
-    <div className="mb-3 d-flex flex-wrap gap-2">
-        {bookingStatusOptions.map((option) => (
-            <Button
-                key={option.value}
-                color={currentStatus === option.value ? option.badgeColor : "light"}
-                outline={currentStatus !== option.value}
-                onClick={() => onChange(option.value)}
-                size="sm"
-            >
-                {option.label}
-            </Button>
-        ))}
-    </div>
-);
-
 const TableBookingIndex = () => {
     const [bookingData, setBookingData] = useState({ items: [], meta: {} });
     const [trashedData, setTrashedData] = useState({ items: [], meta: {} });
@@ -78,6 +62,7 @@ const TableBookingIndex = () => {
     const [showCreate, setShowCreate] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
+    const [apiErrors, setApiErrors] = useState({});
 
     const [createForm, setCreateForm] = useState({
         customer_name: "",
@@ -85,7 +70,7 @@ const TableBookingIndex = () => {
         customer_email: "",
         booking_date: "",
         booking_time: "",
-        number_of_guests: "",
+        number_of_guests: "1",
         table_id: "",
         notes: "",
         special_requests: ""
@@ -104,23 +89,19 @@ const TableBookingIndex = () => {
         return matchesSearch && matchesStatus;
     });
 
-    const fetchReservations = async (page = 1) => {
+    const fetchReservations = async (page = 1, search = "", status = "all") => {
         setLoading(true);
         try {
-            const res = await getReservations({ page });
-            console.log("API SUCCESS:", res.data);
+            const params = { page };
+            if (search) params.query = search;
+            if (status && status !== "all") params.status = status;
+            const res = await getReservations(params);
             setBookingData({
                 items: res.data.data.items,
                 meta: res.data.data.meta,
             });
-        } catch (error) {
-            console.error("API ERROR:", error);
-            Swal.fire({
-                title: "Lỗi!",
-                text: "Không thể tải danh sách đơn đặt bàn",
-                icon: "error",
-                confirmButtonText: "OK",
-            });
+        } catch  {
+            toast.error("Không thể tải danh sách đơn đặt bàn");
         } finally {
             setLoading(false);
         }
@@ -136,12 +117,7 @@ const TableBookingIndex = () => {
             });
         } catch (error) {
             console.error("TRASHED API ERROR:", error);
-            Swal.fire({
-                title: "Lỗi!",
-                text: "Không thể tải danh sách đơn đặt bàn đã xóa",
-                icon: "error",
-                confirmButtonText: "OK",
-            });
+            toast.error("Không thể tải danh sách đơn đặt bàn đã xóa");
         }
     };
 
@@ -155,9 +131,9 @@ const TableBookingIndex = () => {
     };
 
     useEffect(() => {
-        fetchReservations();
+        fetchReservations(1, searchTerm, statusFilter);
         fetchTableAreas();
-    }, []);
+    }, [searchTerm, statusFilter]);
 
     useEffect(() => {
         if (activeTab === "2") {
@@ -171,30 +147,22 @@ const TableBookingIndex = () => {
                 ...prev,
                 items: prev.items.filter((booking) => booking.id !== id),
             }));
+            toast.success("Đã xóa đơn đặt bàn thành công");
         } catch (err) {
             console.error("Delete failed:", err);
+            toast.error("Không thể xóa đơn đặt bàn");
         }
     };
 
     const handleRestore = async (id) => {
         try {
             await restoreReservation(id);
-            Swal.fire({
-                title: "Thành công!",
-                text: "Đã khôi phục đơn đặt bàn thành công",
-                icon: "success",
-                confirmButtonText: "OK",
-            });
+            toast.success("Đã khôi phục đơn đặt bàn thành công");
             fetchTrashedReservations();
             fetchReservations(); // Refresh main list
         } catch (error) {
             console.error("Restore failed:", error);
-            Swal.fire({
-                title: "Lỗi!",
-                text: "Không thể khôi phục đơn đặt bàn",
-                icon: "error",
-                confirmButtonText: "OK",
-            });
+            toast.error("Không thể khôi phục đơn đặt bàn");
         }
     };
 
@@ -213,54 +181,28 @@ const TableBookingIndex = () => {
         if (result.isConfirmed) {
             try {
                 await forceDeleteReservation(id);
-                Swal.fire({
-                    title: "Thành công!",
-                    text: "Đã xóa vĩnh viễn đơn đặt bàn",
-                    icon: "success",
-                    confirmButtonText: "OK",
-                });
+                toast.success("Đã xóa vĩnh viễn đơn đặt bàn");
                 fetchTrashedReservations();
             } catch (error) {
                 console.error("Force delete failed:", error);
-                Swal.fire({
-                    title: "Lỗi!",
-                    text: "Không thể xóa vĩnh viễn đơn đặt bàn",
-                    icon: "error",
-                    confirmButtonText: "OK",
-                });
+                toast.error("Không thể xóa vĩnh viễn đơn đặt bàn");
             }
         }
     };
 
     const handleCreate = async () => {
+        setApiErrors({});
         try {
             if (!createForm.customer_name || !createForm.customer_phone) {
-                Swal.fire({
-                    title: "Lỗi!",
-                    text: "Vui lòng điền đầy đủ thông tin bắt buộc (tên và số điện thoại)",
-                    icon: "error",
-                    confirmButtonText: "OK",
-                });
+                toast.error("Vui lòng điền đầy đủ thông tin bắt buộc (tên và số điện thoại)");
                 return;
             }
-            // Kiểm tra chọn bàn
             if (!createForm.table_id || createForm.table_id === "" || Number(createForm.table_id) === 0) {
-                Swal.fire({
-                    title: "Lỗi!",
-                    text: "Vui lòng chọn khu vực bàn.",
-                    icon: "error",
-                    confirmButtonText: "OK",
-                });
+                toast.error("Vui lòng chọn khu vực bàn.");
                 return;
             }
-            // Kiểm tra ngày giờ
             if (!createForm.booking_date || !createForm.booking_time) {
-                Swal.fire({
-                    title: "Lỗi!",
-                    text: "Vui lòng chọn ngày và giờ đặt.",
-                    icon: "error",
-                    confirmButtonText: "OK",
-                });
+                toast.error("Vui lòng chọn ngày và giờ đặt.");
                 return;
             }
             const payload = {
@@ -269,20 +211,16 @@ const TableBookingIndex = () => {
                 customer_name: createForm.customer_name,
                 customer_phone: createForm.customer_phone,
                 customer_email: createForm.customer_email,
-                reservation_time: `${createForm.booking_date} ${createForm.booking_time}:00`,
-                number_of_guests: Number(createForm.number_of_guests),
+                reservation_date: createForm.booking_date,
+                reservation_time: createForm.booking_time,
+                number_of_guests: Number(createForm.number_of_guests) || 1,
                 table_id: Number(createForm.table_id),
                 notes: createForm.notes,
                 special_requests: createForm.special_requests,
                 status: "pending"
             };
             await createReservation(payload);
-            Swal.fire({
-                title: "Thành công!",
-                text: "Đã tạo đơn đặt bàn thành công",
-                icon: "success",
-                confirmButtonText: "OK",
-            });
+            toast.success("Đã tạo đơn đặt bàn thành công");
             setShowCreate(false);
             setCreateForm({
                 customer_name: "",
@@ -290,20 +228,19 @@ const TableBookingIndex = () => {
                 customer_email: "",
                 booking_date: "",
                 booking_time: "",
-                number_of_guests: "",
+                number_of_guests: "1",
                 table_id: "",
                 notes: "",
                 special_requests: ""
             });
             fetchReservations();
         } catch (error) {
-            console.error("Error creating reservation:", error);
-            Swal.fire({
-                title: "Lỗi!",
-                text: error.response?.data?.message || error.message || "Không thể tạo đơn đặt bàn",
-                icon: "error",
-                confirmButtonText: "OK",
-            });
+            if (error.response && error.response.data && error.response.data.errors) {
+                setApiErrors(error.response.data.errors);
+                toast.error("Vui lòng kiểm tra lại thông tin!");
+            } else {
+                toast.error(error.response?.data?.message || error.message || "Không thể tạo đơn đặt bàn");
+            }
         }
     };
 
@@ -315,6 +252,20 @@ const TableBookingIndex = () => {
         if (activeTab !== tab) {
             setActiveTab(tab);
         }
+    };
+
+    const handleStatusChangeLocal = (id, newStatus) => {
+        setBookingData(prev => ({
+            ...prev,
+            items: prev.items.map(item =>
+                item.id === id ? { ...item, status: newStatus } : item
+            )
+        }));
+        toast.success('Đã xác nhận đơn đặt bàn!');
+    };
+
+    const handlePageChange = (page) => {
+        fetchReservations(page, searchTerm, statusFilter);
     };
 
     return (
@@ -407,7 +358,6 @@ const TableBookingIndex = () => {
                                         Tạo đơn đặt bàn
                                     </Button>
                                     <ButtonGroup>
-                                        
                                         <Button
                                             color={view === "grid" ? "primary" : "light"}
                                             onClick={() => setView("grid")}
@@ -434,7 +384,7 @@ const TableBookingIndex = () => {
                                             type="text"
                                             placeholder="Tìm kiếm theo tên, SĐT, email..."
                                             value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            onChange={e => setSearchTerm(e.target.value)}
                                         />
                                     </div>
                                 </Col>
@@ -446,7 +396,7 @@ const TableBookingIndex = () => {
                                         <Input
                                             type="select"
                                             value={statusFilter}
-                                            onChange={(e) => setStatusFilter(e.target.value)}
+                                            onChange={e => setStatusFilter(e.target.value)}
                                         >
                                             <option value="all">Tất cả trạng thái</option>
                                             <option value="pending">Chờ xác nhận</option>
@@ -478,11 +428,129 @@ const TableBookingIndex = () => {
                             <Spinner color="primary" />
                         </div>
                     ) : (
+                        <>
                         <GridReservation
                             data={filteredData}
+                                paginate={bookingData.meta}
                             onDelete={handleDelete}
                             onUpdate={handleUpdate}
-                        />
+                                onStatusChangeLocal={handleStatusChangeLocal}
+                                onPageChange={handlePageChange}
+                                tableAreas={areaData}
+                            />
+                            
+                            {/* Phân trang đẹp */}
+                            {bookingData.meta && bookingData.meta.totalPage > 1 && (
+                                <Card className="mt-4">
+                                    <CardBody className="d-flex justify-content-between align-items-center">
+                                        <div className="text-muted">
+                                            Hiển thị {((bookingData.meta.currentPage - 1) * bookingData.meta.perPage) + 1} - {Math.min(bookingData.meta.currentPage * bookingData.meta.perPage, bookingData.meta.total)} trong tổng số {bookingData.meta.total} đơn đặt bàn
+                                        </div>
+                                        <div className="d-flex align-items-center">
+                                            <Button
+                                                color="light"
+                                                size="sm"
+                                                disabled={bookingData.meta.currentPage === 1}
+                                                onClick={() => fetchReservations(bookingData.meta.currentPage - 1)}
+                                                className="me-2"
+                                            >
+                                                <i className="mdi mdi-chevron-left"></i>
+                                                Trước
+                                            </Button>
+                                            
+                                            <div className="d-flex gap-1">
+                                                {(() => {
+                                                    const pages = [];
+                                                    const currentPage = bookingData.meta.currentPage;
+                                                    const totalPages = bookingData.meta.totalPage;
+                                                    
+                                                    // Hiển thị tối đa 5 trang
+                                                    let startPage = Math.max(1, currentPage - 2);
+                                                    let endPage = Math.min(totalPages, currentPage + 2);
+                                                    
+                                                    // Điều chỉnh để luôn hiển thị 5 trang nếu có thể
+                                                    if (endPage - startPage < 4) {
+                                                        if (startPage === 1) {
+                                                            endPage = Math.min(totalPages, startPage + 4);
+                                                        } else {
+                                                            startPage = Math.max(1, endPage - 4);
+                                                        }
+                                                    }
+                                                    
+                                                    // Thêm nút "Đầu"
+                                                    if (startPage > 1) {
+                                                        pages.push(
+                                                            <Button
+                                                                key="first"
+                                                                color="light"
+                                                                size="sm"
+                                                                onClick={() => fetchReservations(1)}
+                                                                className="px-3"
+                                                            >
+                                                                1
+                                                            </Button>
+                                                        );
+                                                        if (startPage > 2) {
+                                                            pages.push(
+                                                                <span key="dots1" className="px-2 text-muted">...</span>
+                                                            );
+                                                        }
+                                                    }
+                                                    
+                                                    // Thêm các trang chính
+                                                    for (let i = startPage; i <= endPage; i++) {
+                                                        pages.push(
+                                                            <Button
+                                                                key={i}
+                                                                color={i === currentPage ? "primary" : "light"}
+                                                                size="sm"
+                                                                onClick={() => fetchReservations(i)}
+                                                                className="px-3"
+                                                            >
+                                                                {i}
+                                                            </Button>
+                                                        );
+                                                    }
+                                                    
+                                                    // Thêm nút "Cuối"
+                                                    if (endPage < totalPages) {
+                                                        if (endPage < totalPages - 1) {
+                                                            pages.push(
+                                                                <span key="dots2" className="px-2 text-muted">...</span>
+                                                            );
+                                                        }
+                                                        pages.push(
+                                                            <Button
+                                                                key="last"
+                                                                color="light"
+                                                                size="sm"
+                                                                onClick={() => fetchReservations(totalPages)}
+                                                                className="px-3"
+                                                            >
+                                                                {totalPages}
+                                                            </Button>
+                                                        );
+                                                    }
+                                                    
+                                                    return pages;
+                                                })()}
+                                            </div>
+                                            
+                                            <Button
+                                                color="light"
+                                                size="sm"
+                                                disabled={bookingData.meta.currentPage === bookingData.meta.totalPage}
+                                                onClick={() => fetchReservations(bookingData.meta.currentPage + 1)}
+                                                className="ms-2"
+                                            >
+                                                Sau
+                                                <i className="mdi mdi-chevron-right"></i>
+                                            </Button>
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            )}
+                        </>
                     )}
                 </TabPane>
 
@@ -510,6 +578,7 @@ const TableBookingIndex = () => {
                             </CardBody>
                         </Card>
                     ) : (
+                        <>
                         <Card>
                             <CardBody>
                                 <div className="table-responsive">
@@ -556,9 +625,122 @@ const TableBookingIndex = () => {
                                             ))}
                                         </tbody>
                                     </table>
+                                    </div>
+                                </CardBody>
+                            </Card>
+                            
+                            {/* Phân trang cho thùng rác */}
+                            {trashedData.meta && trashedData.meta.totalPage > 1 && (
+                                <Card className="mt-4">
+                                    <CardBody className="d-flex justify-content-between align-items-center">
+                                        <div className="text-muted">
+                                            Hiển thị {((trashedData.meta.currentPage - 1) * trashedData.meta.perPage) + 1} - {Math.min(trashedData.meta.currentPage * trashedData.meta.perPage, trashedData.meta.total)} trong tổng số {trashedData.meta.total} đơn đặt bàn đã xóa
+                                        </div>
+                                        <div className="d-flex align-items-center">
+                                            <Button
+                                                color="light"
+                                                size="sm"
+                                                disabled={trashedData.meta.currentPage === 1}
+                                                onClick={() => fetchTrashedReservations(trashedData.meta.currentPage - 1)}
+                                                className="me-2"
+                                            >
+                                                <i className="mdi mdi-chevron-left"></i>
+                                                Trước
+                                            </Button>
+                                            
+                                            <div className="d-flex gap-1">
+                                                {(() => {
+                                                    const pages = [];
+                                                    const currentPage = trashedData.meta.currentPage;
+                                                    const totalPages = trashedData.meta.totalPage;
+                                                    
+                                                    // Hiển thị tối đa 5 trang
+                                                    let startPage = Math.max(1, currentPage - 2);
+                                                    let endPage = Math.min(totalPages, currentPage + 2);
+                                                    
+                                                    // Điều chỉnh để luôn hiển thị 5 trang nếu có thể
+                                                    if (endPage - startPage < 4) {
+                                                        if (startPage === 1) {
+                                                            endPage = Math.min(totalPages, startPage + 4);
+                                                        } else {
+                                                            startPage = Math.max(1, endPage - 4);
+                                                        }
+                                                    }
+                                                    
+                                                    // Thêm nút "Đầu"
+                                                    if (startPage > 1) {
+                                                        pages.push(
+                                                            <Button
+                                                                key="first"
+                                                                color="light"
+                                                                size="sm"
+                                                                onClick={() => fetchTrashedReservations(1)}
+                                                                className="px-3"
+                                                            >
+                                                                1
+                                                            </Button>
+                                                        );
+                                                        if (startPage > 2) {
+                                                            pages.push(
+                                                                <span key="dots1" className="px-2 text-muted">...</span>
+                                                            );
+                                                        }
+                                                    }
+                                                    
+                                                    // Thêm các trang chính
+                                                    for (let i = startPage; i <= endPage; i++) {
+                                                        pages.push(
+                                                            <Button
+                                                                key={i}
+                                                                color={i === currentPage ? "primary" : "light"}
+                                                                size="sm"
+                                                                onClick={() => fetchTrashedReservations(i)}
+                                                                className="px-3"
+                                                            >
+                                                                {i}
+                                                            </Button>
+                                                        );
+                                                    }
+                                                    
+                                                    // Thêm nút "Cuối"
+                                                    if (endPage < totalPages) {
+                                                        if (endPage < totalPages - 1) {
+                                                            pages.push(
+                                                                <span key="dots2" className="px-2 text-muted">...</span>
+                                                            );
+                                                        }
+                                                        pages.push(
+                                                            <Button
+                                                                key="last"
+                                                                color="light"
+                                                                size="sm"
+                                                                onClick={() => fetchTrashedReservations(totalPages)}
+                                                                className="px-3"
+                                                            >
+                                                                {totalPages}
+                                                            </Button>
+                                                        );
+                                                    }
+                                                    
+                                                    return pages;
+                                                })()}
+                                            </div>
+                                            
+                                            <Button
+                                                color="light"
+                                                size="sm"
+                                                disabled={trashedData.meta.currentPage === trashedData.meta.totalPage}
+                                                onClick={() => fetchTrashedReservations(trashedData.meta.currentPage + 1)}
+                                                className="ms-2"
+                                            >
+                                                Sau
+                                                <i className="mdi mdi-chevron-right"></i>
+                                            </Button>
                                 </div>
                             </CardBody>
                         </Card>
+                            )}
+                        </>
                     )}
                 </TabPane>
             </TabContent>
@@ -629,8 +811,15 @@ const TableBookingIndex = () => {
                                     <Label for="customer_phone">Số điện thoại *</Label>
                                     <Input
                                         id="customer_phone"
+                                        type="tel"
+                                        pattern="[0-9]*"
+                                        inputMode="numeric"
                                         value={createForm.customer_phone}
-                                        onChange={e => setCreateForm({ ...createForm, customer_phone: e.target.value })}
+                                        onChange={e => {
+                                            // Chỉ cho nhập số
+                                            const val = e.target.value.replace(/[^0-9]/g, '');
+                                            setCreateForm({ ...createForm, customer_phone: val });
+                                        }}
                                         required
                                     />
                                 </FormGroup>
@@ -668,10 +857,14 @@ const TableBookingIndex = () => {
                                     <Input
                                         id="booking_date"
                                         type="date"
+                                        min={new Date().toISOString().slice(0, 10)}
                                         value={createForm.booking_date}
                                         onChange={e => setCreateForm({ ...createForm, booking_date: e.target.value })}
                                         required
                                     />
+                                    {apiErrors.reservation_date && (
+                                        <div className="text-danger mt-1" style={{ fontSize: 13 }}>{apiErrors.reservation_date}</div>
+                                    )}
                                 </FormGroup>
                             </Col>
                             <Col md={6}>
@@ -679,11 +872,33 @@ const TableBookingIndex = () => {
                                     <Label for="booking_time">Giờ đặt *</Label>
                                     <Input
                                         id="booking_time"
-                                        type="time"
+                                        type="select"
                                         value={createForm.booking_time}
                                         onChange={e => setCreateForm({ ...createForm, booking_time: e.target.value })}
                                         required
-                                    />
+                                    >
+                                        <option value="">Chọn giờ</option>
+                                        {(() => {
+                                            // Tạo các mốc giờ từ 09:00 đến 20:00, mỗi 30 phút
+                                            const times = [];
+                                            let start = 9 * 60; // 9:00
+                                            let end = 20 * 60; // 20:00
+                                            for (let mins = start; mins <= end; mins += 30) {
+                                                const h = Math.floor(mins / 60);
+                                                const m = mins % 60;
+                                                const value = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                                                // Hiển thị dạng 12h cho đẹp
+                                                const ampm = h < 12 ? 'AM' : 'PM';
+                                                const h12 = h % 12 === 0 ? 12 : h % 12;
+                                                const label = `${h12.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
+                                                times.push(<option key={value} value={value}>{label}</option>);
+                                            }
+                                            return times;
+                                        })()}
+                                    </Input>
+                                    {apiErrors.reservation_time && (
+                                        <div className="text-danger mt-1" style={{ fontSize: 13 }}>{apiErrors.reservation_time}</div>
+                                    )}
                                 </FormGroup>
                             </Col>
                         </Row>

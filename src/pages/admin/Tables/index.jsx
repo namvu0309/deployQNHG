@@ -15,7 +15,7 @@ import {
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import TableCard from "@components/admin/Table/CardTable";
 import ModalTable from "@components/admin/Table/ModalTable";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Import Swiper React components
@@ -289,7 +289,6 @@ const TableIndex = () => {
 
   return (
     <div className="page-content">
-      <ToastContainer />
       <Breadcrumbs title="Quản Lý Bàn Nhà Hàng" breadcrumbItem="Danh sách bàn" />
 
       {/* Area Cards section with Swiper Carousel */}

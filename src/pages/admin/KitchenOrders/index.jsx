@@ -9,7 +9,6 @@ import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import '@pages/admin/KitchenOrders/KitchenOrdersKanban.css';
 import KanbanCard from "@components/admin/KitchenOrders/KanbanCard";
-import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 const STATUS_LIST = [
@@ -55,8 +54,10 @@ const KitchenOrdersPage = () => {
     // Filter trạng thái badge
     const handleStatusBadge = (status) => {
         setStatusFilter(status);
-        setFilter(f => ({ ...f, status: status === "all" ? "" : status }));
-        fetchOrders(1, { ...filter, status: status === "all" ? "" : status });
+        // Gửi luôn status lên backend khi filter
+        const newFilter = { ...filter, status: status === "all" ? "" : status };
+        setFilter(newFilter);
+        fetchOrders(1, newFilter);
     };
 
     // Filter nhanh
@@ -70,10 +71,30 @@ const KitchenOrdersPage = () => {
     // Chuyển trạng thái đơn bếp
     const handleChangeStatus = async (orderId, newStatus) => {
         try {
-            await updateKitchenOrderStatus(orderId, { status: newStatus });
-            toast.success("Cập nhật trạng thái thành công!");
+            console.log(`🔄 Đang chuyển đơn #${orderId} từ trạng thái hiện tại sang: ${newStatus}`);
+            
+            const response = await updateKitchenOrderStatus(orderId, { status: newStatus });
+            console.log('✅ Response từ backend:', response);
+            
+            // Kiểm tra response từ backend
+            if (response?.data?.data?.status) {
+                const actualStatus = response.data.data.status;
+                console.log(`📊 Backend trả về trạng thái: ${actualStatus}`);
+                
+                if (actualStatus !== newStatus) {
+                    console.warn(`⚠️ Trạng thái mong muốn: ${newStatus}, nhưng backend trả về: ${actualStatus}`);
+                    toast.warn(`Trạng thái đã được cập nhật thành: ${actualStatus}`);
+                } else {
+                    toast.success("Cập nhật trạng thái thành công!");
+                }
+            } else {
+                toast.success("Cập nhật trạng thái thành công!");
+            }
+            
+            // Reload lại danh sách để cập nhật UI
             fetchOrders(currentPage, filter);
-        } catch {
+        } catch (error) {
+            console.error('❌ Lỗi khi cập nhật trạng thái:', error);
             toast.error("Cập nhật trạng thái thất bại!");
         }
     };
@@ -117,14 +138,13 @@ const KitchenOrdersPage = () => {
     const countByStatus = (status) =>
         status === "all" ? orders.length : orders.filter((o) => o.status === status).length;
 
-    // Filter theo searchTerm và statusFilter
+    // Filter theo searchTerm (KHÔNG filter trạng thái ở FE nữa)
     const filteredOrders = orders.filter((order) => {
         const matchesSearch =
             String(order.order_id || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
             String(order.table_number || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
             String(order.item_name || "").toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStatus = statusFilter === "all" || order.status === statusFilter;
-        return matchesSearch && matchesStatus;
+        return matchesSearch;
     });
 
     // Xử lý kéo thả card giữa các cột
@@ -132,12 +152,36 @@ const KitchenOrdersPage = () => {
         const { source, destination, draggableId } = result;
         if (!destination) return;
         if (source.droppableId === destination.droppableId && source.index === destination.index) return;
+
         // Tìm order bị kéo
         const draggedOrder = orders.find(o => String(o.id) === draggableId);
         if (!draggedOrder) return;
-        // Nếu trạng thái thay đổi thì cập nhật
-        if (draggedOrder.status !== destination.droppableId) {
-            await handleChangeStatus(draggedOrder.id, destination.droppableId);
+
+        const from = source.droppableId;
+        const to = destination.droppableId;
+
+        console.log(`🎯 Kéo thả: Đơn #${draggedOrder.id} từ "${from}" sang "${to}"`);
+        console.log(`📋 Trạng thái hiện tại của đơn: ${draggedOrder.status}`);
+
+        // Chỉ cho phép chuyển hợp lệ
+        if (
+            (from === "pending" && !["preparing", "cancelled"].includes(to)) ||
+            (from === "preparing" && !["ready"].includes(to)) ||
+            (from === "ready") || // ready không kéo đi đâu được
+            (from === "cancelled") // cancelled không kéo đi đâu được
+        ) {
+            console.warn(`❌ Không cho phép chuyển từ "${from}" sang "${to}"`);
+            toast.warn("Không thể chuyển trạng thái này!");
+            return;
+        }
+
+        console.log(`✅ Cho phép chuyển từ "${from}" sang "${to}"`);
+
+        if (draggedOrder.status !== to) {
+            console.log(`🔄 Gọi API cập nhật trạng thái sang: ${to}`);
+            await handleChangeStatus(draggedOrder.id, to);
+        } else {
+            console.log(`ℹ️ Trạng thái đã đúng, không cần cập nhật`);
         }
     };
 
@@ -200,7 +244,6 @@ const KitchenOrdersPage = () => {
 
     return (
         <div className="page-content">
-            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
             <Breadcrumbs title="Danh sách đơn bếp" breadcrumbItem="Quản lí đơn bếp" />
             {/* Tabs */}
             <Card className="mb-4">
@@ -221,7 +264,7 @@ const KitchenOrdersPage = () => {
                     <Card className="mb-4">
                         <CardHeader className="bg-white border-bottom-0">
                             <div className="d-flex flex-wrap gap-2">
-                                <Button color={statusFilter === "all" ? "secondary" : "light"} outline={statusFilter !== "all"} onClick={() => handleStatusBadge("all")} size="sm">
+                                <Button color={statusFilter === "all" ? "secondary" : ""} outline={statusFilter !== "all"} onClick={() => handleStatusBadge("all")} size="sm">
                                     Tất cả <Badge color="secondary" pill className="ms-2">{countByStatus("all")}</Badge>
                                 </Button>
                                 {STATUS_LIST.map((opt) => (
@@ -272,40 +315,64 @@ const KitchenOrdersPage = () => {
                     </Card>
                     
                     {/* Kanban board dạng hàng ngang với kéo thả */}
-                    <DragDropContext onDragEnd={onDragEnd}>
-                        {STATUS_LIST.filter(s => s.key !== undefined).map((status) => (
-                            <div key={status.key} className="kanban-swimlane-row mb-4">
-                                <div className="d-flex align-items-center mb-2">
-                                    <h5 className="mb-0 me-2">{status.label}</h5>
-                                    <Badge color={status.badgeColor} pill>{filteredOrders.filter((o) => o.status === status.key).length}</Badge>
-                                </div>
-                                <Droppable droppableId={status.key} direction="horizontal">
-                                    {(provided) => (
-                                        <div
-                                            className="kanban-swimlane-cards d-flex flex-row gap-3 overflow-auto pb-2"
-                                            ref={provided.innerRef}
-                                            {...provided.droppableProps}
-                                        >
-                                            {filteredOrders.filter((o) => o.status === status.key).length === 0 ? (
-                                                <div className="text-muted">Không có đơn nào</div>
-                                            ) : (
-                                                filteredOrders.filter((o) => o.status === status.key).map((order, idx) => (
-                                                    <KanbanCard
-                                                        key={order.id}
-                                                        order={order}
-                                                        index={idx}
-                                                        onChangeStatus={handleChangeStatus}
-                                                        onCancel={handleCancel}
-                                                        status={status.key}
-                                                    />
-                                                ))
-                                            )}
-                                            {provided.placeholder}
-                                        </div>
-                                    )}
-                                </Droppable>
+                    <div className="mb-3">
+                        <div className="alert alert-info d-flex align-items-center" style={{ fontSize: 14 }}>
+                            <i className="mdi mdi-information-outline me-2"></i>
+                            <div>
+                                <strong>Lưu ý:</strong> Đơn có <span className="badge bg-danger">Ưu tiên</span> đầu bếp cần phải làm trước .
                             </div>
-                        ))}
+                        </div>
+                    </div>
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        {STATUS_LIST.filter(s => s.key !== undefined).map((status) => {
+                            // Lọc và sắp xếp đơn theo trạng thái và ưu tiên
+                            const ordersInStatus = filteredOrders
+                                .filter((o) => o.status === status.key)
+                                .sort((a, b) => {
+                                    // Ưu tiên đơn có is_priority = 1 lên đầu
+                                    if (a.is_priority && !b.is_priority) return -1;
+                                    if (!a.is_priority && b.is_priority) return 1;
+                                    
+                                    // Nếu cùng ưu tiên, sắp xếp theo thời gian tạo (mới nhất lên đầu)
+                                    const timeA = new Date(a.created_at || 0).getTime();
+                                    const timeB = new Date(b.created_at || 0).getTime();
+                                    return timeB - timeA;
+                                });
+
+                            return (
+                                <div key={status.key} className="kanban-swimlane-row mb-4">
+                                    <div className="d-flex align-items-center mb-2">
+                                        <h5 className="mb-0 me-2">{status.label}</h5>
+                                        <Badge color={status.badgeColor} pill>{ordersInStatus.length}</Badge>
+                                    </div>
+                                    <Droppable droppableId={status.key} direction="horizontal">
+                                        {(provided) => (
+                                            <div
+                                                className="kanban-swimlane-cards d-flex flex-row gap-3 overflow-auto pb-2"
+                                                ref={provided.innerRef}
+                                                {...provided.droppableProps}
+                                            >
+                                                {ordersInStatus.length === 0 ? (
+                                                    <div className="text-muted">Không có đơn nào</div>
+                                                ) : (
+                                                    ordersInStatus.map((order, idx) => (
+                                                        <KanbanCard
+                                                            key={order.id}
+                                                            order={order}
+                                                            index={idx}
+                                                            onChangeStatus={handleChangeStatus}
+                                                            onCancel={handleCancel}
+                                                            status={status.key}
+                                                        />
+                                                    ))
+                                                )}
+                                                {provided.placeholder}
+                                            </div>
+                                        )}
+                                    </Droppable>
+                                </div>
+                            );
+                        })}
                     </DragDropContext>
                     
                     {/* Pagination */}

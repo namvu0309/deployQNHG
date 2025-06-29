@@ -23,7 +23,7 @@ import { getTables } from "@services/admin/tableService";
 import { getTableAreas } from "@services/admin/tableAreaService";
 import { createOrder } from "@services/admin/orderService";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 
@@ -262,7 +262,6 @@ const FormOrderCreate = () => {
 
   return (
     <div className="page-content">
-      <ToastContainer />
       <Row>
         {/* Product Catalog */}
         <Col md={9}>
