@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./header.scss";
 import { Link, Navigate, useLocation } from "react-router-dom";
-import logo from "../../../../assets/client/images/header/logo.jpg";
+import logo from "@assets/client/images/header/logo.png";
 import BookingPopup from "./BookingPopup";
-import HeaderService from "../../../../services/client/HeaderService"; 
+import HeaderService from "@services/client/HeaderService"; 
 import { FaPhoneAlt, FaRegClock, FaGift, FaUser, FaUserPlus } from "react-icons/fa";
 
 const Header = () => {
