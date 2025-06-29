@@ -1,6 +1,6 @@
 import React from "react";
 import "./Footer.scss";
-import logo from "../../../../assets/client/images/header/logo.jpg";
+import logo from "@assets/client/images/header/logo.png";
 const Footer = ({ onOpenBooking }) => {
   return (
     <footer className="tudo-footer">
