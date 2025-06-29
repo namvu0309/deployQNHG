@@ -1,177 +1,224 @@
 import React, { useEffect, useState } from "react";
+import {
+    Card,
+    CardHeader,
+    Input,
+    Button,
+    Offcanvas,
+    OffcanvasHeader,
+    OffcanvasBody,
+    Form,
+    FormGroup,
+    Label,
+} from "reactstrap";
 import Swal from "sweetalert2";
-import { getPermissionGroups, deletePermissionGroup } from "@services/admin/permissiongroupService.js";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import CreatePermissionGroup from "./CreatePermissionGroup";
-import Breadcrumbs from "@components/admin/ui/Breadcrumb.jsx";
+import { getPermissionGroups, deletePermissionGroup } from "@services/admin/permissiongroupService";
 
 export default function ListPermissionGroup() {
     const [groups, setGroups] = useState([]);
     const [meta, setMeta] = useState({});
     const [loading, setLoading] = useState(true);
-    const [page, setPage] = useState(1);
-    const [perPage, setPerPage] = useState(10);
-    const [keyword, setKeyword] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [editingGroup, setEditingGroup] = useState(null);
 
+    const [page, setPage] = useState(1);
+    const [keyword, setKeyword] = useState("");
+    const [filterGroupName, setFilterGroupName] = useState("");
+    const [showFilter, setShowFilter] = useState(false);
+
     useEffect(() => {
         fetchGroups();
-    }, [page, perPage, keyword]);
+    }, [page, keyword]);
 
     const fetchGroups = () => {
         setLoading(true);
-        getPermissionGroups({ page, perPage, keyword })
+        const params = {
+            page,
+            keyword,
+            ...(filterGroupName && { group_name: filterGroupName }),
+        };
+
+        getPermissionGroups(params)
             .then((res) => {
                 const result = res.data.data;
                 setGroups(result.items || []);
                 setMeta(result.meta || {});
-                setLoading(false);
             })
-            .catch((err) => {
-                console.error("Lỗi lấy nhóm quyền:", err);
-                setLoading(false);
-            });
+            .finally(() => setLoading(false));
     };
 
     const handleDelete = (id) => {
         Swal.fire({
-            title: "Bạn có chắc chắn?",
-            text: "Thao tác này sẽ xóa nhóm quyền!",
+            title: "Xác nhận xóa",
+            text: "Bạn có chắc chắn muốn xóa nhóm quyền này?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
             cancelButtonColor: "#3085d6",
             confirmButtonText: "Xóa",
             cancelButtonText: "Hủy"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                deletePermissionGroup(id)
-                    .then(() => {
-                        Swal.fire("Đã xóa!", "Nhóm quyền đã được xóa.", "success");
-                        fetchGroups();
-                    })
-                    .catch((err) => {
-                        const message = err?.response?.data?.message || "Xóa thất bại.";
-                        const errors = err?.response?.data?.errors;
-
-                        let errorDetail = "";
-
-                        if (errors && typeof errors === "object") {
-                            const allErrors = Object.values(errors).flat();
-                            errorDetail = allErrors.length > 0 ? `\n- ${allErrors.join("\n- ")}` : "";
-                        }
-
-                        Swal.fire("Lỗi!", `${message}${errorDetail}`, "error");
-                    });
-
+        }).then((res) => {
+            if (res.isConfirmed) {
+                deletePermissionGroup(id).then(() => {
+                    Swal.fire("Đã xóa!", "", "success");
+                    fetchGroups();
+                });
             }
         });
     };
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        setPage(1);
-        fetchGroups();
-    };
-
     return (
         <div className="page-content">
-            <Breadcrumbs
-                title="Danh sách nhóm quyền"
-                breadcrumbItem="Danh sách nhóm quyền"
-            />
+            <Breadcrumbs title="Danh sách nhóm quyền" breadcrumbItem="Quản lý nhóm quyền" />
+
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <button
-                    className="btn btn-primary"
-                    onClick={() => {
-                        setEditingGroup(null);
-                        setShowModal(true);
-                    }}
-                >
+                <Button color="primary" onClick={() => {
+                    setEditingGroup(null);
+                    setShowModal(true);
+                }}>
                     + Thêm mới
-                </button>
+                </Button>
             </div>
 
-            <form className="row g-3 align-items-center mb-3" onSubmit={handleSearch}>
-                <div className="col-auto">
-                    <input
-                        type="text"
-                        className="form-control"
+            <Card className="mb-4">
+                <CardHeader className="bg-white border-bottom-0 d-flex justify-content-between">
+                    <Input
+                        type="search"
                         placeholder="Tìm kiếm nhóm quyền..."
                         value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                    />
-                </div>
-                <div className="col-auto">
-                    <select
-                        className="form-select"
-                        value={perPage}
                         onChange={(e) => {
-                            setPerPage(Number(e.target.value));
                             setPage(1);
+                            setKeyword(e.target.value);
                         }}
-                    >
-                        <option value="5">5 dòng/trang</option>
-                        <option value="10">10 dòng/trang</option>
-                        <option value="20">20 dòng/trang</option>
-                    </select>
-                </div>
-                <div className="col-auto">
-                    <button className="btn btn-outline-primary" type="submit">Tìm</button>
-                </div>
-            </form>
+                        style={{ maxWidth: 250 }}
+                    />
+                    <Button color="light" className="border" onClick={() => setShowFilter(true)}>
+                        <i className="mdi mdi-filter-variant me-1"></i> Lọc nâng cao
+                    </Button>
+                </CardHeader>
+            </Card>
 
             {loading ? (
                 <p>Đang tải dữ liệu...</p>
             ) : (
-                <table className="table table-bordered table-hover">
-                    <thead className="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Tên nhóm quyền</th>
-                        <th>Mô tả</th>
-                        <th>Ngày tạo</th>
-                        <th>Hành động</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {groups.length === 0 ? (
+                <div className="table-responsive">
+                    <table className="table table-bordered align-middle">
+                        <thead className="table-light">
                         <tr>
-                            <td colSpan="5" className="text-center">Không có nhóm quyền nào.</td>
+                            <th>ID</th>
+                            <th>Tên nhóm quyền</th>
+                            <th>Mô tả</th>
+                            <th>Ngày tạo</th>
+                            <th>Hành động</th>
                         </tr>
-                    ) : (
-                        groups.map((group) => (
-                            <tr key={group.id}>
-                                <td>{group.id}</td>
-                                <td>{group.group_name}</td>
-                                <td>{group.description}</td>
-                                <td>{group.created_at}</td>
-                                <td>
-                                    <button
-                                        className="btn btn-sm btn-warning me-2"
-                                        onClick={() => {
-                                            setEditingGroup(group);
-                                            setShowModal(true);
-                                        }}
-                                    >
-                                        Sửa
-                                    </button>
-                                    <button
-                                        className="btn btn-sm btn-danger"
-                                        onClick={() => handleDelete(group.id)}
-                                    >
-                                        Xóa
-                                    </button>
-                                </td>
+                        </thead>
+                        <tbody>
+                        {groups.length === 0 ? (
+                            <tr>
+                                <td colSpan="5" className="text-center">Không có nhóm quyền nào.</td>
                             </tr>
-                        ))
-                    )}
-                    </tbody>
-                </table>
+                        ) : (
+                            groups.map((group) => (
+                                <tr key={group.id}>
+                                    <td>{group.id}</td>
+                                    <td>{group.group_name}</td>
+                                    <td>{group.description}</td>
+                                    <td>{group.created_at}</td>
+                                    <td>
+                                        <div className="d-flex gap-2">
+                                            <Button
+                                                size="sm"
+                                                color="light"
+                                                title="Sửa"
+                                                onClick={() => {
+                                                    setEditingGroup(group);
+                                                    setShowModal(true);
+                                                }}
+                                            >
+                                                <i className="bi bi-pencil-square"></i>
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                color="light"
+                                                title="Xóa"
+                                                onClick={() => handleDelete(group.id)}
+                                            >
+                                                <i className="bi bi-trash"></i>
+                                            </Button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                        </tbody>
+                    </table>
+                </div>
             )}
 
+            {/* Pagination */}
+            {meta.total > meta.per_page && (
+                <div className="d-flex justify-content-end mt-3 align-items-center gap-2">
+                    <Button
+                        color="light"
+                        disabled={!meta.prev_page_url}
+                        onClick={() => setPage(meta.current_page - 1)}
+                    >
+                        Trước
+                    </Button>
+                    <span>
+                        Trang {meta.current_page} / {meta.last_page}
+                    </span>
+                    <Button
+                        color="light"
+                        disabled={!meta.next_page_url}
+                        onClick={() => setPage(meta.current_page + 1)}
+                    >
+                        Sau
+                    </Button>
+                </div>
+            )}
+
+            {/* Bộ lọc nâng cao */}
+            <Offcanvas
+                direction="end"
+                isOpen={showFilter}
+                toggle={() => setShowFilter(false)}
+            >
+                <OffcanvasHeader toggle={() => setShowFilter(false)}>
+                    Bộ lọc nâng cao
+                </OffcanvasHeader>
+                <OffcanvasBody>
+                    <Form>
+                        <FormGroup>
+                            <Label for="filterGroupName">Tên nhóm quyền</Label>
+                            <Input
+                                id="filterGroupName"
+                                placeholder="Nhập tên nhóm quyền..."
+                                value={filterGroupName}
+                                onChange={(e) => setFilterGroupName(e.target.value)}
+                            />
+                        </FormGroup>
+                        <Button
+                            color="primary"
+                            className="mt-3"
+                            block
+                            onClick={() => {
+                                setPage(1);
+                                setShowFilter(false);
+                                fetchGroups();
+                            }}
+                        >
+                            Áp dụng lọc
+                        </Button>
+                    </Form>
+                </OffcanvasBody>
+            </Offcanvas>
+
+            {/* Modal thêm/sửa */}
             {showModal && (
-                <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+                <div className="modal d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
                     <div className="modal-dialog modal-lg">
                         <div className="modal-content">
                             <div className="modal-header">

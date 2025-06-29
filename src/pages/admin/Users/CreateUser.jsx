@@ -113,116 +113,117 @@ export default function CreateUser({ user, onSuccess, onClose }) {
 
     return (
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-            <div className="mb-3">
-                <label className="form-label">Tên đăng nhập</label>
-                <input
-                    type="text"
-                    name="username"
-                    className={`form-control ${errors.username ? "is-invalid" : ""}`}
-                    value={formData.username}
-                    onChange={handleChange}
-                />
-                {errors.username && <div className="invalid-feedback">{errors.username[0]}</div>}
-            </div>
-
-            {!user && (
-                <div className="mb-3">
-                    <label className="form-label">Mật khẩu</label>
+            <div className="row">
+                <div className="col-md-6 mb-3">
+                    <label className="form-label">Tên đăng nhập</label>
                     <input
-                        type="password"
-                        name="password"
-                        className={`form-control ${errors.password ? "is-invalid" : ""}`}
-                        value={formData.password}
+                        type="text"
+                        name="username"
+                        className={`form-control ${errors.username ? "is-invalid" : ""}`}
+                        value={formData.username}
                         onChange={handleChange}
                     />
-                    {errors.password && <div className="invalid-feedback">{errors.password[0]}</div>}
+                    {errors.username && <div className="invalid-feedback">{errors.username[0]}</div>}
                 </div>
-            )}
 
-            <div className="mb-3">
-                <label className="form-label">Họ và tên</label>
-                <input
-                    type="text"
-                    name="full_name"
-                    className={`form-control ${errors.full_name ? "is-invalid" : ""}`}
-                    value={formData.full_name}
-                    onChange={handleChange}
-                />
-                {errors.full_name && <div className="invalid-feedback">{errors.full_name[0]}</div>}
-            </div>
-
-            <div className="mb-3">
-                <label className="form-label">Email</label>
-                <input
-                    type="text"
-                    name="email"
-                    className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                    value={formData.email}
-                    onChange={handleChange}
-                />
-                {errors.email && <div className="invalid-feedback">{errors.email[0]}</div>}
-            </div>
-
-            <div className="mb-3">
-                <label className="form-label">Số điện thoại</label>
-                <input
-                    type="text"
-                    name="phone_number"
-                    className={`form-control ${errors.phone_number ? "is-invalid" : ""}`}
-                    value={formData.phone_number}
-                    onChange={handleChange}
-                />
-                {errors.phone_number && <div className="invalid-feedback">{errors.phone_number[0]}</div>}
-            </div>
-
-            <div className="mb-3">
-                <label className="form-label">Vai trò</label>
-                <select
-                    name="role_id"
-                    className={`form-select ${errors.role_id ? "is-invalid" : ""}`}
-                    value={formData.role_id}
-                    onChange={handleChange}
-                >
-                    <option value="">-- Chọn vai trò --</option>
-                    {Array.isArray(roleOptions) &&
-                        roleOptions.map((role) => (
-                            <option key={role.id} value={role.id}>
-                                {role.role_name}
-                            </option>
-                        ))}
-                </select>
-
-                {errors.role_id && <div className="invalid-feedback">{errors.role_id[0]}</div>}
-            </div>
-
-            <div className="mb-3">
-                <label className="form-label">Ảnh đại diện</label>
-                <div className="d-flex align-items-center gap-3">
-                    <input
-                        type="file"
-                        name="avatar"
-                        className={`form-control ${errors.avatar ? "is-invalid" : ""}`}
-                        onChange={handleChange}
-                        accept="image/*"
-                    />
-                    {previewAvatar && (
-                        <img
-                            src={previewAvatar}
-                            alt="Avatar preview"
-                            style={{
-                                width: "40px",
-                                height: "40px",
-                                borderRadius: "50%",
-                                objectFit: "cover",
-                                border: "1px solid #ddd",
-                            }}
+                {!user && (
+                    <div className="col-md-6 mb-3">
+                        <label className="form-label">Mật khẩu</label>
+                        <input
+                            type="password"
+                            name="password"
+                            className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                            value={formData.password}
+                            onChange={handleChange}
                         />
-                    )}
+                        {errors.password && <div className="invalid-feedback">{errors.password[0]}</div>}
+                    </div>
+                )}
+
+                <div className="col-md-6 mb-3">
+                    <label className="form-label">Họ và tên</label>
+                    <input
+                        type="text"
+                        name="full_name"
+                        className={`form-control ${errors.full_name ? "is-invalid" : ""}`}
+                        value={formData.full_name}
+                        onChange={handleChange}
+                    />
+                    {errors.full_name && <div className="invalid-feedback">{errors.full_name[0]}</div>}
                 </div>
-                {errors.avatar && <div className="invalid-feedback">{errors.avatar[0]}</div>}
+
+                <div className="col-md-6 mb-3">
+                    <label className="form-label">Email</label>
+                    <input
+                        type="text"
+                        name="email"
+                        className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                        value={formData.email}
+                        onChange={handleChange}
+                    />
+                    {errors.email && <div className="invalid-feedback">{errors.email[0]}</div>}
+                </div>
+
+                <div className="col-md-6 mb-3">
+                    <label className="form-label">Số điện thoại</label>
+                    <input
+                        type="text"
+                        name="phone_number"
+                        className={`form-control ${errors.phone_number ? "is-invalid" : ""}`}
+                        value={formData.phone_number}
+                        onChange={handleChange}
+                    />
+                    {errors.phone_number && <div className="invalid-feedback">{errors.phone_number[0]}</div>}
+                </div>
+
+                <div className="col-md-6 mb-3">
+                    <label className="form-label">Vai trò</label>
+                    <select
+                        name="role_id"
+                        className={`form-select ${errors.role_id ? "is-invalid" : ""}`}
+                        value={formData.role_id}
+                        onChange={handleChange}
+                    >
+                        <option value="">-- Chọn vai trò --</option>
+                        {Array.isArray(roleOptions) &&
+                            roleOptions.map((role) => (
+                                <option key={role.id} value={role.id}>
+                                    {role.role_name}
+                                </option>
+                            ))}
+                    </select>
+                    {errors.role_id && <div className="invalid-feedback">{errors.role_id[0]}</div>}
+                </div>
+
+                <div className="col-md-6 mb-3">
+                    <label className="form-label">Ảnh đại diện</label>
+                    <div className="d-flex align-items-center gap-3">
+                        <input
+                            type="file"
+                            name="avatar"
+                            className={`form-control ${errors.avatar ? "is-invalid" : ""}`}
+                            onChange={handleChange}
+                            accept="image/*"
+                        />
+                        {previewAvatar && (
+                            <img
+                                src={previewAvatar}
+                                alt="Avatar preview"
+                                style={{
+                                    width: "40px",
+                                    height: "40px",
+                                    borderRadius: "50%",
+                                    objectFit: "cover",
+                                    border: "1px solid #ddd",
+                                }}
+                            />
+                        )}
+                    </div>
+                    {errors.avatar && <div className="invalid-feedback">{errors.avatar[0]}</div>}
+                </div>
             </div>
 
-            <div className="d-flex justify-content-end">
+            <div className="d-flex justify-content-end mt-3">
                 <button type="button" className="btn btn-secondary me-2" onClick={onClose} disabled={loading}>
                     Hủy
                 </button>
@@ -231,5 +232,6 @@ export default function CreateUser({ user, onSuccess, onClose }) {
                 </button>
             </div>
         </form>
+
     );
 }

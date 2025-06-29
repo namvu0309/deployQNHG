@@ -1,50 +1,66 @@
 import React, { useEffect, useState } from "react";
-import { getPermissions, deletePermission } from "@services/admin/permissionService.js";
+import {
+    Card,
+    CardHeader,
+    Input,
+    Button,
+    Offcanvas,
+    OffcanvasHeader,
+    OffcanvasBody,
+    Form,
+    FormGroup,
+    Label,
+} from "reactstrap";
 import Swal from "sweetalert2";
-import CreatePermission from "./CreatePermission";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb.jsx";
+import CreatePermission from "./CreatePermission";
+import { getPermissions, deletePermission } from "@services/admin/permissionService.js";
 
 export default function ListPermission() {
     const [permissions, setPermissions] = useState([]);
     const [meta, setMeta] = useState({});
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
-    const [perPage, setPerPage] = useState(10);
     const [keyword, setKeyword] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [editingPermission, setEditingPermission] = useState(null);
 
+    const [showFilter, setShowFilter] = useState(false);
+    const [filterGroupName, setFilterGroupName] = useState("");
+
     useEffect(() => {
         fetchPermissions();
-    }, [page, perPage, keyword]);
+    }, [page, keyword]);
 
     const fetchPermissions = () => {
         setLoading(true);
-        getPermissions({ page, perPage, keyword })
+        const params = {
+            page,
+            keyword,
+            ...(filterGroupName && { permission_group_name: filterGroupName }),
+        };
+
+        getPermissions(params)
             .then((res) => {
                 const result = res.data.data;
                 setPermissions(result.items || []);
                 setMeta(result.meta || {});
-                setLoading(false);
             })
-            .catch((err) => {
-                console.error("Lỗi lấy danh sách quyền:", err);
-                setLoading(false);
-            });
+            .finally(() => setLoading(false));
     };
 
     const handleDelete = (id) => {
         Swal.fire({
-            title: "Bạn có chắc chắn?",
-            text: "Thao tác này sẽ xóa quyền!",
+            title: "Xác nhận xóa",
+            text: "Bạn có chắc chắn muốn xóa quyền này?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
             cancelButtonColor: "#3085d6",
             confirmButtonText: "Xóa",
             cancelButtonText: "Hủy"
-        }).then((result) => {
-            if (result.isConfirmed) {
+        }).then((res) => {
+            if (res.isConfirmed) {
                 deletePermission(id)
                     .then(() => {
                         Swal.fire("Đã xóa!", "Quyền đã được xóa.", "success");
@@ -53,7 +69,6 @@ export default function ListPermission() {
                     .catch((err) => {
                         const message = err?.response?.data?.message || "Không thể xóa.";
                         const errors = err?.response?.data?.errors;
-
                         let errorDetail = "";
 
                         if (errors && typeof errors === "object") {
@@ -62,119 +77,53 @@ export default function ListPermission() {
                         }
 
                         Swal.fire("Lỗi!", `${message}${errorDetail}`, "error");
-                        console.error("Xóa thất bại:", err);
                     });
-
             }
         });
     };
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        setPage(1);
-        fetchPermissions();
-    };
-
-    const renderPagination = () => {
-        const pages = [];
-        for (let i = 1; i <= meta.totalPage; i++) {
-            pages.push(
-                <button
-                    key={i}
-                    onClick={() => setPage(i)}
-                    className={`btn btn-sm me-1 ${page === i ? "btn-primary" : "btn-outline-primary"}`}
-                >
-                    {i}
-                </button>
-            );
-        }
-
-        return (
-            <div className="d-flex justify-content-between align-items-center mt-3">
-                <div>
-                    Trang {meta.page} / {meta.totalPage} — Tổng: {meta.total} quyền
-                </div>
-                <div>
-                    <button
-                        className="btn btn-sm btn-outline-secondary me-1"
-                        disabled={page <= 1}
-                        onClick={() => setPage(page - 1)}
-                    >
-                        &laquo;
-                    </button>
-
-                    {pages}
-
-                    <button
-                        className="btn btn-sm btn-outline-secondary ms-1"
-                        disabled={page >= meta.totalPage}
-                        onClick={() => setPage(page + 1)}
-                    >
-                        &raquo;
-                    </button>
-                </div>
-            </div>
-        );
-    };
-
     return (
         <div className="page-content">
-            <Breadcrumbs
-                title="Danh sách quyền"
-                breadcrumbItem="Danh sách quyền"
-            />
+            <Breadcrumbs title="Danh sách quyền" breadcrumbItem="Quản lý quyền" />
+
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <button
-                    className="btn btn-primary"
-                    onClick={() => {
-                        setEditingPermission(null);
-                        setShowModal(true);
-                    }}
-                >
+                <Button color="primary" onClick={() => {
+                    setEditingPermission(null);
+                    setShowModal(true);
+                }}>
                     + Thêm mới
-                </button>
+                </Button>
             </div>
 
-            <form className="row g-3 align-items-center mb-3" onSubmit={handleSearch}>
-                <div className="col-auto">
-                    <input
-                        type="text"
-                        className="form-control"
+            <Card className="mb-4">
+                <CardHeader className="bg-white border-bottom-0 d-flex justify-content-between">
+                    <Input
+                        type="search"
                         placeholder="Tìm kiếm quyền..."
                         value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                    />
-                </div>
-                <div className="col-auto">
-                    <select
-                        className="form-select"
-                        value={perPage}
                         onChange={(e) => {
-                            setPerPage(Number(e.target.value));
                             setPage(1);
+                            setKeyword(e.target.value);
                         }}
-                    >
-                        <option value="5">5 dòng/trang</option>
-                        <option value="10">10 dòng/trang</option>
-                        <option value="20">20 dòng/trang</option>
-                    </select>
-                </div>
-                <div className="col-auto">
-                    <button className="btn btn-outline-primary" type="submit">Tìm</button>
-                </div>
-            </form>
+                        style={{ maxWidth: 250 }}
+                    />
+                    <Button color="light" className="border" onClick={() => setShowFilter(true)}>
+                        <i className="mdi mdi-filter-variant me-1"></i> Lọc nâng cao
+                    </Button>
+                </CardHeader>
+            </Card>
 
             {loading ? (
                 <p>Đang tải dữ liệu...</p>
             ) : (
-                <>
-                    <table className="table table-bordered table-hover">
+                <div className="table-responsive">
+                    <table className="table table-bordered align-middle">
                         <thead className="table-light">
                         <tr>
                             <th>ID</th>
                             <th>Tên quyền</th>
-                            <th>Tên nhóm quyền</th>
-                            <th>Mô tả nhóm quyền</th>
+                            <th>Nhóm quyền</th>
+                            <th>Mô tả nhóm</th>
                             <th>Mô tả quyền</th>
                             <th>Hành động</th>
                         </tr>
@@ -193,41 +142,112 @@ export default function ListPermission() {
                                     <td>{item.permission_group_description}</td>
                                     <td>{item.description}</td>
                                     <td>
-                                        <button
-                                            className="btn btn-sm btn-warning me-2"
-                                            onClick={() => {
-                                                setEditingPermission(item);
-                                                setShowModal(true);
-                                            }}
-                                        >
-                                            Sửa
-                                        </button>
-                                        <button
-                                            className="btn btn-sm btn-danger"
-                                            onClick={() => handleDelete(item.id)}
-                                        >
-                                            Xóa
-                                        </button>
+                                        <div className="d-flex gap-2">
+                                            <Button
+                                                size="sm"
+                                                color="light"
+                                                title="Sửa"
+                                                onClick={() => {
+                                                    setEditingPermission(item);
+                                                    setShowModal(true);
+                                                }}
+                                            >
+                                                <i className="bi bi-pencil-square"></i>
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                color="light"
+                                                title="Xóa"
+                                                onClick={() => handleDelete(item.id)}
+                                            >
+                                                <i className="bi bi-trash"></i>
+                                            </Button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
                         )}
                         </tbody>
                     </table>
-                    {meta.totalPage > 1 && renderPagination()}
-                </>
+                </div>
             )}
 
+            {/* Pagination */}
+            {meta.total > meta.per_page && (
+                <div className="d-flex justify-content-end mt-3 align-items-center gap-2">
+                    <Button
+                        color="light"
+                        disabled={!meta.prev_page_url}
+                        onClick={() => setPage(meta.current_page - 1)}
+                    >
+                        Trước
+                    </Button>
+                    <span>
+                        Trang {meta.current_page} / {meta.last_page}
+                    </span>
+                    <Button
+                        color="light"
+                        disabled={!meta.next_page_url}
+                        onClick={() => setPage(meta.current_page + 1)}
+                    >
+                        Sau
+                    </Button>
+                </div>
+            )}
+
+            {/* Bộ lọc nâng cao */}
+            <Offcanvas
+                direction="end"
+                isOpen={showFilter}
+                toggle={() => setShowFilter(false)}
+            >
+                <OffcanvasHeader toggle={() => setShowFilter(false)}>
+                    Bộ lọc nâng cao
+                </OffcanvasHeader>
+                <OffcanvasBody>
+                    <Form>
+                        <FormGroup>
+                            <Label for="filterGroupName">Nhóm quyền</Label>
+                            <Input
+                                id="filterGroupName"
+                                placeholder="Nhập tên nhóm quyền..."
+                                value={filterGroupName}
+                                onChange={(e) => setFilterGroupName(e.target.value)}
+                            />
+                        </FormGroup>
+                        <Button
+                            color="primary"
+                            className="mt-3"
+                            block
+                            onClick={() => {
+                                setPage(1);
+                                setShowFilter(false);
+                                fetchPermissions();
+                            }}
+                        >
+                            Áp dụng lọc
+                        </Button>
+                    </Form>
+                </OffcanvasBody>
+            </Offcanvas>
+
+            {/* Modal thêm/sửa */}
             {showModal && (
-                <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+                <div className="modal d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
                     <div className="modal-dialog modal-lg">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">{editingPermission ? "Cập nhật quyền" : "Thêm quyền"}</h5>
-                                <button type="button" className="btn-close" onClick={() => {
-                                    setShowModal(false);
-                                    setEditingPermission(null);
-                                }}></button>
+                                <h5 className="modal-title">
+                                    {editingPermission ? "Cập nhật quyền" : "Thêm quyền"}
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={() => {
+                                        setShowModal(false);
+                                        setEditingPermission(null);
+                                    }}
+                                ></button>
                             </div>
                             <div className="modal-body">
                                 <CreatePermission
