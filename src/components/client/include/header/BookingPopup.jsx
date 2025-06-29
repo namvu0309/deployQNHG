@@ -123,7 +123,7 @@ const BookingPopup = ({ isOpen, onClose }) => {
             {/* THÔNG TIN ĐẶT BÀN */}
             <div className="form-group">
               <h4>Thông tin đặt bàn</h4>
-              <div className="row">
+              <div className="row-booking">
                 <div className="form-field">
                   <label>Số lượng khách</label>
                   <div className="quantity">

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "./header.scss";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import logo from "../../../../assets/client/images/header/logo.jpg";
 import BookingPopup from "./BookingPopup";
 import HeaderService from "../../../../services/client/HeaderService"; 
+import { FaPhoneAlt, FaRegClock, FaGift, FaUser, FaUserPlus } from "react-icons/fa";
 
 const Header = () => {
   const [showNoti, setShowNoti] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
-  const [categories, setCategories] = useState([]); // Danh mục cha
+  const [ setCategories] = useState([]); // Danh mục cha
   const location = useLocation();
 
   // Gọi API lấy danh mục cha khi load header
@@ -17,7 +18,7 @@ const Header = () => {
       try {
         const data = await HeaderService.getParentCategories();
         setCategories(data);
-        console.log("✅ Danh mục cha:", data);
+        // console.log("✅ Danh mục cha:", data);
       } catch (error) {
         console.error("❌ Không thể tải danh mục cha:", error);
       }
@@ -43,7 +44,41 @@ const Header = () => {
           </button>
         </div>
       )}
+      {/* Header Top mới */}
+      <section className="header-top-bar">
+        <div className="header-top-left">
+          <span className="icon">
+            <FaPhoneAlt />
+          </span>
+          <span className="top-text">
+            Hotline: <b>*2005</b>
+          </span>
+          <span className="icon">
+            <FaRegClock />
+          </span>{" "}
+          <span className="top-text">16:00 - 23:00</span>
+        </div>
+        <div className="header-top-right">
+          <span className="icon">
+            <FaGift />
+          </span>
 
+          <span className="divider-vertical" />
+          <span className="icon">
+            <FaUser />
+          </span>
+          <Link to="/login-page" className="top-link">
+            Đăng nhập
+          </Link>
+          <span className="divider-vertical" />
+          <span className="icon">
+            <FaUserPlus />
+          </span>
+          <Link to="/register-page" className="top-link">
+            Đăng ký
+          </Link>
+        </div>
+      </section>
       <div className="header-main">
         <div className="header-left">
           <Link to="/" className="logo">
@@ -60,7 +95,9 @@ const Header = () => {
           <div className="nav-links">
             <Link
               to="/"
-              className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
+              className={`nav-link ${
+                location.pathname === "/" ? "active" : ""
+              }`}
             >
               Trang Chủ
             </Link>

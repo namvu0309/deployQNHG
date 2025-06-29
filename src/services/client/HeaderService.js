@@ -14,7 +14,7 @@ const HeaderService = {
   getParentCategories: async () => {
     try {
       const res = await axiosInstance.get("/categories/parent");
-      console.log("✅ Dữ liệu danh mục cha:", res.data);
+      // console.log("✅ Dữ liệu danh mục cha:", res.data);
       return res.data.data;
     } catch (error) {
       console.error("❌ Lỗi lấy danh mục cha:", error.response?.data || error.message);

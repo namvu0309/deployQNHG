@@ -217,3 +217,41 @@
     }
   }
 }
+
+.header-top-bar {
+  width: 100%;
+  background: #07381b;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 17px;
+  padding: 0 32px;
+  height: 40px;
+  .header-top-left, .header-top-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .icon {
+    color: #ffc107;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+  }
+  .top-text, .top-link {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .top-link {
+    cursor: pointer;
+    &:hover { color: #ffc107; }
+  }
+  .divider-vertical {
+    width: 1px;
+    height: 18px;
+    background: #fff3;
+    margin: 0 8px;
+  }
+}

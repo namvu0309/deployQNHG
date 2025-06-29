@@ -1,7 +1,7 @@
 import React from "react";
 import "./Footer.scss";
 import logo from "../../../../assets/client/images/header/logo.jpg";
-const Footer = () => {
+const Footer = ({ onOpenBooking }) => {
   return (
     <footer className="tudo-footer">
       <div className="tudo-footer__left">
@@ -15,7 +15,7 @@ const Footer = () => {
           className="tudo-footer__logo"
         /> 
       
-        <button className="tudo-footer__button">ĐẶT BÀN</button>
+        <button className="tudo-footer__button" onClick={onOpenBooking}>ĐẶT BÀN</button>
       </div>
 
       <div className="tudo-footer__center">

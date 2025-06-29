@@ -1,15 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./home.scss";
 import Slider from "react-slick";
-import { introInfo, partyInfo, dishes, endows, promoSlides } from "./data-home";
+import { introInfo, partyInfo, endows, promoSlides } from "./data-home";
 import { Link } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import DishDetailPopsup from "../dishDetail/DishDetailPopsup";
+import BookingPopup from "../include/header/BookingPopup";
+import Footer from "../include/footer/footer";
+import { getFeaturedDishes } from "@services/client/dishDetailService";
+import dish1 from "@assets/client/images/home/dish1.webp";
 // import plush from "@assets/client/images/menu/plush.svg";
 
 // Đã xóa import Header
 
 export default function Home() {
+  const [showDetail, setShowDetail] = useState(false);
+  const [selectedDish, setSelectedDish] = useState(null);
+  const [showBooking, setShowBooking] = useState(false);
+  const [dishes, setDishes] = useState([]);
+console.log(dishes)
   const settings = {
     dots: true,
     infinite: true,
@@ -23,6 +33,21 @@ export default function Home() {
       { breakpoint: 576, settings: { slidesToShow: 1 } },
     ],
   };
+
+  useEffect(() => {
+    const fetchDishes = async () => {
+      try {
+        const res = await getFeaturedDishes();
+        console.log(res)
+        setDishes(Array.isArray(res.data) ? res.data : []);
+       
+      } catch (e) {
+        console.error(e);
+        setDishes([]);
+      }
+    };
+    fetchDishes();
+  }, []);
 
   return (
     <>
@@ -41,14 +66,23 @@ export default function Home() {
         <div className="slider-wrapper">
           <div className="slider-inner">
           <Slider {...settings}>
+          {/* {console.log(dishes.map(d => d.id))} */}
             {dishes.map(d => (
-              <div key={d.id} className="card-item small">
+              <div
+                key={d.id}
+                className="card-item small"
+                onClick={() => {
+                  setSelectedDish(d);
+                  setShowDetail(true);
+                }}
+                style={{ cursor: "pointer" }}
+              >
                 <div className="card-image">
-                  <img src={d.img} alt={d.name} />
+                  <img src={d.image_url ? d.image_url : dish1} alt={d.name} />
                 </div>
                 <div className="card-info">
                   <h3>{d.name}</h3>
-                  <p className="price">{d.price}</p>
+                  <p className="price">{d.selling_price.toLocaleString()}đ</p>
                   <button className="btn-order">+ Đặt</button>
                 </div>
               </div>
@@ -58,7 +92,7 @@ export default function Home() {
         </div>
         
         <div className="btn-wrap">
-          <button className="btn-view-menu">Xem thực đơn</button>
+          <Link to="/menu-page" className="btn-view-menu">Xem thực đơn</Link>
         </div>
       </section>
 
@@ -141,7 +175,9 @@ export default function Home() {
           <p className="club-description">
             Hoàng Gia Club là nơi hội tụ của những tâm hồn yêu thích sự sang trọng và đẳng cấp. Tại đây, bạn sẽ được trải nghiệm những ly rượu thượng hạng, những món ăn tinh tế và những khoảnh khắc đáng nhớ bên bạn bè và người thân.
           </p>
-          <button className="club-cta">ĐẶT BÀN NGAY</button>
+          <button className="club-cta" onClick={() => setShowBooking(true)}>
+            ĐẶT BÀN NGAY
+          </button>
         </div>
       </section>
 
@@ -170,6 +206,14 @@ export default function Home() {
           </Slider>
         </div>
       </section>
+
+      <DishDetailPopsup
+        isOpen={showDetail}
+        onClose={() => setShowDetail(false)}
+        dish={selectedDish}
+      />
+      {/* <Footer onOpenBooking={() => setShowBooking(true)} /> */}
+      <BookingPopup isOpen={showBooking} onClose={() => setShowBooking(false)} />
     </>
   );
 }
