@@ -43,7 +43,8 @@ import {
 
 const RightSidebar = (props) => {
   useEffect(() => {
-    if (!props.leftSideBarTheme || !Object.values(leftSideBarThemeTypes).includes(props.leftSideBarTheme)) {
+    // Luôn set mặc định sidebar là màu trắng (light) khi load trang
+    if (props.leftSideBarTheme !== leftSideBarThemeTypes.LIGHT) {
       props.changeSidebarTheme(leftSideBarThemeTypes.LIGHT);
     }
   }, []);
