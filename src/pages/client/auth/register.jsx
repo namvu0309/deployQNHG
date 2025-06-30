@@ -35,7 +35,7 @@ export default function RegisterUserPage() {
       setTimeout(() => navigate('/login-page'), 1500);
     } catch (err) {
       setError(
-        err?.response?.data?.message || 'Không thể đăng ký. Vui lòng thử lại!'
+        err?.response?.data?.message || 'Không thể đăng ký. Vui lòng thử lại!'  
       );
     }
   };
