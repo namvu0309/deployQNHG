@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { createBooking } from "../../../../services/client/bookingService";
 import SuccessModal from "./SuccessModal";
 import ArrivalTimeSelect from "./ArrivalTimeSelect";
+import { toast } from "react-toastify";
 
-// Hàm chuyển đổi từ "HH:MM AM/PM" sang "HH:MM" (24h)
 const convertTo24Hour = (time12h) => {
   if (!time12h) return "";
   const [time, modifier] = time12h.split(" ");
@@ -18,10 +18,11 @@ const convertTo24Hour = (time12h) => {
 const BookingPopup = ({ isOpen, onClose }) => {
   const [guestCount, setGuestCount] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const [orderTable, setOrderTable] = useState({
-    customer_id:"",
+    customer_id: "",
     customer_name: "",
     customer_phone: "",
     customer_email: "",
@@ -32,8 +33,6 @@ const BookingPopup = ({ isOpen, onClose }) => {
     notes: "",
     status: "",
   });
-
-  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,27 +46,12 @@ const BookingPopup = ({ isOpen, onClose }) => {
     }));
   };
 
-  const validate = () => {
-    const newErrors = {};
-    if (!orderTable.customer_name.trim()) newErrors.customer_name = "Vui lòng nhập tên";
-    if (!orderTable.customer_phone.trim()) newErrors.customer_phone = "Vui lòng nhập số điện thoại";
-    if (!orderTable.customer_email.trim()) newErrors.customer_email = "Vui lòng nhập email";
-    if (!orderTable.reservation_date.trim()) newErrors.reservation_date = "Chọn ngày đặt";
-    if (!orderTable.reservation_time.trim()) newErrors.reservation_time = "Chọn giờ đến";
-    return newErrors;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
 
     const submissionData = {
       ...orderTable,
-      reservation_time: convertTo24Hour(orderTable.reservation_time), // Chuyển đổi sang 24h
+      reservation_time: convertTo24Hour(orderTable.reservation_time),
     };
 
     try {
@@ -75,7 +59,11 @@ const BookingPopup = ({ isOpen, onClose }) => {
       localStorage.setItem("latestReservation", JSON.stringify(submissionData));
       setShowSuccess(true);
     } catch (error) {
-      console.error("Đặt bàn thất bại:", error.response?.data || error.message);
+      const apiErrors = error.response?.data?.errors;
+      if (apiErrors) {
+        setErrors(apiErrors); // Vì BE trả về lỗi dạng { field: "message" }
+      }
+      toast.error(error.response?.data?.message || "Lỗi tạo đơn đặt bàn");
     }
   };
 
@@ -189,6 +177,7 @@ const BookingPopup = ({ isOpen, onClose }) => {
                 value={orderTable.notes}
                 onChange={handleChange}
               />
+              {errors.notes && <p className="error">{errors.notes}</p>}
             </div>
 
             <div className="actions">
