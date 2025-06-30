@@ -22,7 +22,7 @@ import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import ListDish from "@components/admin/Dishes/ListDish";
 import ListTrashDish from "@components/admin/Dishes/ListTrashDish";
 import ModalDish from "@components/admin/Dishes/ModalDish";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Dishes.scss";
 import { getDishes, createDish, updateDish, deleteSoftDish, getDish } from "@services/admin/dishService";
@@ -330,7 +330,6 @@ const DishIndex = () => {
 
   return (
     <div className="page-content">
-      <ToastContainer />
       <Breadcrumbs title="Quản Lý Món Ăn" breadcrumbItem={activeTab === "list" ? "Danh sách món ăn" : "Thùng rác"} />
 
       {/* Nav Tabs for List and Trash */}

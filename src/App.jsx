@@ -27,7 +27,7 @@ import { authProtectedRoutes } from "@routes/admin";
 
 fakeBackend();
 
-const App = (props) => {
+const App = () => {
   // Sử dụng cố định Include
   const Layout = Include;
 
@@ -79,6 +79,20 @@ const App = (props) => {
           />
         ))}
       </Routes>
+      
+      {/* Toast Container */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </React.Fragment>
   );
 };

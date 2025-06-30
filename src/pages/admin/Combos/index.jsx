@@ -25,7 +25,6 @@ import { getDishes } from "@services/admin/dishService";
 import Swal from "sweetalert2";
 import ComboCardGrid from "@components/admin/Combos/ComboCardGrid";
 import ModalAddDishToCombo from "@components/admin/Combos/ModalAddDishToCombo";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const statusOptions = [
@@ -509,7 +508,6 @@ const ComboIndex = () => {
                     )}
                 </div>
             </Modal>
-            <ToastContainer position="top-right" autoClose={3000} />
         </div>
     );
 };
