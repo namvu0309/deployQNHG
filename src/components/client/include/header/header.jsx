@@ -81,15 +81,9 @@ const [, setCategories] = useState([]);;  // Danh mục cha
       </section>
       <div className="header-main">
         <div className="header-left">
-          <Link to="/" className="logo">
+          <Link to="/" className="logo-header">
             <img src={logo} alt="Quán Nhậu Hoàng Gia" />
           </Link>
-           
-          <div className="brand-name"></div>
-          <div className="divider"></div>
-          <div className="hotline">
-            <span>HOTLINE</span> <strong>*1986</strong>
-          </div>
         </div>
 
         <div className="nav-menu">
