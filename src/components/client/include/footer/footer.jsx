@@ -5,10 +5,6 @@ const Footer = ({ onOpenBooking }) => {
   return (
     <footer className="tudo-footer">
       <div className="tudo-footer__left">
-           <h2>
-              <span className="line-1">Quán Nhậu</span>
-              <span className="line-2">Hoàng Gia</span>
-            </h2>
         <img
           src={logo}
           alt="Quán Nhậu Hoàng Gia"
