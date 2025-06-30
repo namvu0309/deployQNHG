@@ -105,7 +105,7 @@ export default function RegisterUserPage() {
                 
                 className="form-input"
               />
-              <button type="submit" className="btn-primary">Đăng ký</button>
+              <button type="submit" className="btn-primary-nga">Đăng ký</button>
             </form>
             <div className="auth-links">
               <a href="/login-page" className="forgot">Quay lại đăng nhập</a>

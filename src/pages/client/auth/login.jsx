@@ -61,7 +61,7 @@ export default function LoginUserPage() {
                 required
                 className="form-input"
               />
-              <button type="submit" className="btn-primary">Đăng nhập</button>
+              <button type="submit" className="btn-primary-nga">Đăng nhập</button>
             </form>
             <div className="auth-links">
               <a href="/forgot" className="forgot">Quên mật khẩu?</a>

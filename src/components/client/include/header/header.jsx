@@ -9,7 +9,7 @@ import { FaPhoneAlt, FaRegClock, FaGift, FaUser, FaUserPlus } from "react-icons/
 const Header = () => {
   const [showNoti, setShowNoti] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
-  const [ setCategories] = useState([]); // Danh mục cha
+const [, setCategories] = useState([]);;  // Danh mục cha
   const location = useLocation();
 
   // Gọi API lấy danh mục cha khi load header
@@ -84,6 +84,7 @@ const Header = () => {
           <Link to="/" className="logo">
             <img src={logo} alt="Quán Nhậu Hoàng Gia" />
           </Link>
+           
           <div className="brand-name"></div>
           <div className="divider"></div>
           <div className="hotline">
