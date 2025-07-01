@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import { connect } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import ProtectedRoute from "@components/admin/ProtectedRoute.jsx";
 // Import Routes
 import {  publicRoutes } from "@routes/admin/index.jsx";
 //FE
@@ -47,16 +47,21 @@ const App = (props) => {
           />
         ))}
 
-         {authProtectedRoutes.map((route, idx) => (
-          <Route
-            path={route.path}
-            element={<Layout>{route.component}</Layout>}
-            key={idx}
-            exact={true}
-          />
-        ))}
+          {/* Protected Admin */}
+          {authProtectedRoutes.map((route, idx) => (
+              <Route
+                  key={idx}
+                  path={route.path}
+                  element={
+                      <ProtectedRoute permission={route.permission}>
+                          <Layout>{route.component}</Layout>
+                      </ProtectedRoute>
+                  }
+              />
+          ))}
 
-        {/* {authProtectedRoutes.map((route, idx) => (
+
+          {/* {authProtectedRoutes.map((route, idx) => (
           <Route
             path={route.path}
             element={
