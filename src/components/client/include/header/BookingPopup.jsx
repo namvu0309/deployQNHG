@@ -61,7 +61,7 @@ const BookingPopup = ({ isOpen, onClose }) => {
     } catch (error) {
       const apiErrors = error.response?.data?.errors;
       if (apiErrors) {
-        setErrors(apiErrors); // Vì BE trả về lỗi dạng { field: "message" }
+        setErrors(apiErrors);
       }
       toast.error(error.response?.data?.message || "Lỗi tạo đơn đặt bàn");
     }
@@ -77,7 +77,6 @@ const BookingPopup = ({ isOpen, onClose }) => {
         <div className="popup">
           <h2>Đặt bàn</h2>
           <form className="form" onSubmit={handleSubmit}>
-            {/* THÔNG TIN CỦA BẠN */}
             <div className="form-group">
               <h4>Thông tin của bạn</h4>
               <input
@@ -108,7 +107,6 @@ const BookingPopup = ({ isOpen, onClose }) => {
               {errors.customer_email && <p className="error">{errors.customer_email}</p>}
             </div>
 
-            {/* THÔNG TIN ĐẶT BÀN */}
             <div className="form-group">
               <h4>Thông tin đặt bàn</h4>
               <div className="row-booking">
@@ -166,6 +164,7 @@ const BookingPopup = ({ isOpen, onClose }) => {
                         reservation_time: time,
                       }))
                     }
+                    reservationDate={orderTable.reservation_date}
                   />
                   {errors.reservation_time && <p className="error">{errors.reservation_time}</p>}
                 </div>
