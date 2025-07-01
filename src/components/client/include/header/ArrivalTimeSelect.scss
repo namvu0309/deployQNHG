@@ -40,4 +40,8 @@
     background-color: #f39c12;
     color: white;
   }
+  .disabled-time {
+  color: #ccc !important;
+  pointer-events: none;
+}
 }
