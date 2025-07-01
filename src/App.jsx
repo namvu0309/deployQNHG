@@ -31,9 +31,6 @@ const App = () => {
   // Sử dụng cố định Include
   const Layout = Include;
 
-  // Tạo user giả
-  localStorage.setItem("authUser", JSON.stringify({ username: "quanglam" }));
-
   return (
     <React.Fragment>
       <Routes>

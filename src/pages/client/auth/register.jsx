@@ -7,7 +7,7 @@ export default function RegisterUserPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     full_name: '',
-    username: '',
+    phone_number: '',
     email: '',
     password: '',
     password_confirmation: ''
@@ -26,7 +26,7 @@ export default function RegisterUserPage() {
     try {
       await registerUser({
         full_name: form.full_name,
-        username: form.username,
+        phone_number: form.phone_number,
         email: form.email,
         password: form.password,
         password_confirmation: form.password_confirmation
@@ -41,42 +41,40 @@ export default function RegisterUserPage() {
   };
 
   return (
-    <div className="register-bg">
-      <div className="register-container">
-        <div className="register-col register-col-left">
-          <div className="logo">
-            <img src="/src/assets/client/images/header/logo.jpg" alt="Hoàng Gia" style={{maxWidth: 120, marginBottom: 24}} />
+    <div className="auth-container">
+      <div className="auth-content">
+        <div className="auth-left">
+          <div style={{ marginBottom: 24 }}>
+            
           </div>
-          <div className="register-illustration">
-            <div className="thumb"><img src="/src/assets/client/images/auth/thumb1.webp" alt="" /></div>
-            <div className="thumb"><img src="/src/assets/client/images/auth/thumb2.webp" alt="" /></div>
-            <div className="thumb"><img src="/src/assets/client/images/auth/thumb3.webp" alt="" /></div>
-            <div className="thumb"><img src="/src/assets/client/images/auth/thumb4.webp" alt="" /></div>
+          <div className="auth-images-grid">
+            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb1.webp" alt="" /></div>
+            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb2.webp" alt="" /></div>
+            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb3.webp" alt="" /></div>
+            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb4.webp" alt="" /></div>
           </div>
         </div>
-        <div className="register-col register-col-right">
-          <div className="auth-card">
-            <h1 className="auth-title">ĐĂNG KÝ THÀNH VIÊN</h1>
+        <div className="auth-right">
+          <div className="auth-form-box">
+            <div className="auth-title">ĐĂNG KÝ THÀNH VIÊN</div>
             {error && <div className="alert error">{error}</div>}
             {success && <div className="alert success">Đăng ký thành công! Chuyển trang...</div>}
-            <form onSubmit={handleSubmit} className="login-form">
+            <form onSubmit={handleSubmit} className="auth-form">
               <input
                 type="text"
                 name="full_name"
                 placeholder="Họ và tên"
                 value={form.full_name}
                 onChange={handleChange}
-                
-                className="form-input"
+                className="auth-input"
               />
               <input
                 type="text"
-                name="username"
-                placeholder="Tên đăng nhập"
-                value={form.username}
+                name="phone_number"
+                placeholder="Nhập số điện thoại"
+                value={form.phone_number}
                 onChange={handleChange}
-                
-                className="form-input"
+                className="auth-input"
               />
               <input
                 type="email"
@@ -84,8 +82,7 @@ export default function RegisterUserPage() {
                 placeholder="Email của bạn"
                 value={form.email}
                 onChange={handleChange}
-                
-                className="form-input"
+                className="auth-input"
               />
               <input
                 type="password"
@@ -93,8 +90,7 @@ export default function RegisterUserPage() {
                 placeholder="Mật khẩu của bạn"
                 value={form.password}
                 onChange={handleChange}
-                
-                className="form-input"
+                className="auth-input"
               />
               <input
                 type="password"
@@ -102,12 +98,11 @@ export default function RegisterUserPage() {
                 placeholder="Nhập lại mật khẩu"
                 value={form.password_confirmation}
                 onChange={handleChange}
-                
-                className="form-input"
+                className="auth-input"
               />
-              <button type="submit" className="btn-primary-nga">Đăng ký</button>
+              <button type="submit" className="auth-btn">Đăng ký</button>
             </form>
-            <div className="auth-links">
+            <div className="auth-link">
               <a href="/login-page" className="forgot">Quay lại đăng nhập</a>
             </div>
           </div>
