@@ -33,10 +33,10 @@ const Header = () => {
     const checkUser = () => {
       const token = localStorage.getItem('token');
       if (token) {
-        const authUser = localStorage.getItem('authUser');
-        if (authUser) {
+        const clientUser = localStorage.getItem('clientUser');
+        if (clientUser) {
           try {
-            const userObj = JSON.parse(authUser);
+            const userObj = JSON.parse(clientUser);
             setUser(userObj || null);
           } catch {
             setUser(null);
@@ -56,7 +56,7 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('authUser');
+    localStorage.removeItem('clientUser');
     setUser(null);
     window.location.reload();
   };
@@ -98,15 +98,13 @@ const Header = () => {
           <span className="divider-vertical" />
           {user ? (
             <div className="user-dropdown" style={{ display: "inline-block", position: "relative" }}>
-              <span className="icon">
-                <FaUser />
-              </span>
               <span
                 className="top-link user-name"
-                style={{ cursor: "pointer" }}
+                style={{ display: "inline-flex", alignItems: "center", cursor: "pointer", marginLeft: 0, fontWeight: 400, fontSize: 18 }}
                 onClick={() => setShowDropdown((prev) => !prev)}
               >
-                Xin chào, <b>{user.full_name}</b>
+                <span className="icon" style={{ marginRight: 6 }}><FaUser /></span>
+                {user.full_name}
               </span>
               {showDropdown && (
                 <div

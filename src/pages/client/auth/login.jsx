@@ -27,7 +27,7 @@ export default function LoginUserPage() {
         localStorage.setItem('token', res.data.token);
         if (res.data.user) {
           const { id, email, full_name } = res.data.user;
-          localStorage.setItem('authUser', JSON.stringify({ id, email, full_name }));
+          localStorage.setItem('clientUser', JSON.stringify({ id, email, full_name }));
         }
         window.dispatchEvent(new Event('storage'));
         console.log(res.data.token);
@@ -43,7 +43,7 @@ export default function LoginUserPage() {
   };
 
   const token = localStorage.getItem('authUser');
-  console.log('Token:', token);
+  // console.log('Token:', token);
 
   return (
     <div className="auth-container">
