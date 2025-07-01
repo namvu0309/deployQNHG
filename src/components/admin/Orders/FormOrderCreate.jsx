@@ -18,24 +18,23 @@ import {
 } from "reactstrap";
 import { getDishes } from "@services/admin/dishService";
 import "./FormOrder.scss";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaShoppingCart } from "react-icons/fa";
 import { getTables } from "@services/admin/tableService";
 import { getTableAreas } from "@services/admin/tableAreaService";
 import { createOrder } from "@services/admin/orderService";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Swal from "sweetalert2";
-import OrderItemsModal from "./OrderItemsModal";
 import dishDefaultImg from "@assets/admin/images/dish/dish-default.webp";
 import { formatPriceToVND } from "@helpers/formatPriceToVND";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
+import CardTable from "../Table/CardTable";
 
 const FormOrderCreate = () => {
   const [orderItems, setOrderItems] = useState([]);
   const [orderNotes, setOrderNotes] = useState("");
   const [orderMethod, setOrderMethod] = useState("Dine In");
-  const [selectedTables, setSelectedTables] = useState([]);
+  const [selectedTables, setSelectedTables] = useState([]); // [{id, table_number, ...}]
   const [dishes, setDishes] = useState([]);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -60,7 +59,6 @@ const FormOrderCreate = () => {
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
-  const [showItemsModal, setShowItemsModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const navigate = useNavigate();
@@ -168,8 +166,8 @@ const FormOrderCreate = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const vat = subtotal * 0.1; // 10% VAT
-  const total = subtotal + vat;
+  const vat = 0; // VAT luôn là 0đ
+  const total = subtotal;
 
   const handleEditTables = () => {
     setShowTableModal(true);
@@ -192,11 +190,19 @@ const FormOrderCreate = () => {
   const handleCloseTableModal = () => setShowTableModal(false);
 
   const handleTableToggle = (tableId) => {
-    setSelectedTables((prev) =>
-      prev.includes(tableId)
-        ? prev.filter((id) => id !== tableId)
-        : [...prev, tableId]
-    );
+    setSelectedTables((prev) => {
+      const exists = prev.find((t) => String(t.id) === String(tableId));
+      if (exists) {
+        return prev.filter((t) => String(t.id) !== String(tableId));
+      } else {
+        // tìm object trong tableList
+        const found = tableList.find((t) => String(t.id) === String(tableId));
+        if (found) {
+          return [...prev, found];
+        }
+        return prev;
+      }
+    });
   };
 
   useEffect(() => {
@@ -226,7 +232,7 @@ const FormOrderCreate = () => {
       order_type: getOrderType(orderMethod),
       tables:
         orderMethod === "Dine In"
-          ? selectedTables.map((id) => ({ table_id: Number(id) }))
+          ? selectedTables.map((t) => ({ table_id: Number(t.id) }))
           : [],
       reservation_id: null,
       customer_id: null,
@@ -307,7 +313,7 @@ const FormOrderCreate = () => {
               </div>
             ) : (
               dishes.map((dish) => (
-                <Col md={4} key={dish.id} className="mb-3">
+                <Col md={6} key={dish.id} className="mb-4">
                   <Card className="menu-card d-flex flex-row align-items-stretch shadow-sm border-0">
                     <div className="menu-card-img-block">
                       <img
@@ -316,7 +322,7 @@ const FormOrderCreate = () => {
                         className="menu-card-img"
                       />
                     </div>
-                    <CardBody className="d-flex flex-column justify-content-center py-2 px-3">
+                    <CardBody className="d-flex flex-column justify-content-center py-2">
                       <div className="menu-card-title mb-1">
                         {dish.name || "Unnamed Dish"}
                       </div>
@@ -371,71 +377,116 @@ const FormOrderCreate = () => {
             <div className="order-sidebar-header mb-3">
               <div className="order-sidebar-title d-flex align-items-center">
                 Tạo đơn hàng mới
-                <Button color="link" size="sm" className="ms-2 p-0" onClick={() => setShowItemsModal(true)} title="Xem danh sách món ăn">
-                  <FaEdit size={20} />
-                </Button>
               </div>
             </div>
-            {/* Existing Items */}
-            <div className="order-sidebar-list order-sidebar-list-scroll mb-3">
-              {orderItems.length === 0 ? (
-                <div className="text-muted text-center py-4 small">
-                  Chưa có món nào trong đơn hàng.
-                </div>
-              ) : (
-                orderItems.map((item) => (
-                  <div
-                    className="order-item-box d-flex align-items-start justify-content-between mb-3"
-                    key={item.id}
+            {/* Chọn bàn, ghi chú, hình thức phục vụ */}
+            <div className="order-sidebar-section mb-3">
+              {/* Order Method */}
+              {orderMethod === "Dine In" && (
+                <div className="order-table-box d-flex align-items-center justify-content-between py-2 mb-2">
+                  <span>
+                    {selectedTables.length > 0 ? (
+                      selectedTables.map((t) => `Bàn ${t.table_number}`).join(", ")
+                    ) : (
+                      <span className="text-muted">Chưa chọn bàn nào</span>
+                    )}
+                  </span>
+                  <Button
+                    color="link"
+                    size="sm"
+                    style={{ color: "#222" }}
+                    onClick={handleEditTables}
+                    className="p-0 ms-2"
+                    title="Edit tables"
                   >
-                    <div style={{ flex: 1 }}>
-                      <div className="mb-1">
-                        <span className="order-item-title">{item.name}</span>
+                    <FaEdit size={18} />
+                  </Button>
+                  {/* Modal chọn bàn */}
+                  <Modal
+                    isOpen={showTableModal}
+                    toggle={handleCloseTableModal}
+                    size="xl"
+                    style={{ maxWidth: '80vw' }}
+                  >
+                    <ModalHeader toggle={handleCloseTableModal}>
+                      Chọn bàn
+                    </ModalHeader>
+                    <ModalBody>
+                      <div
+                        className="table-area-carousel d-flex align-items-center mb-3"
+                        style={{ overflowX: "auto" }}
+                      >
+                        {tableAreas.map((area) => (
+                          <div
+                            key={area.id}
+                            className={`table-area-item py-2 me-2 rounded ${selectedArea === area.id ? "active" : ""}`}
+                            style={{
+                              background: selectedArea === area.id ? "#556ee6" : "#f4f4f6",
+                              color: selectedArea === area.id ? "#fff" : "#222",
+                              cursor: "pointer",
+                              minWidth: 120,
+                              textAlign: "center",
+                              fontWeight: 500,
+                              border: selectedArea === area.id ? "2px solid #556ee6" : "2px solid transparent",
+                              transition: "all 0.2s",
+                            }}
+                            onClick={() => setSelectedArea(area.id)}
+                          >
+                            {area.name}
+                          </div>
+                        ))}
                       </div>
-                      <div className="d-flex align-items-center mt-2">
-                        <Button
-                          color="light"
-                          size="sm"
-                          className="border px-2 py-0 order-item-qty-btn"
-                          onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1)
-                          }
-                        >
-                          -
-                        </Button>
-                        <span className="mx-2 order-item-qty">
-                          {item.quantity}
-                        </span>
-                        <Button
-                          color="light"
-                          size="sm"
-                          className="border px-2 py-0 order-item-qty-btn"
-                          onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
-                          }
-                        >
-                          +
-                        </Button>
+                      <div
+                        className="table-modal-list"
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          justifyContent: "flex-start",
+                          gap: "16px",
+                          minHeight: "200px",
+                          padding: "8px 0",
+                        }}
+                      >
+                        {tableList.length === 0 && !loadingTables && (
+                          <div className="text-muted text-center w-100">
+                            Không có bàn nào khả dụng.
+                          </div>
+                        )}
+                        {tableList.map((table) => {
+                          const isSelected = selectedTables.some((t) => String(t.id) === String(table.id));
+                          return (
+                            <div
+                              key={table.id}
+                              className={`table-card-wrapper ${isSelected ? "selected" : ""}`}
+                              onClick={() => handleTableToggle(String(table.id))}
+                              style={{ margin: 8 }}
+                            >
+                              <CardTable
+                                tableId={table.table_number}
+                                seatCount={table.capacity}
+                                status={table.status}
+                                hideMenu={true}
+                              />
+                            </div>
+                          );
+                        })}
+                        {loadingTables && (
+                          <div className="text-center w-100 py-4">
+                            <Spinner color="primary" />
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    <div className="order-item-price fw-bold ms-3 mt-1">
-                      {formatPriceToVND(item.price * item.quantity)}
-                    </div>
-                  </div>
-                ))
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="primary" onClick={handleCloseTableModal}>
+                        Xác nhận
+                      </Button>
+                    </ModalFooter>
+                  </Modal>
+                </div>
               )}
-            </div>
-
-            <div className="order-sidebar-section">
-              {/* Order Note */}
-              <div
-                className="order-note-area px-3 py-2 mb-2"
-                style={{
-                  background: "#f7f8fa",
-                  borderRadius: 10,
-                  borderBottom: "1px solid #ececec",
-                }}
-              >
+              {/* Ghi chú */}
+              <div className="order-note-area py-2 mb-2">
                 <div className="d-flex justify-content-between align-items-center mb-1">
                   <div className="order-sidebar-label">Ghi chú đơn hàng</div>
                   <Button
@@ -468,16 +519,8 @@ const FormOrderCreate = () => {
                   </div>
                 )}
               </div>
-
-              {/* Order Method */}
-              <div
-                className="order-method-row px-3 py-2 mb-2"
-                style={{
-                  background: "#f7f8fa",
-                  borderRadius: 10,
-                  borderBottom: "1px solid #ececec",
-                }}
-              >
+              {/* Hình thức phục vụ */}
+              <div className="order-method-row py-2 mb-2">
                 <Label className="order-sidebar-label mb-1">Hình thức đơn hàng</Label>
                 <Input
                   type="select"
@@ -491,17 +534,9 @@ const FormOrderCreate = () => {
                   <option value="Delivery">Giao hàng</option>
                 </Input>
               </div>
-
               {/* Delivery/Contact Info */}
               {orderMethod === "Delivery" && (
-                <div
-                  className="delivery-info px-3 py-2 mb-2"
-                  style={{
-                    background: "#f7f8fa",
-                    borderRadius: 10,
-                    borderBottom: "1px solid #ececec",
-                  }}
-                >
+                <div className="delivery-info py-2 mb-2">
                   <Label className="order-sidebar-label mb-1">Thông tin giao hàng</Label>
                   <Input
                     type="text"
@@ -532,184 +567,50 @@ const FormOrderCreate = () => {
                   />
                 </div>
               )}
-
-              {/* Selected Tables */}
-              {orderMethod === "Dine In" && (
-                <div
-                  className="order-table-box d-flex align-items-center justify-content-between px-3 py-2 mb-2"
-                  style={{
-                    background: "#fff",
-                    borderRadius: 10,
-                    borderBottom: "1px solid #ececec",
-                  }}
-                >
-                  <span>
-                    {selectedTables.length > 0 ? (
-                      selectedTables
-                        .map((id) => {
-                          const found = tableList.find((t) => String(t.id) === String(id));
-                          return found ? `Bàn ${found.table_number}` : `Bàn ${id}`;
-                        })
-                        .join(", ")
-                    ) : (
-                      <span className="text-muted">Chưa chọn bàn nào</span>
-                    )}
-                  </span>
-                  <Button
-                    color="link"
-                    size="sm"
-                    style={{ color: "#222" }}
-                    onClick={handleEditTables}
-                    className="p-0 ms-2"
-                    title="Edit tables"
-                  >
-                    <FaEdit size={18} />
-                  </Button>
-                  {/* Modal chọn bàn */}
-                  <Modal
-                    isOpen={showTableModal}
-                    toggle={handleCloseTableModal}
-                    size="lg"
-                  >
-                    <ModalHeader toggle={handleCloseTableModal}>
-                      Chọn bàn
-                    </ModalHeader>
-                    <ModalBody>
-                      <div
-                        className="table-area-carousel d-flex align-items-center mb-3"
-                        style={{ overflowX: "auto" }}
-                      >
-                        {tableAreas.map((area) => (
-                          <div
-                            key={area.id}
-                            className={`table-area-item px-3 py-2 me-2 rounded ${
-                              selectedArea === area.id ? "active" : ""
-                            }`}
-                            style={{
-                              background:
-                                selectedArea === area.id
-                                  ? "#556ee6"
-                                  : "#f4f4f6",
-                              color: selectedArea === area.id ? "#fff" : "#222",
-                              cursor: "pointer",
-                              minWidth: 120,
-                              textAlign: "center",
-                              fontWeight: 500,
-                              border:
-                                selectedArea === area.id
-                                  ? "2px solid #556ee6"
-                                  : "2px solid transparent",
-                              transition: "all 0.2s",
-                            }}
-                            onClick={() => setSelectedArea(area.id)}
-                          >
-                            {area.name}
-                          </div>
-                        ))}
-                      </div>
-                      <div
-                        className="table-modal-list"
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          justifyContent: "flex-start",
-                          gap: "16px",
-                          minHeight: "200px",
-                          padding: "8px 0",
-                        }}
-                      >
-                        {tableList.length === 0 && !loadingTables && (
-                          <div className="text-muted text-center w-100">
-                            Không có bàn nào khả dụng.
-                          </div>
-                        )}
-                        {tableList.map((table) => (
-                          <div
-                            key={table.id}
-                            className={`table-card ${
-                              selectedTables.includes(String(table.id))
-                                ? "selected"
-                                : ""
-                            }`}
-                            onClick={() => handleTableToggle(String(table.id))}
-                          >
-                            <div className="table-card-inner">
-                              <div
-                                className="table-status-badge"
-                                style={{
-                                  background:
-                                    table.status === "available"
-                                      ? "linear-gradient(135deg, #4ade80, #22c55e)"
-                                      : table.status === "occupied"
-                                      ? "linear-gradient(135deg, #fbbf24, #f59e0b)"
-                                      : "linear-gradient(135deg, #e5e7eb, #d1d5db)",
-                                  color:
-                                    table.status === "available"
-                                      ? "#065f46"
-                                      : table.status === "occupied"
-                                      ? "#92400e"
-                                      : "#6b7280",
-                                }}
-                              >
-                                {table.status === "available"
-                                  ? "Trống"
-                                  : table.status === "occupied"
-                                  ? "Đang dùng"
-                                  : table.status}
-                              </div>
-                              <div className="table-number">
-                                Bàn {table.table_number}
-                              </div>
-                              <div className="table-info">
-                                <div className="table-info-item">
-                                  <span className="table-info-label">
-                                    Khu vực:
-                                  </span>
-                                  <span className="table-info-value">
-                                    {table.table_area?.name || "N/A"}
-                                  </span>
-                                </div>
-                                <div className="table-info-item">
-                                  <span className="table-info-label">
-                                    Sức chứa:
-                                  </span>
-                                  <span className="table-info-value">
-                                    {table.capacity || "N/A"} người
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                        {loadingTables && (
-                          <div className="text-center w-100 py-4">
-                            <Spinner color="primary" />
-                          </div>
-                        )}
-                      </div>
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="primary" onClick={handleCloseTableModal}>
-                        Xác nhận
-                      </Button>
-                    </ModalFooter>
-                  </Modal>
-                </div>
-              )}
             </div>
-
+            {/* Danh sách món ăn */}
+            <div className="order-items-detail-box mb-3">
+              <div className="fw-bold mb-3 px-3" style={{fontSize: '1.1rem'}}>Chi tiết đơn hàng ({orderItems.length} món)</div>
+              <div className="order-items-list">
+                {orderItems.length === 0 ? (
+                  <div className="text-muted text-center py-4">
+                    <FaShoppingCart size={32} className="mb-2 text-secondary" />
+                    <div>Chưa có món nào trong đơn hàng.</div>
+                  </div>
+                ) : (
+                  orderItems.map((item) => (
+                    <div className="order-item-row d-flex align-items-center" key={item.id}>
+                      <div className="order-item-img-block me-3">
+                        <img src={item.image_url ? `${fullUrl}${item.image_url}` : dishDefaultImg} alt={item.name} className="order-item-img" />
+                      </div>
+                      <div className="flex-grow-1 d-flex align-items-center">
+                        <div style={{flex: 1, minWidth: 0}}>
+                          <div className="fw-bold order-item-title ellipsis-1 mb-1">{item.name}</div>
+                          <div className="order-item-price-mult text-muted">{formatPriceToVND(item.price)} đ × {item.quantity}</div>
+                        </div>
+                        <div className="d-flex align-items-center gap-2 ms-3">
+                          <Button color="light" size="sm" className="border order-item-qty-btn" onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</Button>
+                          <span className="mx-2 order-item-qty">{item.quantity}</span>
+                          <Button color="light" size="sm" className="border order-item-qty-btn" onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
             <div className="order-sidebar-totals mb-3">
-              <div className="d-flex justify-content-between mb-1" style={{fontSize: '1.1rem', fontWeight: 500}}>
-                <span>Tạm tính</span>
-                <span>{formatPriceToVND(subtotal)}</span>
+              <div className="order-totals-row">
+                <span className="order-totals-label">Tạm tính</span>
+                <span className="order-totals-value">{formatPriceToVND(subtotal)}</span>
               </div>
-              <div className="d-flex justify-content-between mb-1" style={{fontSize: '1.1rem', fontWeight: 500}}>
-                <span>VAT</span>
-                <span>{formatPriceToVND(vat)}</span>
+              <div className="order-totals-row">
+                <span className="order-totals-label">VAT</span>
+                <span className="order-totals-value">{formatPriceToVND(vat)}</span>
               </div>
-              <div className="d-flex justify-content-between" style={{fontSize: '1.25rem', fontWeight: 700}}>
-                <span>Tổng cộng</span>
-                <span>{formatPriceToVND(total)}</span>
+              <div className="order-totals-row order-totals-total">
+                <span className="order-totals-label order-totals-label-total">Tổng cộng</span>
+                <span className="order-totals-value order-totals-value-total">{formatPriceToVND(total)}</span>
               </div>
             </div>
             <div className="d-flex gap-2">
@@ -741,11 +642,6 @@ const FormOrderCreate = () => {
           </div>
         </Col>
       </Row>
-      <OrderItemsModal
-        isOpen={showItemsModal}
-        toggle={() => setShowItemsModal(false)}
-        items={orderItems}
-      />
     </div>
   );
 };

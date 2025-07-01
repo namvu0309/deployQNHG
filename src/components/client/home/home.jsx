@@ -8,16 +8,17 @@ import "slick-carousel/slick/slick-theme.css";
 import DishDetailPopsup from "../dishDetail/DishDetailPopsup";
 import BookingPopup from "../include/header/BookingPopup";
 import { getFeaturedDishes } from "@services/client/dishDetailService";
-import dish1 from "@assets/client/images/home/dish1.webp";
+import dishDefault from "@assets/admin/images/dish/dish-default.webp";
 import BlurText from "../ui/BlurText";
 import ClickSpark from "../ui/ClickSpark";
+import HeroBanner from "./HeroBanner";
 
 export default function Home() {
   const [showDetail, setShowDetail] = useState(false);
   const [selectedDish, setSelectedDish] = useState(null);
   const [showBooking, setShowBooking] = useState(false);
   const [dishes, setDishes] = useState([]);
-  console.log(dishes);
+  const fullUrl = `http://localhost:8000/storage/`;
   const settings = {
     dots: true,
     infinite: true,
@@ -55,6 +56,9 @@ export default function Home() {
         sparkCount={8}
         duration={400}
       >
+        <section className="hero-banner-section">
+          <HeroBanner />
+        </section>
         <section className="home-section">
           <div className="home-content">
             <BlurText
@@ -87,7 +91,11 @@ export default function Home() {
                   >
                     <div className="card-image">
                       <img
-                        src={d.image_url ? d.image_url : dish1}
+                        src={
+                          d.image_url && d.image_url.trim() !== ""
+                            ? `${fullUrl}${d.image_url}`
+                            : dishDefault
+                        }
                         alt={d.name}
                       />
                     </div>

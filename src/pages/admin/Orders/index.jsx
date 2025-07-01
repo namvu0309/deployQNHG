@@ -83,7 +83,6 @@ const OrderIndex = () => {
       }
 
       const res = await getListOrders(params);
-      console.log("API SUCCESS:", res.data);
       setOrderData({
         items: res.data.data.items || res.data.items || res.data.data || [],
         meta: {
