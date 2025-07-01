@@ -33,7 +33,7 @@ export default function LoginUserPage() {
         console.log(res.data.token);
       }
       setSuccess(true);
-      setTimeout(() => navigate('/menu-page'), 1500);
+      setTimeout(() => navigate('/'), 1500);
     } catch (err) {
       setError(
         err?.response?.data?.message || 'Email hoặc mật khẩu không đúng.'

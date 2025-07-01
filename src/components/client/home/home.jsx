@@ -8,7 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 import DishDetailPopsup from "../dishDetail/DishDetailPopsup";
 import BookingPopup from "../include/header/BookingPopup";
 import { getFeaturedDishes } from "@services/client/dishDetailService";
-import dish1 from "@assets/client/images/home/dish1.webp";
+import dish1 from "@assets/client/images/home/dish1.jpg";
 import BlurText from "../ui/BlurText";
 import ClickSpark from "../ui/ClickSpark";
 

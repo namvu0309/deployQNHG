@@ -1,16 +1,16 @@
 // src/components/client/home/data-home.js
 // src/pages/home/data-home.js (hoặc tương ứng)
-import dish1 from '../../../assets/client/images/home/dish1.webp';
-import dish2 from '../../../assets/client/images/home/dish2.webp';
-import dish3 from '../../../assets/client/images/home/dish3.webp';
-import dish4 from '../../../assets/client/images/home/dish4.webp';
-import endow1 from "../../../assets/client/images/endow-blog/endow1.png";
-import endow2 from "../../../assets/client/images/endow-blog/endow2.webp";
-import introVisual from "../../../assets/client/images/home/intro-visual.webp";
-import partyVisual from "../../../assets/client/images/home/intro-visual.webp";
-import promo1 from "../../../assets/client/images/home/birthday.webp";
-import promo2 from "../../../assets/client/images/home/hotpot.webp";
-import promo3 from "../../../assets/client/images/home/member.webp";
+import dish1 from '../../../assets/client/images/home/dish1.jpg';
+import dish2 from '../../../assets/client/images/home/dish2.jpg';
+import dish3 from '../../../assets/client/images/home/dish3.jpg';
+import dish4 from '../../../assets/client/images/home/dish4.jpg';
+import endow1 from "../../../assets/client/images/endow-blog/endow1.jpg";
+import endow2 from "../../../assets/client/images/endow-blog/endow2.jpg";
+import introVisual from "../../../assets/client/images/home/intro-visual.jpg";
+import partyVisual from "../../../assets/client/images/home/intro-visual.jpg";
+import promo1 from "../../../assets/client/images/home/birthday.jpg";
+import promo2 from "../../../assets/client/images/home/hotpot.jpg";
+import promo3 from "../../../assets/client/images/home/member.jpg";
 
 
 export const dishes = [
