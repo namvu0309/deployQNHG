@@ -1,28 +1,27 @@
-/* LoginUserPage.jsx */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './auth.scss';
 import { loginUser } from '@services/client/auth/loginService';
+import { toast } from 'react-toastify';
 
 export default function LoginUserPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setFieldErrors({});
+    setErrors({});
     try {
       const res = await loginUser(form);
-      // Lưu toàn bộ object data vào localStorage với key 'authUser'
+
       if (res?.data?.token) {
         localStorage.setItem('token', res.data.token);
         if (res.data.user) {
@@ -30,20 +29,21 @@ export default function LoginUserPage() {
           localStorage.setItem('clientUser', JSON.stringify({ id, email, full_name }));
         }
         window.dispatchEvent(new Event('storage'));
-        console.log(res.data.token);
       }
+
       setSuccess(true);
       setTimeout(() => navigate('/'), 1500);
-    } catch (err) {
-      setError(
-        err?.response?.data?.message || 'Email hoặc mật khẩu không đúng.'
-      );
-      setFieldErrors(err?.response?.data?.errors || {});
+    } catch (error) {
+      const apiErrors = error.response?.data?.errors;
+      const message = error.response?.data?.message || 'Email hoặc mật khẩu không đúng.';
+
+      if (apiErrors) {
+        setErrors(apiErrors);
+      }
+
+      toast.error(message);
     }
   };
-
-  const token = localStorage.getItem('authUser');
-  // console.log('Token:', token);
 
   return (
     <div className="auth-container">
@@ -59,8 +59,8 @@ export default function LoginUserPage() {
         <div className="auth-right">
           <div className="auth-form-box">
             <div className="auth-title">ĐĂNG NHẬP THÀNH VIÊN</div>
-            {error && <div className="alert error">{error}</div>}
             {success && <div className="alert success">Đăng nhập thành công! Chuyển trang...</div>}
+
             <form onSubmit={handleSubmit} className="auth-form">
               <input
                 type="email"
@@ -68,22 +68,23 @@ export default function LoginUserPage() {
                 placeholder="Email"
                 value={form.email}
                 onChange={handleChange}
-                required
                 className="auth-input"
               />
-              {fieldErrors.email && <div className="field-error">{fieldErrors.email[0]}</div>}
+              {errors.email && <p className="field-error">{errors.email}</p>}
+
               <input
                 type="password"
                 name="password"
                 placeholder="Mật khẩu"
                 value={form.password}
                 onChange={handleChange}
-                required
                 className="auth-input"
               />
-              {fieldErrors.password && <div className="field-error">{fieldErrors.password[0]}</div>}
+              {errors.password && <p className="field-error">{errors.password}</p>}
+
               <button type="submit" className="auth-btn">Đăng nhập</button>
             </form>
+
             <div className="auth-link">
               <a href="/forgot" className="forgot">Quên mật khẩu?</a>
               <span> | </span>
