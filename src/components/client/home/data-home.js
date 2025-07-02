@@ -7,6 +7,7 @@ import promo2 from "../../../assets/client/images/home/hotpot.webp";
 import promo3 from "../../../assets/client/images/home/member.webp";
 
 
+
 export const endows = [
   {
     id: 1,

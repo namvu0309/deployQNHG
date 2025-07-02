@@ -8,7 +8,8 @@ import LoginUserPage from "../../pages/client/auth/login";
 import BranchDetail from "../../components/client/BranchDetail/BranchDetail";
 import Contact from "../../components/client/contact/Contact";
 import Home from "../../components/client/home/home";
-import SuccessfulReservation from "../../components/client/include/header/successful_reservation"
+import SuccessfulReservation from "../../components/client/include/header/successful_reservation";
+
 
 
 const clientRoutes = [
@@ -49,6 +50,8 @@ const clientRoutes = [
     path: "/reservation_success",
     component: <SuccessfulReservation/>,
   },
+   
+  
    
 ];
 

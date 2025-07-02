@@ -9,8 +9,10 @@ import { FaPhoneAlt, FaRegClock, FaGift, FaUser, FaUserPlus } from "react-icons/
 const Header = () => {
   const [showNoti, setShowNoti] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
-const [, setCategories] = useState([]);;  // Danh mục cha
+  const [categories, setCategories] = useState([]);  // Danh mục cha
   const location = useLocation();
+  const [user, setUser] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // Gọi API lấy danh mục cha khi load header
   useEffect(() => {
@@ -27,6 +29,37 @@ const [, setCategories] = useState([]);;  // Danh mục cha
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    const checkUser = () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const clientUser = localStorage.getItem('clientUser');
+        if (clientUser) {
+          try {
+            const userObj = JSON.parse(clientUser);
+            setUser(userObj || null);
+          } catch {
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+    };
+
+    checkUser();
+    window.addEventListener('storage', checkUser);
+    return () => window.removeEventListener('storage', checkUser);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('clientUser');
+    setUser(null);
+    window.location.reload();
+  };
 
   return (
     <header className="header-wrapper">
@@ -62,21 +95,67 @@ const [, setCategories] = useState([]);;  // Danh mục cha
           <span className="icon">
             <FaGift />
           </span>
-
           <span className="divider-vertical" />
-          <span className="icon">
-            <FaUser />
-          </span>
-          <Link to="/login-page" className="top-link">
-            Đăng nhập
-          </Link>
-          <span className="divider-vertical" />
-          <span className="icon">
-            <FaUserPlus />
-          </span>
-          <Link to="/register-page" className="top-link">
-            Đăng ký
-          </Link>
+          {user ? (
+            <div className="user-dropdown" style={{ display: "inline-block", position: "relative" }}>
+              <span
+                className="top-link user-name"
+                style={{ display: "inline-flex", alignItems: "center", cursor: "pointer", marginLeft: 0, fontWeight: 400, fontSize: 18 }}
+                onClick={() => setShowDropdown((prev) => !prev)}
+              >
+                <span className="icon" style={{ marginRight: 6 }}><FaUser /></span>
+                {user.full_name}
+              </span>
+              {showDropdown && (
+                <div
+                  className="dropdown-menu-logout"
+                  style={{
+                    position: "absolute",
+                    top: "120%",
+                    right: 0,
+                    background: "#fff",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                    borderRadius: 8,
+                    zIndex: 100,
+                    minWidth: 120,
+                  }}
+                >
+                  <button
+                    className="logout-btn"
+                    onClick={handleLogout}
+                    style={{
+                      width: "100%",
+                      background: "#22543d",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: 6,
+                      padding: "8px 0",
+                      cursor: "pointer",
+                      fontWeight: 500,
+                    }}
+                  >
+                    Đăng xuất
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <span className="icon">
+                <FaUser />
+              </span>
+              <Link to="/login-page" className="top-link">
+                Đăng nhập
+              </Link>
+              <span className="divider-vertical" />
+              <span className="icon">
+                <FaUserPlus />
+              </span>
+              <Link to="/register-page" className="top-link">
+                Đăng ký
+              </Link>
+            </>
+          )}
         </div>
       </section>
       <div className="header-main">
