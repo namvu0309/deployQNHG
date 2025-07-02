@@ -41,3 +41,20 @@ export async function del(url, config = {}) {
     .delete(url, { ...config })
     .then((response) => response.data);
 }
+
+// Chuyển đổi tags từ json (mảng hoặc chuỗi json) sang chuỗi phân cách bởi dấu phẩy
+
+export function convertTagsToString(tags) {
+  if (!tags) return '';
+  if (Array.isArray(tags)) return tags.join(', ');
+  if (typeof tags === 'string') {
+    try {
+      const arr = JSON.parse(tags);
+      if (Array.isArray(arr)) return arr.join(', ');
+      return tags;
+    } catch {
+      return tags;
+    }
+  }
+  return '';
+}

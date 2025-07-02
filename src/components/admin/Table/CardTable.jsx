@@ -12,6 +12,7 @@ const TableCard = ({
   status = "available", // available, occupied, reserved
   onClick,
   onDelete,
+  hideMenu = false,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -111,7 +112,6 @@ const TableCard = ({
     border: "1px solid #dee2e6",
     borderRadius: "12px",
     background: "white",
-    marginBottom: "1rem",
     boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
     cursor: "pointer",
     transition: "all 0.2s ease",
@@ -153,31 +153,33 @@ const TableCard = ({
     >
       <div className="d-flex justify-content-between align-items-center mb-3">
         <span style={badgeStyle}>{getStatusText(status)}</span>
-        <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-          <DropdownToggle
-            tag="button"
-            style={menuButtonStyle}
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent card click event
-            }}
-          >
-            ⋮
-          </DropdownToggle>
-          <DropdownMenu right>
-            <DropdownItem onClick={(e) => {
-              e.stopPropagation();
-              onClick && onClick(tableId); // Trigger edit action
-            }}>
-              Sửa
-            </DropdownItem>
-            <DropdownItem onClick={(e) => {
-              e.stopPropagation();
-              onDelete && onDelete(tableId);
-            }}>
-              Xóa
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+        {!hideMenu && (
+          <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+            <DropdownToggle
+              tag="button"
+              style={menuButtonStyle}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent card click event
+              }}
+            >
+              ⋮
+            </DropdownToggle>
+            <DropdownMenu right>
+              <DropdownItem onClick={(e) => {
+                e.stopPropagation();
+                onClick && onClick(tableId); // Trigger edit action
+              }}>
+                Sửa
+              </DropdownItem>
+              <DropdownItem onClick={(e) => {
+                e.stopPropagation();
+                onDelete && onDelete(tableId);
+              }}>
+                Xóa
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        )}
       </div>
 
       <div
