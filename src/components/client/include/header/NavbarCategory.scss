@@ -1,67 +1,73 @@
 .navbar-category-wrapper {
-  padding: 5px 0;
-  background-color: #FFA500; /* Nền cam */
-  border-top: 2px solid #1A3C34; /* Viền trên xanh lá cây đậm */
-  border-bottom: none;
-  overflow-x: auto;
-  white-space: nowrap;
-  scrollbar-width: none;
-  position: relative;
+  background-color: #ffa500; 
+  border-top: 2px solid #1a3c34;
+  padding: 6px 0;
+}
 
-  &::-webkit-scrollbar {
-    display: none;
+.navbar-container {
+  max-width: 1145px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px; 
+}
+
+.scroll-icon {
+  color: #486861;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  background: transparent;
+  padding: 0 8px;
+  transition: color 0.3s ease;
+  user-select: none;
+
+  &:hover {
+    color: #c92127;
   }
 
-  &::before,
-  &::after {
-    content: "<"; /* Ký hiệu mũi tên trái */
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #1A3C34; /* Màu chữ giống nút */
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  &.left {
+    margin-right: 3px;
   }
 
-  &::before {
-    left: 5px; /* Nút bên trái */
-  }
-
-  &::after {
-    content: ">"; /* Ký hiệu mũi tên phải */
-    right: 10px; 
-  }
-
-  &:hover::before,
-  &:hover::after {
-    color: #c92127; 
+  &.right {
+    margin-left: 3px;
   }
 }
 
 .navbar-category {
   display: flex;
-  gap: 5px;
-  padding: 0 15px;
   list-style: none;
   margin: 0;
-  justify-content: center;
+  padding: 0;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  white-space: nowrap;
+  max-width: 100%;
+  flex: 1;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   li {
+    flex: 0 0 auto;
+
     a {
       display: inline-block;
-      padding: 5px 12px;
+      padding: 3px 10px;
       border-radius: 20px;
-      background-color: #FFA500; 
-      color: #1A3C34; 
+      background-color: #ffa500;
+      color: #1a3c34;
       text-decoration: none;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: bold;
       transition: all 0.3s ease;
 
       &:hover,
       &.active {
-        background-color: #c9be21; 
+        background-color: #c9be21;
         color: #fff;
       }
     }

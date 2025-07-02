@@ -16,6 +16,7 @@ import {
 } from "reactstrap";
 import SwitchUI from "@components/admin/ui/SwitchUI";
 import { toast } from "react-toastify";
+import { convertTagsToString } from "@helpers/admin/api_helper";
 
 const ModalDish = ({
   modalOpen,
@@ -38,8 +39,11 @@ const ModalDish = ({
       } else {
         setPreviewImage(null);
       }
+      if (newDish.tags && typeof newDish.tags !== "string") {
+        setNewDish({ ...newDish, tags: convertTagsToString(newDish.tags) });
+      }
     }
-  }, [modalOpen, newDish.image_url, isEdit]);
+  }, [modalOpen]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];

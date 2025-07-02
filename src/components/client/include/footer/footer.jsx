@@ -1,21 +1,17 @@
 import React from "react";
 import "./Footer.scss";
-import logo from "../../../../assets/client/images/header/logo.jpg";
-const Footer = () => {
+import logo from "@assets/client/images/header/logo.png";
+const Footer = ({ onOpenBooking }) => {
   return (
     <footer className="tudo-footer">
       <div className="tudo-footer__left">
-           <h2>
-              <span className="line-1">Quán Nhậu</span>
-              <span className="line-2">Hoàng Gia</span>
-            </h2>
         <img
           src={logo}
           alt="Quán Nhậu Hoàng Gia"
           className="tudo-footer__logo"
         /> 
       
-        <button className="tudo-footer__button">ĐẶT BÀN</button>
+        <button className="tudo-footer__button" onClick={onOpenBooking}>ĐẶT BÀN</button>
       </div>
 
       <div className="tudo-footer__center">

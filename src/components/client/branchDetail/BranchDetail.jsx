@@ -55,7 +55,7 @@ const BranchDetail = () => {
           <button onClick={() => setShowPopup(true)}>
             <FaCalendarAlt /> Đặt bàn ngay
           </button>
-          <Link to="/thuc-don" className="menu-button">
+          <Link to="/menu-page" className="menu-button">
             <FaUtensils /> Xem thực đơn
           </Link>
           <button

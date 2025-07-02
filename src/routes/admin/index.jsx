@@ -32,8 +32,12 @@ import PageTable from "@pages/admin/Tables/index";
 import PageReservation from "@pages/admin/Reservations/index";
 import PageTableArea from "@pages/admin/TableAreas/index";
 import PageOrder from "@pages/admin/Orders/index";
+import FormOrderCreate from "@components/admin/Orders/FormOrderCreate";
+import FormOrderUpdate from "@components/admin/Orders/FormOrderUpdate";
 import PageCombo from "@pages/admin/Combos/index";
 import PageCategory from "@pages/admin/Categories/index";
+import PageKitchenOrders from "@pages/admin/KitchenOrders/index";
+
 import Forbidden403 from "@pages/admin/Users/403.jsx";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard />, permission: "dashboard.view" },
@@ -69,6 +73,11 @@ const authProtectedRoutes = [
   { path: "/table-areas/:id/update", component: <PageTableArea />, permission: "table-area.update" },
   { path: "/table-areas/:id/delete", component: <PageTableArea />, permission: "table-area.delete" },
 
+  // Quản lý đơn hàng
+  { path: "/orders/list", component: <PageOrder /> },
+  { path: "/orders/form/create", component: <FormOrderCreate /> },
+  { path: "/orders/form/edit", component: <FormOrderUpdate /> },
+
   // Đơn hàng
   { path: "/orders", component: <PageOrder />, permission: "order.view" },
   { path: "/orders/list", component: <PageOrder />, permission: "order.view" },
@@ -82,6 +91,8 @@ const authProtectedRoutes = [
 
   // Combo
   { path: "/combos", component: <PageCombo />, permission: "combo.view" },
+
+  { path: "/kitchen-orders", component: <PageKitchenOrders /> },
 
   // Hồ sơ
   { path: "/profile", component: <UserProfile /> }, // không cần permission

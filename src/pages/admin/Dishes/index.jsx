@@ -22,7 +22,7 @@ import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import ListDish from "@components/admin/Dishes/ListDish";
 import ListTrashDish from "@components/admin/Dishes/ListTrashDish";
 import ModalDish from "@components/admin/Dishes/ModalDish";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Dishes.scss";
 import { getDishes, createDish, updateDish, deleteSoftDish, getDish } from "@services/admin/dishService";
@@ -30,6 +30,7 @@ import { getCategories } from "@services/admin/categoryService";
 import DeleteModal from "@components/admin/ui/DeleteModal";
 import Swal from "sweetalert2";
 import PaginateUi from "@components/admin/ui/PaginateUi";
+import { convertTagsToString } from "@helpers/admin/api_helper";
 
 const DishIndex = () => {
   const [dishes, setDishes] = useState([]);
@@ -167,7 +168,7 @@ const DishIndex = () => {
         selling_price: dish.selling_price !== null ? dish.selling_price.toString() : "",
         unit: dish.unit || "plate",
         image_url: dish.image_url || "",
-        tags: dish.tags ? dish.tags.join(", ") : "",
+        tags: convertTagsToString(dish.tags),
         is_featured: !!dish.is_featured,
         status: dish.status || "active",
       });
@@ -217,7 +218,8 @@ const DishIndex = () => {
     formData.append("status", newDish.status || "active");
     formData.append("is_featured", newDish.is_featured ? "1" : "0");
 
-    const tagsArray = newDish.tags
+    const tagsString = typeof newDish.tags === "string" ? newDish.tags : convertTagsToString(newDish.tags);
+    const tagsArray = tagsString
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean);
@@ -227,6 +229,11 @@ const DishIndex = () => {
 
     if (newDish.image instanceof File) {
       formData.append("image_url", newDish.image);
+    }
+
+    // Log dữ liệu gửi đi
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ':', pair[1]);
     }
 
     try {
@@ -330,7 +337,6 @@ const DishIndex = () => {
 
   return (
     <div className="page-content">
-      <ToastContainer />
       <Breadcrumbs title="Quản Lý Món Ăn" breadcrumbItem={activeTab === "list" ? "Danh sách món ăn" : "Thùng rác"} />
 
       {/* Nav Tabs for List and Trash */}

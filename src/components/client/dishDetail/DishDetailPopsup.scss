@@ -1,0 +1,26 @@
+@import "../include/header/bookingPopup.scss";
+
+.dish-detail-content {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  .dish-img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .dish-info {
+    flex: 1;
+    .dish-price {
+      font-weight: bold;
+      color: #f39c12;
+      margin-bottom: 8px;
+    }
+    .dish-desc {
+      color: #333;
+      font-size: 15px;
+    }
+  }
+}

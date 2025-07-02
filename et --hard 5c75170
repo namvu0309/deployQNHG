@@ -1,0 +1,129 @@
+[33m2a14c90[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mlamdq[m[33m, [m[1;31morigin/lamdq[m[33m)[m update phân quyền
+[33m232e396[m Merge branch 'master' of https://github.com/dohuyit/Frontend-QNHG into lamdq
+[33m5c75170[m fix fe phân quyền
+[33mf3bc87d[m Merge pull request #44 from dohuyit/namvt
+[33m160531c[m feat: create paginateUi.jsx
+[33m319e882[m Merge pull request #43 from dohuyit/namvt
+[33m178b45b[m Merge branch 'master' of https://github.com/dohuyit/Frontend-QNHG into namvt
+[33m7db1d10[m feat:update combos
+[33m443f0ed[m Merge pull request #42 from dohuyit/lamdq
+[33me25d058[m update
+[33m3482c3b[m conflict
+[33m40e6bcd[m update
+[33m940a984[m Merge pull request #40 from dohuyit/nga1
+[33m84910fc[m  nga lấy api danh mục sản phẩm
+[33m76b9821[m mer master
+[33m17ef8c3[m mer master
+[33m79606f7[m Merge branch 'master' of https://github.com/dohuyit/Frontend-QNHG into nga1
+[33mfe9d289[m lấy api header
+[33me599d47[m Merge pull request #39 from dohuyit/huydq
+[33mef5a9c7[m update client popup reservation
+[33mb7333a2[m Merge pull request #38 from dohuyit/huydq
+[33mc9aa733[m Merge pull request #36 from dohuyit/nga1
+[33mc476dcb[m module combo
+[33ma74c24a[m Merge branch 'master' of https://github.com/dohuyit/Frontend-QNHG into huydq
+[33m1ddeb9f[m[33m ([m[1;32mmaster[m[33m)[m Merge pull request #37 from dohuyit/namvt
+[33mb57830d[m module order
+[33mbdcd6c6[m update combo
+[33md8243f8[m fix:crud combo
+[33mc41d882[m feat:CRUD COMBO
+[33ma434575[m sửa lại api tạo đơn đặt bàn và sửa lại css
+[33m4b199be[m git pull
+[33m1beecb1[m Merge pull request #34 from dohuyit/nga1
+[33md847315[m Merge pull request #35 from dohuyit/huydq
+[33m18ea5ee[m module category
+[33m48df699[m sửa lại popup chút
+[33m9398eed[m sửa lại api
+[33m54e52b1[m nga sua lai api tạo đơn đặt bàn và code thêm popup
+[33m3bb4db4[m Merge pull request #33 from dohuyit/namvt
+[33ma01d4a7[m fix conflict
+[33m0bcbe7b[m feat:CRUD orders
+[33m63ff616[m Merge pull request #32 from dohuyit/huydq
+[33mccb05ec[m Merge branch 'master' into huydq
+[33m023d17d[m Merge pull request #31 from dohuyit/lamdq
+[33m9ccf5f5[m module dishes
+[33m2ab4704[m update phân quyền
+[33mf1b64b4[m update
+[33m22aa469[m phân quyền
+[33ma6c0ad2[m Merge pull request #28 from dohuyit/nga1
+[33md8b0407[m Merge pull request #29 from dohuyit/huydq
+[33m8218367[m Merge branch 'master' into huydq
+[33m73966b4[m module FE table & table area
+[33m92d84c0[m Merge pull request #26 from dohuyit/namvt
+[33maf39c65[m nga lây api tao don dat ban
+[33m47a22b8[m Merge branch 'master' of https://github.com/dohuyit/Frontend-QNHG into namvt
+[33ma9772da[m fix: reservations create and update
+[33m22e57c2[m Merge pull request #25 from dohuyit/nga1
+[33m4e88e3c[m feat:Admin quản lý đơn đặt bàn reservations
+[33m3177896[m sua chu chay
+[33md699988[m nga sua lai file home
+[33m98f58c5[m Merge pull request #24 from dohuyit/huydq
+[33m7c202f8[m[33m ([m[1;31morigin/huydq[m[33m)[m fix error display admin dashboard
+[33m6f7aaee[m Merge pull request #23 from dohuyit/huydq
+[33m4c14657[m update app.jsx
+[33mbc4dbb4[m Merge pull request #22 from dohuyit/huydq
+[33m72d9a82[m fix lỗi fe scss
+[33md54a94c[m Merge pull request #18 from dohuyit/huydq
+[33m0c27a05[m Merge branch 'master' into huydq
+[33m7ce28a5[m Merge pull request #21 from dohuyit/xuanlam
+[33m68f29e4[m[33m ([m[1;31morigin/xuanlam[m[33m)[m Merge branch 'master' into xuanlam
+[33mdb2e631[m update header footer
+[33mf98fc67[m Merge pull request #20 from dohuyit/lamlx
+[33m66e88bd[m[33m ([m[1;31morigin/lamlx[m[33m)[m Merge branch 'master' into lamlx
+[33mb76396f[m[33m ([m[1;32mlamlx[m[33m)[m  fix header
+[33m295ad2c[m Merge pull request #19 from dohuyit/nga
+[33mcb456df[m[33m ([m[1;31morigin/nga[m[33m, [m[1;32mnga[m[33m)[m update
+[33maa99a37[m Merge pull request #16 from dohuyit/nga
+[33me6ba581[m update
+[33m0ffbcc9[m crud customer
+[33meb8af4a[m Merge pull request #17 from dohuyit/lamlx
+[33mf4e749a[m  cập nhật thêm home-page
+[33m22b5121[m code them home
+[33m8b7660b[m code thêm trang home
+[33m48c52d4[m Nga sửa login register tạo thêm file home
+[33m43c450a[m Merge pull request #15 from dohuyit/nga
+[33m5dc2fa2[m  sua footer
+[33m044c1a5[m sua footer
+[33m11ceb88[m Merge pull request #14 from dohuyit/lamlx
+[33m59331cc[m Merge branch 'master' into lamlx
+[33m23dff06[m  cập nhật header +  pops up Đặt bàn + xoá bỏ cơ sở
+[33m9775dcf[m  chỉnh sửa lại phần cơ sở - bỏ cơ sở + làm thêm phần popsUp đặt bàn + làm thêm header
+[33m1695696[m Merge pull request #13 from dohuyit/nga
+[33m1756413[m Merge branch 'master' into nga
+[33m0067340[m Nga code thêm footer register login db.json
+[33me918cb5[m Merge pull request #12 from dohuyit/huydq
+[33m3cd8e7c[m fix bug layout admin
+[33mff6e575[m Merge pull request #11 from dohuyit/huydq
+[33m3e99a0d[m Merge branch 'master' of https://github.com/dohuyit/Frontend-QNHG into huydq
+[33ma3b6094[m update admin template, fix module CRUD Branchs
+[33m45e78cf[m Merge pull request #9 from dohuyit/lamlx
+[33mdd3a7ce[m Thêm chức trang chi tiết cơ sở ( BranchDetail )
+[33me014a9e[m thay đổi tên folder từ facilyti -> Branch
+[33m488325d[m Merge pull request #10 from dohuyit/nga
+[33m9efc99a[m Merge branch 'master' of https://github.com/dohuyit/Frontend-QNHG into lamlx
+[33ma2e0ca0[m Merge branch 'master' of https://github.com/dohuyit/Frontend-QNHG into nga
+[33mdc8f17a[m sua flile
+[33m789bed1[m thêm phần facilyti-detal(chi tiết cơ sở)
+[33m8c53628[m Cập nhật Phần Cơ sở (Facility)
+[33mdcec8e3[m Merge pull request #8 from dohuyit/lamlx
+[33m4c6a868[m Sua lại import
+[33m5d832da[m Merge pull request #7 from dohuyit/nga
+[33m630e5d6[m sua file
+[33mc4a49da[m sua lai
+[33m792712f[m sua file
+[33mac66692[m them header
+[33m2d053c9[m them menu uu dai xem ngay
+[33mefdcab2[m Merge pull request #6 from dohuyit/nga
+[33m4141023[m them file menu
+[33mbb23bdf[m Merge pull request #5 from dohuyit/huydq
+[33maa5e6a4[m update base FE
+[33mf092eac[m Merge pull request #4 from dohuyit/huydq
+[33me23f032[m update route app
+[33m88a1835[m Merge pull request #3 from dohuyit/huydq
+[33m2666d85[m update file md
+[33m434e3e7[m Merge pull request #2 from dohuyit/huydq
+[33mb3fd516[m [huydq] Base admin dashboard
+[33m995dd91[m Test
+[33mbcbb156[m[33m ([m[1;31morigin/namvt[m[33m, [m[1;31morigin/mai[m[33m)[m Cập nhật base Fe và BE
+[33m26f4342[m Tạo base code cho FE và BE
+[33m844d85c[m Khởi tạo dự án
