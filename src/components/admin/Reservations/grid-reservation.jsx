@@ -423,36 +423,7 @@ const ReservationGrid = ({
                                         <Input
                                             id="reservation_time"
                                             type="select"
-                                            value={editForm.reservation_time !== undefined ? editForm.reservation_time : (() => {
-                                                let timeStr = selectedItem.reservation_time || '';
-                                                if (timeStr) {
-                                                    // Nếu là ISO string
-                                                    if (timeStr.includes("T")) {
-                                                        const d = new Date(timeStr);
-                                                        return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false });
-                                                    }
-                                                    // Nếu là dạng "YYYY-MM-DD HH:mm:ss"
-                                                    const match = timeStr.match(/(\d{2}):(\d{2})/);
-                                                    if (match) {
-                                                        return `${match[1]}:${match[2]}`;
-                                                    }
-                                                    // Nếu chỉ là "HH:mm" hoặc "HH:mm:ss"
-                                                    if (/^\d{2}:\d{2}(:\d{2})?$/.test(timeStr)) {
-                                                        return timeStr.slice(0, 5);
-                                                    }
-                                                }
-                                                let dateStr = selectedItem.reservation_date || selectedItem.booking_date || '';
-                                                if (dateStr && dateStr.includes(' ')) {
-                                                    const parts = dateStr.split(' ');
-                                                    if (parts[1]) {
-                                                        const timeMatch = parts[1].match(/(\d{2}):(\d{2})/);
-                                                        if (timeMatch) {
-                                                            return `${timeMatch[1]}:${timeMatch[2]}`;
-                                                        }
-                                                    }
-                                                }
-                                                return '';
-                                            })()}
+                                            value={editForm.reservation_time || ""}
                                             onChange={(e) => {
                                                 setEditForm({
                                                     ...editForm,
