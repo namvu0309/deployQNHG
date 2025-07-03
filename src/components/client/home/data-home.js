@@ -1,6 +1,7 @@
 import endow1 from "../../../assets/client/images/endow-blog/endow1.jpg";
 import endow2 from "../../../assets/client/images/endow-blog/endow2.jpg";
 import introVisual from "../../../assets/client/images/home/intro-visual.jpg";
+
 import partyVisual from "../../../assets/client/images/home/intro-visual.jpg";
 import promo1 from "../../../assets/client/images/home/birthday.jpg";
 import promo2 from "../../../assets/client/images/home/hotpot.jpg";
@@ -82,7 +83,7 @@ export const partyInfo = {
     "Phòng Vip riêng tư luôn sẵn sàng",
     "Hỗ trợ nhiệt tình mọi yêu cầu",
   ],
-  image: partyVisual,
+  // image: partyVisual,
 };
 // slider bài viết
 
