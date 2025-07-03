@@ -1,24 +1,13 @@
-// src/components/client/home/data-home.js
-// src/pages/home/data-home.js (hoặc tương ứng)
-import dish1 from '../../../assets/client/images/home/dish1.jpg';
-import dish2 from '../../../assets/client/images/home/dish2.jpg';
-import dish3 from '../../../assets/client/images/home/dish3.jpg';
-import dish4 from '../../../assets/client/images/home/dish4.jpg';
 import endow1 from "../../../assets/client/images/endow-blog/endow1.jpg";
 import endow2 from "../../../assets/client/images/endow-blog/endow2.jpg";
 import introVisual from "../../../assets/client/images/home/intro-visual.jpg";
+
 import partyVisual from "../../../assets/client/images/home/intro-visual.jpg";
 import promo1 from "../../../assets/client/images/home/birthday.jpg";
 import promo2 from "../../../assets/client/images/home/hotpot.jpg";
 import promo3 from "../../../assets/client/images/home/member.jpg";
 
 
-export const dishes = [
-  { id: 1, name: 'Măng trúc xào bò', price: '145,000', img: dish1, description: 'Măng trúc xào bò là món ăn hấp dẫn với vị ngọt của thịt bò hòa quyện cùng măng trúc tươi giòn, thêm chút cay nhẹ của ớt, rất thích hợp cho bữa nhậu cùng bạn bè, người thân.' },
-  { id: 2, name: "Gà H'Mong rang muối", price: '350,000', img: dish2, description: 'Gà H\'Mông rang muối là món ăn đặc sản với lớp da giòn rụm, thịt gà chắc ngọt, thấm vị muối rang đậm đà, ăn kèm lá chanh thơm lừng.' },
-  { id: 3, name: 'Cá chẽm chiên giòn kèm xoài xanh', price: '239,000', img: dish3, description: 'Cá chẽm chiên sốt me đặc biệt là món ăn nên thử khi đến Quán Nhậu Tự Do cùng bạn bè, người thân. Khi thưởng thức món ăn bổ dưỡng này, bạn sẽ cảm nhận được vị cá thơm béo đặc trưng.' },
-  { id: 4, name: 'Dê xào hoa chuối', price: '169,000', img: dish4, description: 'Dê xào hoa chuối là sự kết hợp hài hòa giữa thịt dê mềm ngọt và hoa chuối giòn mát, tạo nên món ăn dân dã nhưng đậm đà hương vị.' },
-];
 
 export const endows = [
   {
@@ -94,7 +83,7 @@ export const partyInfo = {
     "Phòng Vip riêng tư luôn sẵn sàng",
     "Hỗ trợ nhiệt tình mọi yêu cầu",
   ],
-  image: partyVisual,
+  // image: partyVisual,
 };
 // slider bài viết
 

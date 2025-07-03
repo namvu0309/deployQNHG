@@ -1,0 +1,122 @@
+.order-detail-modal {
+    .modal-content {
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .order-detail-modal-header {
+      background: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      .modal-title {
+        font-size: 1.25rem;
+        color: #333;
+      }
+      .btn-outline-light {
+        border-color: #ccc;
+        color: #333;
+        font-size: 0.875rem;
+        padding: 0.25rem 0.75rem;
+        &:hover {
+          background: #e9ecef;
+          border-color: #ccc;
+        }
+      }
+    }
+    .order-detail-modal-body {
+      background: #fff;
+      .order-info-col, .order-items-col {
+        padding: 1rem;
+      }
+      .order-info-card, .order-items-card {
+        background: #fff;
+        border-radius: 8px;
+      }
+      .order-info-card {
+        .badge {
+          background: #fff3cd;
+          color: #856404;
+          font-size: 0.75rem;
+          padding: 0.25rem 0.5rem;
+          border-radius: 10px;
+        }
+        .text-muted {
+          color: #6c757d;
+          font-weight: 500;
+        }
+        div {
+          font-size: 0.9rem;
+          color: #333;
+          margin-bottom: 0.5rem;
+        }
+        hr {
+          border-color: #eee;
+        }
+      }
+      .order-items-card {
+        div {
+          font-size: 0.9rem;
+          color: #333;
+          margin-bottom: 0.5rem;
+        }
+        .fw-bold {
+          font-weight: 600;
+          font-size: 1rem;
+        }
+        hr {
+          border-color: #eee;
+        }
+        .order-detail-price-xl {
+          font-size: 1.18rem;
+          color: #1a1a1a;
+          font-weight: 700;
+        }
+        .order-detail-row {
+          margin-bottom: 1.1rem;
+          font-size: 1.01rem;
+          line-height: 0.7;
+        }
+        .order-detail-total {
+          font-size: 1.08rem;
+          font-weight: 700;
+          margin-top: 1.5rem;
+          color: #1a1a1a;
+          letter-spacing: 0.01em;
+        }
+      }
+      .border-end {
+        border-right: 1px solid #ddd;
+      }
+    }
+    .order-detail-modal-footer {
+      background: #f5f5f5;
+      border-top: 1px solid #ddd;
+      justify-content: flex-end;
+      padding: 0.75rem 1.5rem;
+      .btn-secondary {
+        font-size: 0.875rem;
+        padding: 0.25rem 1rem;
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .order-detail-modal {
+      .modal-body .order-info-col, .order-items-col {
+        padding: 0.5rem;
+      }
+    }
+  }
+
+.order-detail-price-lg {
+  font-size: 1.05rem;
+  color: #333;
+}
+
+.order-detail-price-xl {
+  font-size: 1.15rem;
+  color: #222;
+}
