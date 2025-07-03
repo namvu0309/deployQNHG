@@ -11,6 +11,7 @@ import withRouter from "../ui/withRouter";
 
 import { withTranslation } from "react-i18next";
 import { useCallback } from "react";
+import { hasPermission } from "@services/admin/permissionUtils";
 
 const SidebarContent = (props) => {
   const ref = useRef();
@@ -153,64 +154,78 @@ const SidebarContent = (props) => {
         <div id="sidebar-menu">
           <ul className="metismenu list-unstyled" id="side-menu">
             <li className="menu-title">{props.t("Dashboard")} </li>
-            <li>
-              <Link to="/dashboard">
-                <i className="bx bx-home-circle"></i>
-                <span>{props.t("Dashboards")}</span>
-              </Link>
-            </li>
-            <li className="menu-title">{props.t("Restaurant")}</li>
-            <li>
-              <Link to="/#" className="has-arrow">
-                <i className="bx bx-table"></i>
-                <span>{props.t("Quản Lí Bàn")}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
-                <li>
-                  <Link to="/table">{props.t("Danh sách bàn")}</Link>
-                </li>
-              </ul>
-            </li>
 
-            <li>
-              <Link to="/#" className="has-arrow">
-                <i className="bx bx-task"></i>
-                <span>{props.t("Quản Lí Đơn Đặt Bàn")}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
+            {hasPermission("dashboard.view") && (
                 <li>
-                  <Link to="/reservations">
-                    {props.t("Danh Sách Đơn Đặt Bàn")}
+                  <Link to="/dashboard">
+                    <i className="bx bx-home-circle"></i>
+                    <span>{props.t("Dashboards")}</span>
                   </Link>
                 </li>
-                <li>
-                  <Link to="/table-areas">{props.t("Khu vực bàn")} </Link>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <Link to="/#" className="has-arrow">
-                <i className="bx bx-list-ul"></i>
-                <span>{props.t("Quản Lí Danh mục")}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
-                <li>
-                  <Link to="/categories">{props.t("Danh sách danh mục")}</Link>
-                </li>
-              </ul>
-            </li>
+            )}
 
-            <li>
-              <Link to="/#" className="has-arrow ">
-                <i className="bx bx-dish"></i>
-                <span>{props.t("Quản Lí Món Ăn")}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
+            <li className="menu-title">{props.t("Restaurant")}</li>
+
+            {hasPermission("table.view") && (
                 <li>
-                  <Link to="/dishes">{props.t("Danh Sách Món Ăn")}</Link>
+                  <Link to="/#" className="has-arrow">
+                    <i className="bx bx-table"></i>
+                    <span>{props.t("Quản Lí Bàn")}</span>
+                  </Link>
+                  <ul className="sub-menu" aria-expanded="false">
+                    <li>
+                      <Link to="/table">{props.t("Danh sách bàn")}</Link>
+                    </li>
+                  </ul>
                 </li>
-              </ul>
-            </li>
+            )}
+
+            {hasPermission("reservation.view") && (
+                <li>
+                  <Link to="/#" className="has-arrow">
+                    <i className="bx bx-task"></i>
+                    <span>{props.t("Quản Lí Đơn Đặt Bàn")}</span>
+                  </Link>
+                  <ul className="sub-menu" aria-expanded="false">
+                    <li>
+                      <Link to="/reservations">
+                        {props.t("Danh Sách Đơn Đặt Bàn")}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/table-areas">{props.t("Khu vực bàn")}</Link>
+                    </li>
+                  </ul>
+                </li>
+            )}
+
+            {hasPermission("category.view") && (
+                <li>
+                  <Link to="/#" className="has-arrow">
+                    <i className="bx bx-list-ul"></i>
+                    <span>{props.t("Quản Lí Danh mục")}</span>
+                  </Link>
+                  <ul className="sub-menu" aria-expanded="false">
+                    <li>
+                      <Link to="/categories">{props.t("Danh sách danh mục")}</Link>
+                    </li>
+                  </ul>
+                </li>
+            )}
+
+              {hasPermission("dish.view") && (
+                  <li>
+                      <Link to="/#" className="has-arrow ">
+                          <i className="bx bx-dish"></i>
+                          <span>{props.t("Quản Lí Món Ăn")}</span>
+                      </Link>
+                      <ul className="sub-menu" aria-expanded="false">
+                          <li>
+                              <Link to="/dishes">{props.t("Danh Sách Món Ăn")}</Link>
+                          </li>
+                      </ul>
+                  </li>
+              )}
             <li>
               <Link to="/#" className="has-arrow ">
                 <i className="bx bx-dish"></i>
@@ -223,76 +238,100 @@ const SidebarContent = (props) => {
               </ul>
             </li>
 
-            <li>
-              <Link to="/combos">
-                <i className="bx bx-grid-alt"></i>
-                <span>{props.t("Quản Lí Combo")}</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/#" className="has-arrow ">
-                <i className="bx bx-cart"></i>
-                <span>{props.t("Quản Lí Đơn Hàng")}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
+            {hasPermission("combo.view") && (
                 <li>
-                  <Link to="/orders/list">{props.t("Danh Sách Đơn Hàng")}</Link>
-                </li>
-                <li>
-                  <Link to="/orders/track">{props.t("Theo Dõi Đơn Hàng")}</Link>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <Link to="/#" className="has-arrow ">
-                <i className="bx bxs-user-detail"></i>
-                <span>{props.t("Quản Lí Khách Hàng")}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
-                <li>
-                  <Link to="/customer">{props.t("Danh Sách Khách Hàng")}</Link>
-                </li>
-                <li>
-                  <Link to="/invoices-detail">
-                    {props.t("Lịch sử Mua Hàng")}
+                  <Link to="/combos">
+                    <i className="bx bx-grid-alt"></i>
+                    <span>{props.t("Quản Lí Combo")}</span>
                   </Link>
                 </li>
-              </ul>
-            </li>
+            )}
 
-            <li>
-              <Link to="/#" className="has-arrow ">
-                <i className="bx bxs-shield"></i>
-                <span>{props.t("Hệ Thống Phân quyền")}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
+            {hasPermission("order.view") && (
                 <li>
-                  <Link to="/roles">{props.t("Vai trò")}</Link>
+                  <Link to="/#" className="has-arrow ">
+                    <i className="bx bx-cart"></i>
+                    <span>{props.t("Quản Lí Đơn Hàng")}</span>
+                  </Link>
+                  <ul className="sub-menu" aria-expanded="false">
+                    <li>
+                      <Link to="/orders">{props.t("Danh Sách Đơn Hàng")}</Link>
+                    </li>
+                    <li>
+                      <Link to="/orders/track">{props.t("Theo Dõi Đơn Hàng")}</Link>
+                    </li>
+                  </ul>
                 </li>
+            )}
+
+            {hasPermission("customer.view") && (
                 <li>
-                  <Link to="/permission_groups">{props.t("Nhóm quyền")}</Link>
+                  <Link to="/#" className="has-arrow ">
+                    <i className="bx bxs-user-detail"></i>
+                    <span>{props.t("Quản Lí Khách Hàng")}</span>
+                  </Link>
+                  <ul className="sub-menu" aria-expanded="false">
+                    <li>
+                      <Link to="/customer">{props.t("Danh Sách Khách Hàng")}</Link>
+                    </li>
+                    <li>
+                      <Link to="/invoices-detail">
+                        {props.t("Lịch sử Mua Hàng")}
+                      </Link>
+                    </li>
+                  </ul>
                 </li>
+            )}
+
+            {(hasPermission("role.view") ||
+                hasPermission("permission_group.view") ||
+                hasPermission("permission.view") ||
+                hasPermission("user_role.view")) && (
                 <li>
-                  <Link to="/permissions">{props.t("Quyền Hạn")}</Link>
+                  <Link to="/#" className="has-arrow ">
+                    <i className="bx bxs-shield"></i>
+                    <span>{props.t("Hệ Thống Phân quyền")}</span>
+                  </Link>
+                  <ul className="sub-menu" aria-expanded="false">
+                    {hasPermission("role.view") && (
+                        <li>
+                          <Link to="/roles">{props.t("Vai trò")}</Link>
+                        </li>
+                    )}
+                    {hasPermission("permission_group.view") && (
+                        <li>
+                          <Link to="/permission_groups">{props.t("Nhóm quyền")}</Link>
+                        </li>
+                    )}
+                    {hasPermission("permission.view") && (
+                        <li>
+                          <Link to="/permissions">{props.t("Quyền Hạn")}</Link>
+                        </li>
+                    )}
+                    {hasPermission("user_role.view") && (
+                        <li>
+                          <Link to="/user_roles">{props.t("Nhân viên")}</Link>
+                        </li>
+                    )}
+                  </ul>
                 </li>
+            )}
+
+            {hasPermission("user.view") && (
                 <li>
-                  <Link to="/user_roles">{props.t("Nhân viên")}</Link>
+                  <Link to="/#" className="has-arrow ">
+                    <i className="bx bxs-user"></i>
+                    <span>{props.t("Quản lí người dùng")}</span>
+                  </Link>
+                  <ul className="sub-menu" aria-expanded="false">
+                    <li>
+                      <Link to="/users">{props.t("Nhân viên")}</Link>
+                    </li>
+                  </ul>
                 </li>
-              </ul>
-            </li>
-            {/*phân quyền*/}
-            <li>
-              <Link to="/#" className="has-arrow ">
-                <i className="bx bxs-user"></i>
-                <span>{props.t("Quản lí người dùng")}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
-                <li>
-                  <Link to="/users">{props.t("Nhân viên")}</Link>
-                </li>
-              </ul>
-            </li>
+            )}
           </ul>
+
         </div>
       </SimpleBar>
     </React.Fragment>

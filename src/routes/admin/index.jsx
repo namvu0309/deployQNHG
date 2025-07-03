@@ -4,22 +4,11 @@ import { Navigate } from "react-router-dom";
 import UserProfile from "@pages/admin/Authentication/user-profile";
 
 // Authentication related pages
-import Login from "@pages/admin/Authentication/Login";
 import Logout from "@pages/admin/Authentication/Logout";
-import Register from "@pages/admin/Authentication/Register";
-import ForgetPwd from "@pages/admin/Authentication/ForgetPassword";
 
 // Inner Authentication
-import Login1 from "@pages/admin/AuthenticationInner/Login";
-import Login2 from "@pages/admin/AuthenticationInner/Login2";
-import Register1 from "@pages/admin/AuthenticationInner/Register";
-import Register2 from "@pages/admin/AuthenticationInner/Register2";
-import Recoverpw from "@pages/admin/AuthenticationInner/Recoverpw";
-import Recoverpw2 from "@pages/admin/AuthenticationInner/Recoverpw2";
 import ForgetPwd1 from "@pages/admin/AuthenticationInner/ForgetPassword";
 import ForgetPwd2 from "@pages/admin/AuthenticationInner/ForgetPassword2";
-import LockScreen from "@pages/admin/AuthenticationInner/auth-lock-screen";
-import LockScreen2 from "@pages/admin/AuthenticationInner/auth-lock-screen-2";
 import ConfirmMail from "@pages/admin/AuthenticationInner/page-confirm-mail";
 import ConfirmMail2 from "@pages/admin/AuthenticationInner/page-confirm-mail-2";
 import EmailVerification from "@pages/admin/AuthenticationInner/auth-email-verification";
@@ -49,74 +38,74 @@ import PageCombo from "@pages/admin/Combos/index";
 import PageCategory from "@pages/admin/Categories/index";
 import PageKitchenOrders from "@pages/admin/KitchenOrders/index";
 
+import Forbidden403 from "@pages/admin/Users/403.jsx";
 const authProtectedRoutes = [
-  { path: "/dashboard", component: <Dashboard /> },
+  { path: "/dashboard", component: <Dashboard />, permission: "dashboard.view" },
 
   // Customer routes
-  { path: "/customer", component: <PageCustomer /> },
-  { path: "/customer/edit/:id", component: <UpdateCustomer /> },
+  { path: "/customer", component: <PageCustomer />, permission: "customer.view" },
+  { path: "/customer/edit/:id", component: <UpdateCustomer />, permission: "customer.update" },
 
   // Role/Permission/User routes
-  { path: "/roles", component: <ListRole /> },
-  { path: "/permission_groups", component: <ListPermissionGroup /> },
-  { path: "/permissions", component: <ListPermission /> },
-  { path: "/users", component: <ListUser /> },
-  { path: "/user_roles", component: <ListUserRole /> },
+  { path: "/roles", component: <ListRole />, permission: "role.view" },
+  { path: "/permission_groups", component: <ListPermissionGroup />, permission: "permission-group.view" },
+  { path: "/permissions", component: <ListPermission />, permission: "permission.view" },
+  { path: "/users", component: <ListUser />, permission: "user.view" },
+  { path: "/user_roles", component: <ListUserRole />, permission: "user-role.view" },
 
   // Table routes
-  { path: "/table", component: <PageTable /> },
-  { path: "/categories", component: <PageCategory /> },
+  { path: "/table", component: <PageTable />, permission: "table.view" },
+  { path: "/categories", component: <PageCategory />, permission: "category.view" },
 
   // Reservation routes
-  { path: "/reservations", component: <PageReservation /> },
-  { path: "/reservations/list", component: <PageReservation /> },
-  { path: "/reservations/:id/detail", component: <PageReservation /> },
-  { path: "/reservations/create", component: <PageReservation /> },
-  { path: "/reservations/:id/edit", component: <PageReservation /> },
-  { path: "/reservations/trash", component: <PageReservation /> },
-  
-  // Quản lý khu vực bàn
-  { path: "/table-areas", component: <PageTableArea  /> },
-  { path: "/table-areas/list", component: <PageTableArea  /> },
-  { path: "/table-areas/:id/detail", component: <PageTableArea  /> },
-  { path: "/table-areas/create", component: <PageTableArea  /> },
-  { path: "/table-areas/:id/update", component: <PageTableArea  /> },
-  { path: "/table-areas/:id/delete", component: <PageTableArea  /> },
+  { path: "/reservations", component: <PageReservation />, permission: "reservation.view" },
+  { path: "/reservations/list", component: <PageReservation />, permission: "reservation.view" },
+  { path: "/reservations/:id/detail", component: <PageReservation />, permission: "reservation.view" },
+  { path: "/reservations/create", component: <PageReservation />, permission: "reservation.create" },
+  { path: "/reservations/:id/edit", component: <PageReservation />, permission: "reservation.update" },
+  { path: "/reservations/trash", component: <PageReservation />, permission: "reservation.view" },
+
+  // Khu vực bàn
+  { path: "/table-areas", component: <PageTableArea />, permission: "table-area.view" },
+  { path: "/table-areas/list", component: <PageTableArea />, permission: "table-area.view" },
+  { path: "/table-areas/:id/detail", component: <PageTableArea />, permission: "table-area.view" },
+  { path: "/table-areas/create", component: <PageTableArea />, permission: "table-area.create" },
+  { path: "/table-areas/:id/update", component: <PageTableArea />, permission: "table-area.update" },
+  { path: "/table-areas/:id/delete", component: <PageTableArea />, permission: "table-area.delete" },
 
   // Quản lý đơn hàng
   { path: "/orders/list", component: <PageOrder /> },
   { path: "/orders/form/create", component: <FormOrderCreate /> },
   { path: "/orders/form/edit", component: <FormOrderUpdate /> },
 
+  // Đơn hàng
+  { path: "/orders", component: <PageOrder />, permission: "order.view" },
+  { path: "/orders/list", component: <PageOrder />, permission: "order.view" },
+  { path: "/orders/:id/detail", component: <PageOrder />, permission: "order.view" },
+  { path: "/orders/create", component: <PageOrder />, permission: "order.create" },
+  { path: "/orders/:id/edit", component: <PageOrder />, permission: "order.update" },
+  { path: "/orders/track", component: <PageOrder />, permission: "order.view" },
 
-  { path: "/dishes", component: <PageDishes /> },
-  //   // //profile
-  { path: "/profile", component: <UserProfile /> },
+  // Món ăn
+  { path: "/dishes", component: <PageDishes />, permission: "dish.view" },
 
-  { path: "/combos", component: <PageCombo /> },
+  // Combo
+  { path: "/combos", component: <PageCombo />, permission: "combo.view" },
 
   { path: "/kitchen-orders", component: <PageKitchenOrders /> },
 
+  // Hồ sơ
+  { path: "/profile", component: <UserProfile /> }, // không cần permission
 ];
+
 
 const publicRoutes = [
   { path: "/logout", component: <Logout /> },
-  { path: "/login", component: <Login /> },
-  { path: "/forgot-password", component: <ForgetPwd /> },
-  { path: "/register", component: <Register /> },
   { path: "/admin/login", component: <AdminLogin /> },
 
-
-  { path: "/pages-login", component: <Login1 /> },
-  { path: "/pages-login-2", component: <Login2 /> },
-  { path: "/pages-register", component: <Register1 /> },
-  { path: "/pages-register-2", component: <Register2 /> },
-  { path: "/page-recoverpw", component: <Recoverpw /> },
-  { path: "/page-recoverpw-2", component: <Recoverpw2 /> },
+  { path: "/403", component: <Forbidden403 /> },
   { path: "/pages-forgot-pwd", component: <ForgetPwd1 /> },
   { path: "/pages-forgot-pwd-2", component: <ForgetPwd2 /> },
-  { path: "/auth-lock-screen", component: <LockScreen /> },
-  { path: "/auth-lock-screen-2", component: <LockScreen2 /> },
   { path: "/page-confirm-mail", component: <ConfirmMail /> },
   { path: "/page-confirm-mail-2", component: <ConfirmMail2 /> },
   { path: "/auth-email-verification", component: <EmailVerification /> },
