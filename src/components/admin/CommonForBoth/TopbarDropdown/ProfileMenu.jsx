@@ -25,7 +25,7 @@ const ProfileMenu = (props) => {
     const stored = localStorage.getItem("admin_user");
     if (stored) {
       const obj = JSON.parse(stored);
-      setUsername(obj.email || obj.full_name || "Admin");
+      setUsername( obj.full_name || "Admin");
     }
   }, [props.success]);
 

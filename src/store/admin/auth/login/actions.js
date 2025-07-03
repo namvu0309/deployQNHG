@@ -5,46 +5,35 @@ import {
   LOGOUT_USER_SUCCESS,
   API_ERROR,
   SOCIAL_LOGIN,
-} from "./actionTypes"
+} from "./actionTypes";
 
-export const loginUser = (user, history) => {
-  return {
-    type: LOGIN_USER,
-    payload: { user, history },
-  }
-}
+// --- LOGIN ---
+export const loginUser = (user, history) => ({
+  type: LOGIN_USER,
+  payload: { user, history },
+});
 
-export const loginSuccess = user => {
-  return {
-    type: LOGIN_SUCCESS,
-    payload: user,
-  }
-}
+export const loginSuccess = (user) => ({
+  type: LOGIN_SUCCESS,
+  payload: user,
+});
 
-export const logoutUser = history => {
-  return {
-    type: LOGOUT_USER,
-    payload: { history },
-  }
-}
+// --- LOGOUT (SAGA sẽ xử lý) ---
+export const logoutUser = (callback) => ({
+  type: LOGOUT_USER,
+  payload: { callback }, // 👈 truyền callback để navigate về login
+});
 
-export const logoutUserSuccess = () => {
-  return {
-    type: LOGOUT_USER_SUCCESS,
-    payload: {},
-  }
-}
+export const logoutUserSuccess = () => ({
+  type: LOGOUT_USER_SUCCESS,
+});
 
-export const apiError = error => {
-  return {
-    type: API_ERROR,
-    payload: error,
-  }
-}
+export const apiError = (error) => ({
+  type: API_ERROR,
+  payload: error,
+});
 
-export const socialLogin = (type, history) => {
-  return {
-    type: SOCIAL_LOGIN,
-    payload: { type, history },
-  };
-};
+export const socialLogin = (type, history) => ({
+  type: SOCIAL_LOGIN,
+  payload: { type, history },
+});
