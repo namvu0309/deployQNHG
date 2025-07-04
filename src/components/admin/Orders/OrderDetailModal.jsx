@@ -40,7 +40,6 @@ const getOrderTypeInfo = (type) => {
 
 const OrderDetailModal = ({ isOpen, toggle, order }) => {
   if (!order) return null;
-  console.log(order);
   const customerName = order.customer?.full_name || "Không có thông tin";
   const customerPhone = order.customer?.phone_number || "-";
   const orderTime = order.order_time || order.created_at;

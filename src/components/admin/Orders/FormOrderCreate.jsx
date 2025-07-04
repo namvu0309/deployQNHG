@@ -15,6 +15,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Nav,
+  NavItem,
+  NavLink,
 } from "reactstrap";
 import { getDishes } from "@services/admin/dishService";
 import "./FormOrder.scss";
@@ -29,6 +32,7 @@ import dishDefaultImg from "@assets/admin/images/dish/dish-default.webp";
 import { formatPriceToVND } from "@helpers/formatPriceToVND";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import CardTable from "../Table/CardTable";
+import { getCombos } from "@services/admin/comboService";
 
 const FormOrderCreate = () => {
   const [orderItems, setOrderItems] = useState([]);
@@ -61,11 +65,20 @@ const FormOrderCreate = () => {
   const [contactPhone, setContactPhone] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
+  const [activeTab, setActiveTab] = useState("dishes");
+  const [combos, setCombos] = useState([]);
+  const [loadingCombos, setLoadingCombos] = useState(false);
+  const [comboSearch, setComboSearch] = useState("");
+  const [comboCategoryFilter, setComboCategoryFilter] = useState("");
+  const [comboMeta, setComboMeta] = useState({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
+  const [comboCurrentPage, setComboCurrentPage] = useState(1);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchDishes(currentPage);
-  }, [currentPage, search, categoryFilter]);
+    if (activeTab === "dishes") fetchDishes(currentPage);
+    if (activeTab === "combos") fetchCombos(comboCurrentPage);
+  }, [activeTab, currentPage, search, categoryFilter, comboCurrentPage, comboSearch, comboCategoryFilter]);
 
   const fetchDishes = async (page = 1) => {
     setLoadingDishes(true);
@@ -113,9 +126,45 @@ const FormOrderCreate = () => {
     }
   };
 
-  const addToOrder = (dish) => {
+  const fetchCombos = async (page = 1) => {
+    setLoadingCombos(true);
+    try {
+      const params = {
+        page,
+        per_page: 10,
+        search: comboSearch || undefined,
+        category_id: comboCategoryFilter || undefined,
+      };
+      const res = await getCombos(params);
+      const items = res.data?.data?.items;
+      if (Array.isArray(items)) {
+        setCombos(items);
+        setComboMeta({
+          current_page: res.data.data.meta.page || 1,
+          per_page: res.data.data.meta.perPage || 10,
+          total: res.data.data.meta.total || 0,
+          last_page: res.data.data.meta.totalPage || 1,
+        });
+        setComboCurrentPage(res.data.data.meta.page || 1);
+      } else {
+        setCombos([]);
+        setComboMeta({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
+        toast.error("Cấu trúc dữ liệu API combo không đúng!");
+      }
+    } catch (error) {
+      setCombos([]);
+      setComboMeta({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
+      toast.error("Lỗi khi tải danh sách combo!");
+    } finally {
+      setLoadingCombos(false);
+    }
+  };
+
+  const addToOrder = (item, isCombo = false) => {
     setOrderItems((prevItems) => {
-      const existingIndex = prevItems.findIndex((item) => item.id === dish.id);
+      const existingIndex = prevItems.findIndex((i) =>
+        isCombo ? i.combo_id === item.id : i.id === item.id && !i.combo_id
+      );
       if (existingIndex !== -1) {
         const updatedItems = [...prevItems];
         updatedItems[existingIndex].quantity += 1;
@@ -124,22 +173,31 @@ const FormOrderCreate = () => {
         return [
           ...prevItems,
           {
-            ...dish,
+            ...item,
             quantity: 1,
-            price: dish.selling_price ?? dish.price ?? 0,
+            price: item.selling_price ?? item.price ?? 0,
+            combo_id: isCombo ? item.id : null,
           },
         ];
       }
     });
   };
 
-  const updateQuantity = (id, quantity) => {
+  const updateQuantity = (id, quantity, comboId = null) => {
     setOrderItems((prevItems) => {
       if (quantity <= 0) {
-        return prevItems.filter((item) => item.id !== id);
+        return prevItems.filter((item) =>
+          comboId ? item.combo_id !== comboId : item.id !== id && !item.combo_id
+        );
       }
       return prevItems.map((item) =>
-        item.id === id ? { ...item, quantity } : item
+        comboId
+          ? item.combo_id === comboId
+            ? { ...item, quantity }
+            : item
+          : item.id === id && !item.combo_id
+          ? { ...item, quantity }
+          : item
       );
     });
   };
@@ -242,7 +300,8 @@ const FormOrderCreate = () => {
       contact_email: contactEmail || "",
       contact_phone: contactPhone || "",
       items: orderItems.map((item) => ({
-        dish_id: Number(item.id),
+        dish_id: item.combo_id ? null : Number(item.id),
+        combo_id: item.combo_id ? Number(item.combo_id) : null,
         quantity: Number(item.quantity),
         unit_price: Number(item.price),
       })),
@@ -283,92 +342,198 @@ const FormOrderCreate = () => {
         <Col md={8}>
           {/* Search & Category Filter */}
           <Row className="align-items-center g-2 mb-3">
-            <Col md={8} sm={12}>
-              <div className="input-group">
-                <span className="input-group-text">Search</span>
-                <Input
-                  type="search"
-                  placeholder="Tìm kiếm món ăn..."
-                  value={search}
-                  onChange={handleSearchChange}
-                />
-              </div>
-            </Col>
-            <Col md={4} sm={12}>
-              <Input
-                type="select"
-                value={categoryFilter}
-                onChange={handleCategoryFilterChange}
-              >
-                <option value="">Tất cả danh mục</option>
-                {/* Note: Category options would need to be fetched separately */}
-              </Input>
+            <Col>
+              <Nav tabs>
+                <NavItem>
+                  <NavLink
+                    className={activeTab === "dishes" ? "active" : ""}
+                    onClick={() => setActiveTab("dishes")}
+                    style={{ cursor: "pointer" }}
+                  >
+                    Món ăn
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink
+                    className={activeTab === "combos" ? "active" : ""}
+                    onClick={() => setActiveTab("combos")}
+                    style={{ cursor: "pointer" }}
+                  >
+                    Combo
+                  </NavLink>
+                </NavItem>
+              </Nav>
             </Col>
           </Row>
 
-          <Row>
-            {loadingDishes ? (
-              <div className="text-center my-5">
-                <Spinner color="primary" />
-              </div>
-            ) : (
-              dishes.map((dish) => (
-                <Col md={6} key={dish.id} className="mb-4">
-                  <Card className="menu-card d-flex flex-row align-items-stretch shadow-sm border-0">
-                    <div className="menu-card-img-block">
-                      <img
-                        src={dish.image_url ? `${fullUrl}${dish.image_url}` : dishDefaultImg}
-                        alt={dish.name}
-                        className="menu-card-img"
-                      />
-                    </div>
-                    <CardBody className="d-flex flex-column justify-content-center py-2">
-                      <div className="menu-card-title mb-1">
-                        {dish.name || "Unnamed Dish"}
-                      </div>
-                      <div className="menu-card-price mb-2">
-                        {formatPriceToVND(dish.selling_price || 0)}
-                      </div>
-                      <Button
-                        color="light"
-                        size="sm"
-                        className="border menu-card-btn"
-                        onClick={() => addToOrder(dish)}
-                      >
-                        <span className="fw-bold">+</span> Thêm
-                      </Button>
-                    </CardBody>
-                  </Card>
+          {activeTab === "dishes" ? (
+            <>
+              <Row className="align-items-center g-2 mb-3">
+                <Col md={8} sm={12}>
+                  <div className="input-group">
+                    <span className="input-group-text">Search</span>
+                    <Input
+                      type="search"
+                      placeholder="Tìm kiếm món ăn..."
+                      value={search}
+                      onChange={handleSearchChange}
+                    />
+                  </div>
                 </Col>
-              ))
-            )}
-          </Row>
-          {/* Pagination */}
-          <div className="d-flex justify-content-center mt-3">
-            <Pagination>
-              <PaginationItem disabled={currentPage === 1}>
-                <PaginationLink
-                  previous
-                  onClick={() => handlePageChange(currentPage - 1)}
-                />
-              </PaginationItem>
-              {Array.from({ length: meta.last_page }, (_, i) => i + 1).map(
-                (page) => (
-                  <PaginationItem key={page} active={page === currentPage}>
-                    <PaginationLink onClick={() => handlePageChange(page)}>
-                      {page}
-                    </PaginationLink>
+                <Col md={4} sm={12}>
+                  <Input
+                    type="select"
+                    value={categoryFilter}
+                    onChange={handleCategoryFilterChange}
+                  >
+                    <option value="">Tất cả danh mục</option>
+                    {/* Note: Category options would need to be fetched separately */}
+                  </Input>
+                </Col>
+              </Row>
+
+              <Row>
+                {loadingDishes ? (
+                  <div className="text-center my-5">
+                    <Spinner color="primary" />
+                  </div>
+                ) : (
+                  dishes.map((dish) => (
+                    <Col md={6} key={dish.id} className="mb-4">
+                      <Card className="menu-card d-flex flex-row align-items-stretch shadow-sm border-0">
+                        <div className="menu-card-img-block">
+                          <img
+                            src={dish.image_url ? `${fullUrl}${dish.image_url}` : dishDefaultImg}
+                            alt={dish.name}
+                            className="menu-card-img"
+                          />
+                        </div>
+                        <CardBody className="d-flex flex-column justify-content-center py-2">
+                          <div className="menu-card-title mb-1">
+                            {dish.name || "Unnamed Dish"}
+                          </div>
+                          <div className="menu-card-price mb-2">
+                            {formatPriceToVND(dish.selling_price || 0)}
+                          </div>
+                          <Button
+                            color="light"
+                            size="sm"
+                            className="border menu-card-btn"
+                            onClick={() => addToOrder(dish)}
+                          >
+                            <span className="fw-bold">+</span> Thêm
+                          </Button>
+                        </CardBody>
+                      </Card>
+                    </Col>
+                  ))
+                )}
+              </Row>
+              {/* Pagination */}
+              <div className="d-flex justify-content-center mt-3">
+                <Pagination>
+                  <PaginationItem disabled={currentPage === 1}>
+                    <PaginationLink
+                      previous
+                      onClick={() => handlePageChange(currentPage - 1)}
+                    />
                   </PaginationItem>
-                )
-              )}
-              <PaginationItem disabled={currentPage === meta.last_page}>
-                <PaginationLink
-                  next
-                  onClick={() => handlePageChange(currentPage + 1)}
-                />
-              </PaginationItem>
-            </Pagination>
-          </div>
+                  {Array.from({ length: meta.last_page }, (_, i) => i + 1).map(
+                    (page) => (
+                      <PaginationItem key={page} active={page === currentPage}>
+                        <PaginationLink onClick={() => handlePageChange(page)}>
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    )
+                  )}
+                  <PaginationItem disabled={currentPage === meta.last_page}>
+                    <PaginationLink
+                      next
+                      onClick={() => handlePageChange(currentPage + 1)}
+                    />
+                  </PaginationItem>
+                </Pagination>
+              </div>
+            </>
+          ) : (
+            <>
+              <Row className="align-items-center g-2 mb-3">
+                <Col md={8} sm={12}>
+                  <div className="input-group">
+                    <span className="input-group-text">Search</span>
+                    <Input
+                      type="search"
+                      placeholder="Tìm kiếm combo..."
+                      value={comboSearch}
+                      onChange={e => { setComboSearch(e.target.value); setComboCurrentPage(1); fetchCombos(1); }}
+                    />
+                  </div>
+                </Col>
+                <Col md={4} sm={12}>
+                  <Input
+                    type="select"
+                    value={comboCategoryFilter}
+                    onChange={e => { setComboCategoryFilter(e.target.value); setComboCurrentPage(1); fetchCombos(1); }}
+                  >
+                    <option value="">Tất cả danh mục</option>
+                  </Input>
+                </Col>
+              </Row>
+              <Row>
+                {loadingCombos ? (
+                  <div className="text-center my-5">
+                    <Spinner color="primary" />
+                  </div>
+                ) : (
+                  combos.map((combo) => (
+                    <Col md={6} key={combo.id} className="mb-4">
+                      <Card className="menu-card d-flex flex-row align-items-stretch shadow-sm border-0">
+                        <div className="menu-card-img-block">
+                          <img
+                            src={combo.image_url ? `${fullUrl}${combo.image_url}` : dishDefaultImg}
+                            alt={combo.name}
+                            className="menu-card-img"
+                          />
+                        </div>
+                        <CardBody className="d-flex flex-column justify-content-center py-2">
+                          <div className="menu-card-title mb-1">
+                            {combo.name || "Unnamed Combo"}
+                          </div>
+                          <div className="menu-card-price mb-2">
+                            {formatPriceToVND(combo.selling_price || 0)}
+                          </div>
+                          <Button
+                            color="light"
+                            size="sm"
+                            className="border menu-card-btn"
+                            onClick={() => addToOrder(combo, true)}
+                          >
+                            <span className="fw-bold">+</span> Thêm
+                          </Button>
+                        </CardBody>
+                      </Card>
+                    </Col>
+                  ))
+                )}
+              </Row>
+              <div className="d-flex justify-content-center mt-3">
+                <Pagination>
+                  <PaginationItem disabled={comboCurrentPage === 1}>
+                    <PaginationLink previous onClick={() => setComboCurrentPage(comboCurrentPage - 1)} />
+                  </PaginationItem>
+                  {Array.from({ length: comboMeta.last_page }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page} active={page === comboCurrentPage}>
+                      <PaginationLink onClick={() => setComboCurrentPage(page)}>{page}</PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem disabled={comboCurrentPage === comboMeta.last_page}>
+                    <PaginationLink next onClick={() => setComboCurrentPage(comboCurrentPage + 1)} />
+                  </PaginationItem>
+                </Pagination>
+              </div>
+            </>
+          )}
         </Col>
 
         {/* Order Summary */}
