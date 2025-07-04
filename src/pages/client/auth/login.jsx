@@ -1,70 +1,93 @@
-/* LoginUserPage.jsx */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './auth.scss';
 import { loginUser } from '@services/client/auth/loginService';
+import { toast } from 'react-toastify';
 
 export default function LoginUserPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setErrors({});
     try {
-      await loginUser(form);
+      const res = await loginUser(form);
+
+      if (res?.data?.token) {
+        localStorage.setItem('token', res.data.token);
+        if (res.data.user) {
+          const { id, email, full_name } = res.data.user;
+          localStorage.setItem('clientUser', JSON.stringify({ id, email, full_name }));
+        }
+        window.dispatchEvent(new Event('storage'));
+      }
+
       setSuccess(true);
-      setTimeout(() => navigate('/menu-page'), 1500);
-    } catch (err) {
-      setError(
-        err?.response?.data?.message || 'Email hoặc mật khẩu không đúng.'
-      );
+      setTimeout(() => navigate('/'), 1500);
+    } catch (error) {
+      const apiErrors = error.response?.data?.errors;
+      const message = error.response?.data?.message || 'Email hoặc mật khẩu không đúng.';
+
+      if (apiErrors) {
+        setErrors(apiErrors);
+      }
+
+      toast.error(message);
     }
   };
 
   return (
-    <div className="register-bg">
-      <div className="register-container">
-        <div className="register-col register-col-left">
-          <div className="register-illustration">
-            <img src="/src/assets/client/images/auth/thumb1.webp" alt="Đăng nhập" style={{width: '180px', height: '180px', borderRadius: '50%', boxShadow: '0 2px 12px rgba(0,0,0,0.10)'}} />
+    <div className="auth-container">
+      <div className="auth-content">
+        <div className="auth-left">
+          <div className="auth-images-grid">
+            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb1.webp" alt="" /></div>
+            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb2.webp" alt="" /></div>
+            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb3.webp" alt="" /></div>
+            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb4.webp" alt="" /></div>
           </div>
         </div>
-        <div className="register-col register-col-right">
-          <div className="auth-card">
-            <h1 className="auth-title">ĐĂNG NHẬP THÀNH VIÊN</h1>
-            {error && <div className="alert error">{error}</div>}
+        <div className="auth-right">
+          <div className="auth-form-box">
+            <div className="auth-title">ĐĂNG NHẬP THÀNH VIÊN</div>
             {success && <div className="alert success">Đăng nhập thành công! Chuyển trang...</div>}
-            <form onSubmit={handleSubmit} className="login-form">
+
+            <form onSubmit={handleSubmit} className="auth-form">
               <input
                 type="email"
                 name="email"
                 placeholder="Email"
                 value={form.email}
                 onChange={handleChange}
-                required
-                className="form-input"
+                className="auth-input"
               />
+              {errors.email && <p className="field-error">{errors.email}</p>}
+
               <input
                 type="password"
                 name="password"
                 placeholder="Mật khẩu"
                 value={form.password}
                 onChange={handleChange}
-                required
-                className="form-input"
+                className="auth-input"
               />
-              <button type="submit" className="btn-primary-nga">Đăng nhập</button>
+              {errors.password && <p className="field-error">{errors.password}</p>}
+
+              <button type="submit" className="auth-btn">Đăng nhập</button>
             </form>
-            <div className="auth-links">
+
+            <div className="auth-link">
               <a href="/forgot" className="forgot">Quên mật khẩu?</a>
+              <span> | </span>
               <a href="/register-page" className="register">Đăng ký thành viên</a>
             </div>
           </div>

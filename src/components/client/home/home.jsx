@@ -9,6 +9,7 @@ import DishDetailPopsup from "../dishDetail/DishDetailPopsup";
 import BookingPopup from "../include/header/BookingPopup";
 import { getFeaturedDishes } from "@services/client/dishDetailService";
 import dishDefault from "@assets/admin/images/dish/dish-default.webp";
+
 import BlurText from "../ui/BlurText";
 import ClickSpark from "../ui/ClickSpark";
 import HeroBanner from "./HeroBanner";
@@ -83,13 +84,15 @@ export default function Home() {
                   <div
                     key={d.id}
                     className="card-item small"
-                    onClick={() => {
-                      setSelectedDish(d);
-                      setShowDetail(true);
-                    }}
                     style={{ cursor: "pointer" }}
                   >
-                    <div className="card-image">
+                    <div
+                      className="card-image"
+                      onClick={() => {
+                        setSelectedDish(d);
+                        setShowDetail(true);
+                      }}
+                    >
                       <img
                         src={
                           d.image_url && d.image_url.trim() !== ""
@@ -100,11 +103,27 @@ export default function Home() {
                       />
                     </div>
                     <div className="card-info">
-                      <h3>{d.name}</h3>
+                      <h3
+                        onClick={() => {
+                          setSelectedDish(d);
+                          setShowDetail(true);
+                        }}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {d.name}
+                      </h3>
                       <p className="price">
                         {d.selling_price.toLocaleString()}đ
                       </p>
-                      <button className="btn-order">+ Đặt</button>
+                      <button
+                        className="btn-order"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Thêm logic đặt món ở đây nếu cần
+                        }}
+                      >
+                        + Đặt
+                      </button>
                     </div>
                   </div>
                 ))}

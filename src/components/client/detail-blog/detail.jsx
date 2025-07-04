@@ -6,9 +6,9 @@ import "./detail.scss";
 import arrowRight from "../../../assets/client/images/detail-blog/arrow-right.png";
 import rightArrow from "../../../assets/client/images/detail-blog/rightarrow-icon.png";
 import banner from "../../../assets/client/images/detail-blog/banner.jpg";
-import tinhHoa from "../../../assets/client/images/detail-blog/tinhhoa.png";
-import laushiptudo from "../../../assets/client/images/detail-blog/laushiptudo.webp";
-import anh1 from "../../../assets/client/images/detail-blog/anh1.webp";
+import tinhHoa from "../../../assets/client/images/detail-blog/tinhhoa.jpg";
+import laushiptudo from "../../../assets/client/images/detail-blog/laushiptudo.jpg";
+import anh1 from "../../../assets/client/images/detail-blog/anh1.jpg";
 import { Link } from "react-router-dom";
 import Footer from "../../../components/client/include/footer/footer";
 

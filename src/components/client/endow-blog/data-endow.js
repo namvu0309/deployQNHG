@@ -1,5 +1,5 @@
-import endow1 from "../../../assets/client/images/endow-blog/endow1.png";
-import endow2 from "../../../assets/client/images/endow-blog/endow2.webp";
+import endow1 from "../../../assets/client/images/endow-blog/endow1.jpg";
+import endow2 from "../../../assets/client/images/endow-blog/endow2.jpg";
 
 export const endows = [
   {
