@@ -45,11 +45,11 @@ const App = () => {
                         key={idx}
                         path={route.path}
                         element={
-                            <Authmiddleware>
-                                <ProtectedRoute permission={route.permission}>
-                                    <Layout>{route.component}</Layout>
-                                </ProtectedRoute>
-                            </Authmiddleware>
+                            // <Authmiddleware>
+                            <ProtectedRoute permission={route.permission}>
+                                <Layout>{route.component}</Layout>
+                            </ProtectedRoute>
+                            // </Authmiddleware>
                         }
                     />
                 ))}

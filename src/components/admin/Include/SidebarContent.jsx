@@ -155,18 +155,18 @@ const SidebarContent = (props) => {
           <ul className="metismenu list-unstyled" id="side-menu">
             <li className="menu-title">{props.t("Dashboard")} </li>
 
-            {hasPermission("dashboard.view") && (
+            {/* {hasPermission("dashboard.view") && ( */}
                 <li>
                   <Link to="/dashboard">
                     <i className="bx bx-home-circle"></i>
                     <span>{props.t("Dashboards")}</span>
                   </Link>
                 </li>
-            )}
+            {/* )} */}
 
             <li className="menu-title">{props.t("Restaurant")}</li>
 
-            {hasPermission("table.view") && (
+            {/* {hasPermission("table.view") && ( */}
                 <li>
                   <Link to="/#" className="has-arrow">
                     <i className="bx bx-table"></i>
@@ -178,9 +178,9 @@ const SidebarContent = (props) => {
                     </li>
                   </ul>
                 </li>
-            )}
+            {/* )} */}
 
-            {hasPermission("reservation.view") && (
+            {/* {hasPermission("reservation.view") && ( */}
                 <li>
                   <Link to="/#" className="has-arrow">
                     <i className="bx bx-task"></i>
@@ -197,9 +197,9 @@ const SidebarContent = (props) => {
                     </li>
                   </ul>
                 </li>
-            )}
+            {/* )} */}
 
-            {hasPermission("category.view") && (
+            {/* {hasPermission("category.view") && ( */}
                 <li>
                   <Link to="/#" className="has-arrow">
                     <i className="bx bx-list-ul"></i>
@@ -211,10 +211,10 @@ const SidebarContent = (props) => {
                     </li>
                   </ul>
                 </li>
-            )}
+            {/* )} */}
 
-              {hasPermission("dish.view") && (
-                  <li>
+            {/* {hasPermission("dish.view") && ( */}
+                <li>
                       <Link to="/#" className="has-arrow ">
                           <i className="bx bx-dish"></i>
                           <span>{props.t("Quản Lí Món Ăn")}</span>
@@ -225,7 +225,7 @@ const SidebarContent = (props) => {
                           </li>
                       </ul>
                   </li>
-              )}
+            {/* )} */}
             <li>
               <Link to="/#" className="has-arrow ">
                 <i className="bx bx-dish"></i>
@@ -238,16 +238,16 @@ const SidebarContent = (props) => {
               </ul>
             </li>
 
-            {hasPermission("combo.view") && (
+            {/* {hasPermission("combo.view") && ( */}
                 <li>
                   <Link to="/combos">
                     <i className="bx bx-grid-alt"></i>
                     <span>{props.t("Quản Lí Combo")}</span>
                   </Link>
                 </li>
-            )}
+            {/* )} */}
 
-            {hasPermission("order.view") && (
+            {/* {hasPermission("order.view") && ( */}
                 <li>
                   <Link to="/#" className="has-arrow ">
                     <i className="bx bx-cart"></i>
@@ -262,9 +262,9 @@ const SidebarContent = (props) => {
                     </li>
                   </ul>
                 </li>
-            )}
+            {/* )} */}
 
-            {hasPermission("customer.view") && (
+            {/* {hasPermission("customer.view") && ( */}
                 <li>
                   <Link to="/#" className="has-arrow ">
                     <i className="bx bxs-user-detail"></i>
@@ -281,12 +281,12 @@ const SidebarContent = (props) => {
                     </li>
                   </ul>
                 </li>
-            )}
+            {/* )} */}
 
-            {(hasPermission("role.view") ||
+            {/* {(hasPermission("role.view") ||
                 hasPermission("permission_group.view") ||
                 hasPermission("permission.view") ||
-                hasPermission("user_role.view")) && (
+                hasPermission("user_role.view")) && ( */}
                 <li>
                   <Link to="/#" className="has-arrow ">
                     <i className="bx bxs-shield"></i>
@@ -315,9 +315,9 @@ const SidebarContent = (props) => {
                     )}
                   </ul>
                 </li>
-            )}
+            {/* )} */}
 
-            {hasPermission("user.view") && (
+            {/* {hasPermission("user.view") && ( */}
                 <li>
                   <Link to="/#" className="has-arrow ">
                     <i className="bx bxs-user"></i>
@@ -329,7 +329,7 @@ const SidebarContent = (props) => {
                     </li>
                   </ul>
                 </li>
-            )}
+            {/* )} */ }
           </ul>
 
         </div>

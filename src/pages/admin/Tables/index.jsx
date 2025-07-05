@@ -11,10 +11,12 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
+  Alert,
 } from "reactstrap";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import TableCard from "@components/admin/Table/CardTable";
 import ModalTable from "@components/admin/Table/ModalTable";
+import TableDetailModal from "@components/admin/Table/TableDetailModal";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -40,7 +42,7 @@ const TableIndex = () => {
   const [loadingTables, setLoadingTables] = useState(true);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
-  const [selectedAreaId, setSelectedAreaId] = useState(null);
+  const [selectedAreaIds, setSelectedAreaIds] = useState([]);
   const [meta, setMeta] = useState({
     current_page: 1,
     per_page: 10,
@@ -49,15 +51,13 @@ const TableIndex = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedTable, setSelectedTable] = useState(null);
   const [newTable, setNewTable] = useState({
     table_number: "",
     description: "",
-    capacity: "",
-    min_guests: "",
-    max_guests: "",
+    table_type: "",
     tags: "",
-    status: "available",
-    is_active: true,
     table_area_id: "",
   });
   const [errors, setErrors] = useState({});
@@ -65,8 +65,6 @@ const TableIndex = () => {
   const [editTableId, setEditTableId] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTableId, setDeleteTableId] = useState(null);
-  const [dishPage, setDishPage] = useState(1);
-  const dishPerPage = 5;
 
   const statusOptions = [
     { value: "all", label: "Tất cả" },
@@ -85,25 +83,36 @@ const TableIndex = () => {
         table_number: table.table_number || "",
         description: table.description || "",
         table_area_id: table.table_area_id || "",
-        status: table.status || "available",
-        capacity: table.capacity || "",
-        min_guests: table.min_guests || "",
-        max_guests: table.max_guests || "",
+        status: table.status || "",
+        table_type: table.table_type || "",
         tags: table.tags ? table.tags.join(", ") : "",
-        is_active: table.is_active !== undefined ? table.is_active : true,
       });
       setEditTableId(table.id);
       setIsEdit(true);
       setModalOpen(true);
       setErrors({});
-    } catch (error) {
+    } catch {
       toast.error("Không lấy được thông tin bàn!");
     }
   };
 
+  const handleViewDetail = (tableId) => {
+    const table = tables.find(t => t.id === tableId);
+    if (table) {
+      setSelectedTable(table);
+      setDetailModalOpen(true);
+    }
+  };
+
   const handleAreaClick = (areaId) => {
-    setSelectedAreaId(areaId);
     setCurrentPage(1);
+    setSelectedAreaIds((prev) => {
+      if (prev.includes(areaId)) {
+        return prev.filter((id) => id !== areaId);
+      } else {
+        return [...prev, areaId];
+      }
+    });
   };
 
   const handleStatusChange = (e) => {
@@ -127,9 +136,6 @@ const TableIndex = () => {
 
     const tableData = {
       ...newTable,
-      capacity: newTable.capacity ? parseInt(newTable.capacity) : null,
-      min_guests: newTable.min_guests ? parseInt(newTable.min_guests) : null,
-      max_guests: newTable.max_guests ? parseInt(newTable.max_guests) : null,
       tags: newTable.tags ? newTable.tags.split(",").map((tag) => tag.trim()) : [],
     };
    
@@ -145,12 +151,8 @@ const TableIndex = () => {
       setNewTable({
         table_number: "",
         description: "",
-        capacity: "",
-        min_guests: "",
-        max_guests: "",
+        table_type: "",
         tags: "",
-        status: "available",
-        is_active: true,
         table_area_id: "",
       });
       fetchTables();
@@ -171,17 +173,17 @@ const TableIndex = () => {
         page: currentPage,
         search: search,
         status: status !== "all" ? status : undefined,
-        table_area_id: selectedAreaId !== null ? selectedAreaId : undefined,
+        table_area_id: selectedAreaIds.length > 0 ? selectedAreaIds.join(',') : undefined,
       };
-
       Object.keys(params).forEach(
         (key) => params[key] === undefined && delete params[key]
       );
-
       const res = await getTables(params);
+      console.log(res.data.data.items);
+      console.log(res.data.data.meta);
       setTables(res.data.data.items || []);
       setMeta(res.data.data.meta || {});
-    } catch (error) {
+    } catch {
       setTables([]);
       setMeta({
         current_page: 1,
@@ -202,7 +204,7 @@ const TableIndex = () => {
       try {
         const res = await getTableAreas();
         setTableAreas(res.data.data.items || []);
-      } catch (error) {
+      } catch {
         setTableAreas([]);
         toast.error("Lỗi khi tải danh sách khu vực bàn!");
       } finally {
@@ -215,19 +217,7 @@ const TableIndex = () => {
   // Fetch tables
   useEffect(() => {
     fetchTables();
-  }, [currentPage, search, status, selectedAreaId]);
-
-  const filteredTables = tables.filter((table) => {
-    const matchStatus = status === "all" || table.status === status;
-    const matchSearch =
-      search === "" ||
-      (table.table_number &&
-        `Bàn ${table.table_number}`.toLowerCase().includes(search.toLowerCase()));
-    const matchArea =
-      selectedAreaId === null ||
-      String(table.table_area_id) === String(selectedAreaId);
-    return matchStatus && matchSearch && matchArea;
-  });
+  }, [currentPage, search, status, selectedAreaIds]);
 
   const areaStats = tableAreas.reduce((acc, area) => {
     const tablesInArea = tables.filter(
@@ -239,10 +229,6 @@ const TableIndex = () => {
     acc[area.id] = { total, available, occupied };
     return acc;
   }, {});
-
-  const selectedAreaName = selectedAreaId
-    ? tableAreas.find((area) => String(area.id) === String(selectedAreaId))?.name
-    : null;
 
   const totalPages = meta.last_page;
 
@@ -280,7 +266,7 @@ const TableIndex = () => {
       setDeleteModalOpen(false);
       setDeleteTableId(null);
       fetchTables(); // reload lại danh sách
-    } catch (error) {
+    } catch {
       toast.error("Lỗi khi xóa bàn!");
       setDeleteModalOpen(false);
       setDeleteTableId(null);
@@ -336,9 +322,7 @@ const TableIndex = () => {
                 return (
                   <SwiperSlide key={area.id}>
                     <Card
-                      className={`h-100 area-card${
-                        String(area.id) === String(selectedAreaId) ? " selected" : ""
-                      }`}
+                      className={`h-100 area-card${selectedAreaIds.includes(area.id) ? " selected" : ""}`}
                       style={{
                         border: "1px solid #dee2e6",
                         cursor: "pointer",
@@ -352,7 +336,7 @@ const TableIndex = () => {
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.transform = "translateY(0)";
-                        if (String(area.id) !== String(selectedAreaId)) {
+                        if (!selectedAreaIds.includes(area.id)) {
                           e.currentTarget.style.boxShadow =
                             "0 2px 4px rgba(0,0,0,0.1)";
                         }
@@ -362,7 +346,7 @@ const TableIndex = () => {
                       <CardBody className="p-3">
                         <div className="d-flex justify-content-between align-items-start mb-2">
                           <div className="d-flex align-items-center">
-                            {String(area.id) === String(selectedAreaId) && (
+                            {selectedAreaIds.includes(area.id) && (
                               <span className="area-selected-indicator"></span>
                             )}
                             <div
@@ -492,12 +476,8 @@ const TableIndex = () => {
                   setNewTable({
                     table_number: "",
                     description: "",
-                    capacity: "",
-                    min_guests: "",
-                    max_guests: "",
+                    table_type: "",
                     tags: "",
-                    status: "available",
-                    is_active: true,
                     table_area_id: "",
                   });
                   setIsEdit(false);
@@ -521,20 +501,26 @@ const TableIndex = () => {
               <p className="text-muted mb-0">
                 Click vào bàn để xem chi tiết hoặc thực hiện thao tác
               </p>
-              {selectedAreaId && (
-                <div className="d-flex justify-content-center mt-2 mb-0">
-                  <span className="badge-area-selected badge rounded-pill px-3 py-2 d-flex align-items-center">
-                    <span className="me-2">
-                      <span>Hiển thị bàn cho khu vực:</span>
-                      <strong className="ms-1">{selectedAreaName}</strong>
-                    </span>
-                    <Button
-                      close
-                      className="ms-2"
-                      style={{ fontSize: 18, lineHeight: 1 }}
-                      onClick={() => setSelectedAreaId(null)}
-                    />
-                  </span>
+              {selectedAreaIds.length > 0 && (
+                <div className="d-flex justify-content-center mt-2 mb-0 flex-wrap">
+                  {selectedAreaIds.map((id) => {
+                    const area = tableAreas.find(a => a.id === id);
+                    if (!area) return null;
+                    return (
+                      <span key={id} className="badge-area-selected badge rounded-pill px-3 py-2 d-flex align-items-center m-1">
+                        <span className="me-2">
+                          <span>Hiển thị bàn cho khu vực:</span>
+                          <strong className="ms-1">{area.name}</strong>
+                        </span>
+                        <Button
+                          close
+                          className="ms-2"
+                          style={{ fontSize: 18, lineHeight: 1 }}
+                          onClick={() => handleAreaClick(id)}
+                        />
+                      </span>
+                    );
+                  })}
                 </div>
               )}
             </Col>
@@ -548,17 +534,19 @@ const TableIndex = () => {
           ) : (
             <>
               <div style={tableListContainerStyle}>
-                {filteredTables.map((table) => (
+                {tables.map((table) => (
                   <TableCard
                     key={table.id}
-                    tableId={table.id}
-                    seatCount={table.capacity}
+                    tableId={table.table_number}
+                    seatCount={table.table_type_label}
                     status={table.status}
+                    onViewDetail={handleViewDetail}
                     onClick={handleTableClick}
                     onDelete={handleDeleteClick}
+                    hideMenu={false}
                   />
                 ))}
-                {filteredTables.length === 0 && (
+                {tables.length === 0 && (
                   <div className="text-center text-muted">
                     Không tìm thấy bàn nào.
                   </div>
@@ -694,6 +682,13 @@ const TableIndex = () => {
         show={deleteModalOpen}
         onDeleteClick={handleDeleteTable}
         onCloseClick={() => setDeleteModalOpen(false)}
+      />
+
+      <TableDetailModal
+        isOpen={detailModalOpen}
+        toggle={() => setDetailModalOpen(false)}
+        table={selectedTable}
+        tableAreas={tableAreas}
       />
     </div>
   );
