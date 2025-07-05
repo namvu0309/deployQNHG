@@ -268,7 +268,7 @@ const FormOrderUpdate = () => {
         setComboMeta({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
         toast.error("Cấu trúc dữ liệu API combo không đúng!");
       }
-    } catch (error) {
+    } catch {
       setCombos([]);
       setComboMeta({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
       toast.error("Lỗi khi tải danh sách combo!");
@@ -352,35 +352,31 @@ const FormOrderUpdate = () => {
     setLoadingTables(true);
     getTableAreas()
       .then((res) => {
-        const areas = (res.data?.data?.items || []).filter(
-          (area) => area.status === "active"
-        );
+        const areas = res.data?.data?.items || [];
         setTableAreas(areas);
-        let areaId = selectedArea;
-        if (!areaId && areas.length > 0) {
-          areaId = areas[0]?.id;
-          setSelectedArea(areaId);
-        }
-        if (areaId) {
-          getTables({ status: "available", table_area_id: areaId })
-            .then((res) => {
-              const allTables = res.data?.data?.items || [];
-              const filteredTables = allTables.filter(
-                (table) =>
-                  table.status === "available" ||
-                  selectedTables.some((t) => String(t.id) === String(table.id))
-              );
+        // Tìm khu vực đầu tiên có bàn trống
+        getTables({ status: "available" })
+          .then((res) => {
+            const allTables = res.data?.data?.items || [];
+            // Tìm khu vực đầu tiên có bàn trống
+            const firstAreaWithTable = areas.find(area =>
+              allTables.some(table => table.table_area_id === area.id)
+            );
+            if (firstAreaWithTable) {
+              setSelectedArea(firstAreaWithTable.id);
+              // Lọc bàn thuộc khu vực đó
+              const filteredTables = allTables.filter(table => table.table_area_id === firstAreaWithTable.id);
               setTableList(filteredTables);
-            })
-            .catch(() => {
+            } else {
+              setSelectedArea(null);
               setTableList([]);
-              toast.error("Lỗi khi tải danh sách bàn!");
-            })
-            .finally(() => setLoadingTables(false));
-        } else {
-          setTableList([]);
-          setLoadingTables(false);
-        }
+            }
+          })
+          .catch(() => {
+            setTableList([]);
+            toast.error("Lỗi khi tải danh sách bàn!");
+          })
+          .finally(() => setLoadingTables(false));
       })
       .catch(() => {
         setTableAreas([]);
@@ -407,10 +403,11 @@ const FormOrderUpdate = () => {
     });
   };
 
-  useEffect(() => {
-    if (showTableModal && selectedArea) {
-      setLoadingTables(true);
-      getTables({ status: "available", table_area_id: selectedArea })
+  const handleAreaSelect = (areaId) => {
+    setSelectedArea(areaId);
+    setLoadingTables(true);
+    if (areaId === 'all') {
+      getTables({ status: "available" })
         .then((res) => {
           const allTables = res.data?.data?.items || [];
           const filteredTables = allTables.filter(
@@ -425,6 +422,56 @@ const FormOrderUpdate = () => {
           toast.error("Lỗi khi tải danh sách bàn!");
         })
         .finally(() => setLoadingTables(false));
+    } else {
+      getTables({ status: "available", table_area_id: areaId })
+        .then((res) => {
+          const allTables = res.data?.data?.items || [];
+          const filteredTables = allTables.filter(
+            (table) =>
+              table.status === "available" ||
+              selectedTables.some((t) => String(t.id) === String(table.id))
+          );
+          setTableList(filteredTables);
+        })
+        .catch(() => {
+          setTableList([]);
+          toast.error("Lỗi khi tải danh sách bàn!");
+        })
+        .finally(() => setLoadingTables(false));
+    }
+  };
+
+  useEffect(() => {
+    if (showTableModal && selectedArea) {
+      setLoadingTables(true);
+      if (selectedArea === 'all') {
+        getTables({ status: "available" })
+          .then((res) => {
+            const allTables = res.data?.data?.items || [];
+            setTableList(allTables);
+          })
+          .catch(() => {
+            setTableList([]);
+            toast.error("Lỗi khi tải danh sách bàn!");
+          })
+          .finally(() => setLoadingTables(false));
+      } else {
+        getTables({ status: "available", table_area_id: selectedArea })
+          .then((res) => {
+            const allTables = res.data?.data?.items || [];
+            const filteredTables = allTables.filter(
+              (table) =>
+                table.status === "available" ||
+                selectedTables.some((t) => String(t.id) === String(table.id))
+            );
+            setTableList(filteredTables);
+          })
+          .catch(() => {
+            setTableList([]);
+            toast.error("Lỗi khi tải danh sách bàn!");
+          })
+          .finally(() => setLoadingTables(false));
+      }
     }
   }, [showTableModal, selectedArea]);
 
@@ -745,34 +792,52 @@ const FormOrderUpdate = () => {
                           className="table-area-carousel d-flex align-items-center mb-3"
                           style={{ overflowX: "auto" }}
                         >
-                          {tableAreas.map((area) => (
-                            <div
-                              key={area.id}
-                              className={`table-area-item py-2 me-2 rounded ${
-                                selectedArea === area.id ? "active" : ""
-                              }`}
-                              style={{
-                                background:
-                                  selectedArea === area.id ? "#556ee6" : "#f4f4f6",
-                                color: selectedArea === area.id ? "#fff" : "#222",
-                                cursor: "pointer",
-                                minWidth: 120,
-                                textAlign: "center",
-                                fontWeight: 500,
-                                border:
-                                  selectedArea === area.id
-                                    ? "2px solid #556ee6"
-                                    : "2px solid transparent",
-                                transition: "all 0.2s",
-                              }}
-                              onClick={() => setSelectedArea(area.id)}
-                            >
-                              {area.name}
-                            </div>
-                          ))}
+                          
+                          {tableAreas.map((area) => {
+                            const hasAvailable = tableList.some(
+                              (t) => t.table_area_id === area.id && t.status === 'available'
+                            );
+                            return (
+                              <div
+                                key={area.id}
+                                className={`table-area-item py-2 me-2 rounded ${selectedArea === area.id ? "active" : ""}`}
+                                style={{
+                                  background:
+                                    selectedArea === area.id ? "#556ee6" : "#f4f4f6",
+                                  color: selectedArea === area.id ? "#fff" : "#222",
+                                  cursor: "pointer",
+                                  minWidth: 120,
+                                  textAlign: "center",
+                                  fontWeight: 500,
+                                  border:
+                                    selectedArea === area.id
+                                      ? "2px solid #556ee6"
+                                      : "2px solid transparent",
+                                  transition: "all 0.2s",
+                                  position: 'relative',
+                                }}
+                                onClick={() => handleAreaSelect(area.id)}
+                              >
+                                {area.name}
+                                {hasAvailable && (
+                                  <span
+                                    style={{
+                                      display: 'inline-block',
+                                      width: 10,
+                                      height: 10,
+                                      background: '#28a745',
+                                      borderRadius: '50%',
+                                      marginLeft: 8,
+                                      verticalAlign: 'middle',
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                         <div
-                          className="table-modal-list"
+                          className="table-modal-list table-modal-list--grid"
                           style={{
                             display: "flex",
                             flexWrap: "wrap",
@@ -798,7 +863,11 @@ const FormOrderUpdate = () => {
                               >
                                 <CardTable
                                   tableId={table.table_number}
-                                  seatCount={table.capacity}
+                                  seatCount={
+                                    table.table_type === '2_seats' ? 2 :
+                                    table.table_type === '4_seats' ? 4 :
+                                    table.table_type === '8_seats' ? 8 : 4
+                                  }
                                   status={table.status}
                                   hideMenu={true}
                                 />
@@ -994,7 +1063,7 @@ const FormOrderUpdate = () => {
                                   item.combo_id ? item.combo_id : null
                                 )
                               }
-                              disabled={item.kitchen_status !== 'pending'}
+                              disabled={typeof item.kitchen_status !== 'undefined' && item.kitchen_status !== 'pending'}
                             >
                               -
                             </Button>
@@ -1010,7 +1079,7 @@ const FormOrderUpdate = () => {
                                   item.combo_id ? item.combo_id : null
                                 )
                               }
-                              disabled={item.kitchen_status !== 'pending'}
+                              disabled={typeof item.kitchen_status !== 'undefined' && item.kitchen_status !== 'pending'}
                             >
                               +
                             </Button>

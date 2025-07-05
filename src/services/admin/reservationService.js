@@ -17,6 +17,11 @@ export const getReservationDetail = (id) => {
     return axios.get(`${API_URL}/reservations/${id}/detail`);
 };
 
+// Lấy thông tin reservation theo ID
+export const getReservationById = (id) => {
+    return axios.get(`${API_URL}/reservations/${id}`);
+};
+
 // Tạo đơn đặt bàn mới
 export const createReservation = (data) => {
     return axios.post(`${API_URL}/reservations/create`, data, {

@@ -1,0 +1,156 @@
+.table-detail-modal {
+  .modal-header {
+    border-bottom: 2px solid #e9ecef;
+    
+    .badge {
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+    }
+  }
+  
+  .table-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    
+    .row {
+      margin-bottom: 0.5rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  .reservation-details,
+  .order-details {
+    .row {
+      margin-bottom: 1rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    strong {
+      color: #495057;
+      font-weight: 600;
+    }
+    
+    .text-muted {
+      color: #6c757d !important;
+    }
+  }
+  
+  .cleaning-notice,
+  .out-of-service-notice,
+  .available-notice {
+    padding: 2rem 1rem;
+    
+    i {
+      margin-bottom: 1rem;
+    }
+    
+    h4 {
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      margin-bottom: 0.5rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  .order-items-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    
+    .order-item {
+      border-bottom: 1px solid #dee2e6;
+      padding: 1rem;
+      transition: background-color 0.2s ease;
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      &:hover {
+        background-color: #f8f9fa;
+      }
+      
+      .fw-bold.text-primary {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+      }
+      
+      .text-success {
+        font-size: 1.1rem;
+      }
+      
+      .text-muted {
+        font-size: 0.875rem;
+      }
+    }
+  }
+  
+  .modal-footer {
+    border-top: 2px solid #e9ecef;
+    padding: 1rem 1.5rem;
+  }
+}
+
+.available-notice {
+  .available-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+    svg {
+      filter: drop-shadow(0 2px 8px rgba(76, 175, 80, 0.15));
+      border-radius: 12px;
+      background: linear-gradient(135deg, #e8f5e9 60%, #c8e6c9 100%);
+      padding: 8px;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .table-detail-modal {
+    .modal-body {
+      padding: 1rem;
+    }
+    
+    .table-info {
+      padding: 0.75rem;
+    }
+    
+    .cleaning-notice,
+    .out-of-service-notice {
+      padding: 1.5rem 0.5rem;
+    }
+    
+    .order-items-list {
+      .order-item {
+        padding: 0.75rem;
+        
+        .d-flex {
+          flex-direction: column;
+          align-items: flex-start !important;
+          
+          .text-end {
+            text-align: left !important;
+            margin-top: 0.5rem;
+            margin-left: 0 !important;
+          }
+        }
+      }
+    }
+  }
+} 

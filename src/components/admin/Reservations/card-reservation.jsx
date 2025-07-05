@@ -10,8 +10,6 @@ import {
 } from "reactstrap";
 import { MdModeEdit, MdVisibility } from "react-icons/md";
 import { FaTrash, FaCheck, FaTimes, FaUsers, FaCalendarAlt, FaClock, FaStickyNote } from "react-icons/fa";
-import { confirmReservation } from '@services/admin/reservationService';
-import { toast } from 'react-toastify';
 
 const ReservationCard = ({
     reservation,
@@ -43,10 +41,6 @@ const ReservationCard = ({
         const date = new Date(dateString);
         return date.toLocaleDateString('vi-VN');
     };
-
-   
-
-    
 
     return (
         <Card className="h-100 reservation-card shadow-sm">
@@ -220,13 +214,21 @@ const ReservationCard = ({
                                         color="success"
                                         size="sm"
                                         className="w-100"
-                                        onClick={async () => {
-                                            try {
-                                                await confirmReservation(reservation.id);
-                                                toast.success("Đã xác nhận đơn đặt bàn!");
-                                                if (onStatusChangeLocal) onStatusChangeLocal(reservation.id, "confirmed");
-                                            } catch {
-                                                toast.error("Xác nhận thất bại!");
+                                        onClick={() => {
+                                            // Mở modal chỉnh sửa với trạng thái "confirmed"
+                                            if (onEdit) {
+                                                // Tạo một bản sao của reservation với trạng thái đã thay đổi
+                                                const reservationWithConfirmedStatus = {
+                                                    ...reservation,
+                                                    status: "confirmed",
+                                                    originalStatus: reservation.status // Lưu trạng thái gốc
+                                                };
+                                                onEdit(reservationWithConfirmedStatus);
+                                                
+                                                // Cập nhật local state ngay lập tức để UI phản hồi
+                                                if (onStatusChangeLocal) {
+                                                    onStatusChangeLocal(reservation.id, "confirmed");
+                                                }
                                             }
                                         }}
                                         title="Xác nhận"

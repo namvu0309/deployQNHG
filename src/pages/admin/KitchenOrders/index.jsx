@@ -19,37 +19,31 @@ const STATUS_LIST = [
 ];
 
 const KitchenOrdersPage = () => {
+    const todayStr = new Date().toISOString().slice(0, 10);
     const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState({});
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPage, setTotalPage] = useState(1);
+    const [filterDate, setFilterDate] = useState(todayStr);
     const [showFilter, setShowFilter] = useState(false);
     const [activeTab, setActiveTab] = useState("1");
     const [statusFilter, setStatusFilter] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
 
-    const fetchOrders = async (page = 1, filterParams = filter) => {
-        setLoading(true);
+    const fetchOrders = async (filterParams = filter, date = filterDate) => {
         try {
-            const params = { ...filterParams, page, per_page: 10 };
+            const params = { ...filterParams, created_at: date };
             const res = await getListKitchenOrders(params);
             const items = (res.data.data && Array.isArray(res.data.data.items)) ? res.data.data.items : [];
             setOrders(items);
-            setCurrentPage(res.data.data?.meta?.page || 1);
-            setTotalPage(res.data.data?.meta?.totalPage || 1);
         } catch {
             setOrders([]);
             toast.error("Không thể tải danh sách đơn bếp!");
-        } finally {
-            setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchOrders(1, filter);
+        fetchOrders(filter, filterDate);
         // eslint-disable-next-line
-    }, []);
+    }, [filterDate]);
 
     // Filter trạng thái badge
     const handleStatusBadge = (status) => {
@@ -57,15 +51,29 @@ const KitchenOrdersPage = () => {
         // Gửi luôn status lên backend khi filter
         const newFilter = { ...filter, status: status === "all" ? "" : status };
         setFilter(newFilter);
-        fetchOrders(1, newFilter);
+        fetchOrders(newFilter);
     };
 
     // Filter nhanh
     const handleFilterChange = (e) => {
         setFilter({ ...filter, [e.target.name]: e.target.value });
     };
-    const handleSearch = () => {
-        fetchOrders(1, filter);
+
+    // Xử lý thay đổi ngày lọc
+    const handleDateChange = (e) => {
+        const newDate = e.target.value;
+        setFilterDate(newDate);
+        // Tự động fetch lại dữ liệu khi thay đổi ngày
+        fetchOrders(filter, newDate);
+    };
+
+    // Reset về hôm nay
+    const handleResetToToday = () => {
+        setFilterDate(todayStr);
+        setFilter({});
+        setStatusFilter("all");
+        setSearchTerm("");
+        fetchOrders({}, todayStr);
     };
 
     // Chuyển trạng thái đơn bếp
@@ -92,7 +100,7 @@ const KitchenOrdersPage = () => {
             }
             
             // Reload lại danh sách để cập nhật UI
-            fetchOrders(currentPage, filter);
+            fetchOrders(filter);
         } catch (error) {
             console.error('❌ Lỗi khi cập nhật trạng thái:', error);
             toast.error("Cập nhật trạng thái thất bại!");
@@ -116,21 +124,13 @@ const KitchenOrdersPage = () => {
                     toast.error(res.data.message);
                 } else {
                     toast.success("Đã hủy đơn bếp!");
-                    fetchOrders(currentPage, filter);
+                    fetchOrders(filter);
                 }
             } catch (err) {
                 // Nếu có response từ backend, lấy message
                 const msg = err?.response?.data?.message || "Hủy đơn thất bại!";
                 toast.error(msg);
             }
-        }
-    };
-
-    // Phân trang
-    const handlePageChange = (page) => {
-        if (page > 0 && page <= totalPage) {
-            setCurrentPage(page);
-            fetchOrders(page, filter);
         }
     };
 
@@ -305,7 +305,24 @@ const KitchenOrdersPage = () => {
                                         </Input>
                                     </div>
                                 </Col>
-                                <Col md={5} className="d-flex justify-content-md-end justify-content-start">
+                                <Col md={3}>
+                                    <div className="input-group">
+                                        <span className="input-group-text"><i className="mdi mdi-calendar"></i></span>
+                                        <Input
+                                            type="date"
+                                            value={filterDate}
+                                            onChange={handleDateChange}
+                                        />
+                                        <Button 
+                                            color="outline-secondary" 
+                                            onClick={handleResetToToday}
+                                            title="Reset về hôm nay"
+                                        >
+                                            <i className="mdi mdi-refresh"></i>
+                                        </Button>
+                                    </div>
+                                </Col>
+                                <Col md={2} className="text-end">
                                     <Button color="light" className="border" style={{ minWidth: 140 }} onClick={() => setShowFilter(true)}>
                                         <i className="mdi mdi-filter-variant me-1"></i> Lọc nâng cao
                                     </Button>
@@ -319,7 +336,13 @@ const KitchenOrdersPage = () => {
                         <div className="alert alert-info d-flex align-items-center" style={{ fontSize: 14 }}>
                             <i className="mdi mdi-information-outline me-2"></i>
                             <div>
-                                <strong>Lưu ý:</strong> Đơn có <span className="badge bg-danger">Ưu tiên</span> đầu bếp cần phải làm trước .
+                                <strong>Lưu ý:</strong> Đơn có <span className="badge bg-danger">Ưu tiên</span> đầu bếp cần phải làm trước.
+                                {filterDate !== todayStr && (
+                                    <span className="ms-2">
+                                        <i className="mdi mdi-calendar-clock me-1"></i>
+                                        Đang xem đơn bếp ngày: <strong>{new Date(filterDate).toLocaleDateString('vi-VN')}</strong>
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -374,35 +397,6 @@ const KitchenOrdersPage = () => {
                             );
                         })}
                     </DragDropContext>
-                    
-                    {/* Pagination */}
-                    <div className="d-flex justify-content-center mt-4">
-                        <Button 
-                            color="light" 
-                            disabled={currentPage === 1} 
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            className="me-2"
-                        >
-                            <i className="mdi mdi-chevron-left"></i> Trước
-                        </Button>
-                        <span className="mx-3 d-flex align-items-center">
-                            Trang {currentPage} / {totalPage}
-                        </span>
-                        <Button 
-                            color="light" 
-                            disabled={currentPage === totalPage} 
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            className="ms-2"
-                        >
-                            Sau <i className="mdi mdi-chevron-right"></i>
-                        </Button>
-                    </div>
-                    {loading && (
-                        <div className="text-center py-4">
-                            <Spinner color="primary" />
-                            <p className="mt-2">Đang tải dữ liệu...</p>
-                        </div>
-                    )}
                 </TabPane>
                 <TabPane tabId="2">
                     {/* Thùng rác - có thể phát triển thêm logic xóa mềm */}
@@ -454,7 +448,16 @@ const KitchenOrdersPage = () => {
                             <Label for="filterCreatedAt">Ngày tạo</Label>
                             <Input id="filterCreatedAt" type="date" name="created_at" value={filter.created_at || ""} onChange={handleFilterChange} />
                         </FormGroup>
-                        <Button color="primary" className="mt-3" block onClick={handleSearch}>
+                        <FormGroup>
+                            <Label for="filterDate">Lọc theo ngày</Label>
+                            <Input
+                                id="filterDate"
+                                type="date"
+                                value={filterDate}
+                                onChange={handleDateChange}
+                            />
+                        </FormGroup>
+                        <Button color="primary" className="mt-3" block onClick={() => fetchOrders(filter, filterDate)}>
                             <i className="mdi mdi-filter-check me-1"></i>
                             Áp dụng lọc
                         </Button>

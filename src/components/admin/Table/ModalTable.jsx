@@ -22,6 +22,12 @@ const statusOptions = [
   { value: "out_of_service", label: "Ngưng phục vụ" },
 ];
 
+const tableTypeOptions = [
+  { value: "2_seats", label: "2 ghế" },
+  { value: "4_seats", label: "4 ghế" },
+  { value: "8_seats", label: "8 ghế" },
+];
+
 const TableModal = ({
   modalOpen,
   setModalOpen,
@@ -51,6 +57,7 @@ const TableModal = ({
                   setNewTable({ ...newTable, table_number: e.target.value })
                 }
                 placeholder="Nhập số bàn"
+                maxLength={50}
                 invalid={!!errors.table_number}
               />
               {errors.table_number && (
@@ -108,95 +115,61 @@ const TableModal = ({
                 </FormFeedback>
               )}
             </FormGroup>
+            {isEdit && (
+              <FormGroup>
+                <Label for="statuses">Trạng thái</Label>
+                <Input
+                  id="statuses"
+                  type="select"
+                  value={newTable.status || ""}
+                  onChange={(e) =>
+                    setNewTable({ ...newTable, status: e.target.value })
+                  }
+                  invalid={!!errors.status}
+                >
+                  <option value="">Chọn trạng thái</option>
+                  {statusOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </Input>
+                {errors.status && (
+                  <FormFeedback>
+                    {Array.isArray(errors.status)
+                      ? errors.status.join(", ")
+                      : errors.status}
+                  </FormFeedback>
+                )}
+              </FormGroup>
+            )}
+          </Col>
+          <Col md={6}>
             <FormGroup>
-              <Label for="statuses">Trạng thái</Label>
+              <Label for="table_type">
+                Loại bàn <span className="text-danger">*</span>
+              </Label>
               <Input
-                id="statuses"
+                id="table_type"
                 type="select"
-                value={newTable.status}
+                value={newTable.table_type}
                 onChange={(e) =>
-                  setNewTable({ ...newTable, status: e.target.value })
+                  setNewTable({ ...newTable, table_type: e.target.value })
                 }
-                invalid={!!errors.status}
+                invalid={!!errors.table_type}
               >
-                {statusOptions.map((opt) => (
+                <option value="">Chọn loại bàn</option>
+                {tableTypeOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
                   </option>
                 ))}
               </Input>
-              {errors.status && (
+              {errors.table_type && (
                 <FormFeedback>
-                  {Array.isArray(errors.status)
-                    ? errors.status.join(", ")
-                    : errors.status}
-                </FormFeedback>
-              )}
-            </FormGroup>
-          </Col>
-          <Col md={6}>
-            <FormGroup>
-              <Label for="capacity">
-                Sức chứa <span className="text-danger">*</span>
-              </Label>
-              <Input
-                id="capacity"
-                type="number"
-                min={1}
-                value={newTable.capacity}
-                onChange={(e) =>
-                  setNewTable({ ...newTable, capacity: e.target.value })
-                }
-                placeholder="Số ghế"
-                invalid={!!errors.capacity}
-              />
-              {errors.capacity && (
-                <FormFeedback>
-                  {Array.isArray(errors.capacity)
-                    ? errors.capacity.join(", ")
-                    : errors.capacity}
-                </FormFeedback>
-              )}
-            </FormGroup>
-            <FormGroup>
-              <Label for="min_guests">Số khách tối thiểu</Label>
-              <Input
-                id="min_guests"
-                type="number"
-                min={1}
-                value={newTable.min_guests}
-                onChange={(e) =>
-                  setNewTable({ ...newTable, min_guests: e.target.value })
-                }
-                placeholder="Tối thiểu"
-                invalid={!!errors.min_guests}
-              />
-              {errors.min_guests && (
-                <FormFeedback>
-                  {Array.isArray(errors.min_guests)
-                    ? errors.min_guests.join(", ")
-                    : errors.min_guests}
-                </FormFeedback>
-              )}
-            </FormGroup>
-            <FormGroup>
-              <Label for="max_guests">Số khách tối đa</Label>
-              <Input
-                id="max_guests"
-                type="number"
-                min={1}
-                value={newTable.max_guests}
-                onChange={(e) =>
-                  setNewTable({ ...newTable, max_guests: e.target.value })
-                }
-                placeholder="Tối đa"
-                invalid={!!errors.max_guests}
-              />
-              {errors.max_guests && (
-                <FormFeedback>
-                  {Array.isArray(errors.max_guests)
-                    ? errors.max_guests.join(", ")
-                    : errors.max_guests}
+                  {Array.isArray(errors.table_type)
+                    ? errors.table_type.join(", ")
+                    : errors.table_type}
                 </FormFeedback>
               )}
             </FormGroup>

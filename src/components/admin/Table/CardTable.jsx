@@ -4,31 +4,50 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Alert,
 } from "reactstrap";
+import { toast } from "react-toastify";
 
 const TableCard = ({
   tableId,
-  seatCount = 4,
+  tableNumber,
+  seatCount = "4 ghế",
   status = "available", // available, occupied, reserved
   onClick,
   onDelete,
+  onViewDetail,
   hideMenu = false,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [show, setShow] = useState(false);
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+  const toggle = () => setShow(!show);
 
-  // Tính toán chiều dài bàn dựa trên số ghế và ảnh mẫu
-  const getTableWidth = (seats) => {
-    const clampedSeats = Math.max(2, Math.min(seats, 8)); // Ensure seats are between 2 and 8
+  const handleCardClick = () => {
+    // Gọi onViewDetail để hiển thị modal chi tiết cho tất cả trạng thái bàn
+    if (onViewDetail) {
+      onViewDetail(tableId);
+    }
+  };
 
-    // These values are visually tuned to approximate the image's scaling
-    if (clampedSeats === 2) return 140; // Approximate width for T7, T1
-    if (clampedSeats === 4) return 200; // Approximate width for T2, T6, T8
-    if (clampedSeats === 6) return 280; // Approximate width for T4
-    if (clampedSeats === 8) return 360; // Approximate width for T3, T5
+  // Tính toán chiều dài bàn dựa trên loại bàn
+  const getTableWidth = (seatType) => {
+    if (typeof seatType === 'string') {
+      if (seatType.includes('2')) return 140;
+      if (seatType.includes('4')) return 200;
+      if (seatType.includes('8')) return 360;
+    }
+    
+    // Fallback cho số ghế cũ
+    const seats = parseInt(seatType) || 4;
+    const clampedSeats = Math.max(2, Math.min(seats, 8));
 
-    // Fallback for odd seat counts
+    if (clampedSeats === 2) return 140;
+    if (clampedSeats === 4) return 200;
+    if (clampedSeats === 6) return 280;
+    if (clampedSeats === 8) return 360;
+
     if (clampedSeats < 4) {
       return 140 + (200 - 140) * ((clampedSeats - 2) / (4 - 2));
     } else if (clampedSeats < 6) {
@@ -36,7 +55,17 @@ const TableCard = ({
     } else if (clampedSeats < 8) {
       return 280 + (360 - 280) * ((clampedSeats - 6) / (8 - 6));
     }
-    return clampedSeats; // Should not be reached with clamp
+    return clampedSeats;
+  };
+
+  // Tính số ghế từ loại bàn
+  const getSeatCount = (seatType) => {
+    if (typeof seatType === 'string') {
+      if (seatType.includes('2')) return 2;
+      if (seatType.includes('4')) return 4;
+      if (seatType.includes('8')) return 8;
+    }
+    return parseInt(seatType) || 4;
   };
 
   const getStatusIcon = (status) => {
@@ -113,7 +142,7 @@ const TableCard = ({
     borderRadius: "12px",
     background: "white",
     boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-    cursor: "pointer",
+    cursor: status === "available" ? "default" : "pointer",
     transition: "all 0.2s ease",
     padding: "1rem",
     position: "relative",
@@ -124,7 +153,7 @@ const TableCard = ({
     backgroundColor: "#e6f3ff",
     border: "1px solid #b3d9ff",
     borderRadius: "3px",
-    flexGrow: 1,
+    flexGrow: 1,  
     margin: "0 2px",
   };
 
@@ -137,11 +166,13 @@ const TableCard = ({
     background: "none",
   };
 
+  const actualSeatCount = getSeatCount(seatCount);
+
   return (
     <div
       className="table-card"
       style={cardStyle}
-      onClick={() => onClick && onClick(tableId)}
+      onClick={handleCardClick}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-2px)";
         e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
@@ -167,6 +198,16 @@ const TableCard = ({
             <DropdownMenu right>
               <DropdownItem onClick={(e) => {
                 e.stopPropagation();
+                onViewDetail && onViewDetail(tableId);
+              }}>
+                Xem chi tiết
+              </DropdownItem>
+              <DropdownItem onClick={(e) => {
+                e.stopPropagation();
+                if (status === "occupied") {
+                  toast.error("Không thể sửa bàn đang sử dụng!");
+                  return;
+                }
                 onClick && onClick(tableId); // Trigger edit action
               }}>
                 Sửa
@@ -203,7 +244,7 @@ const TableCard = ({
             boxSizing: "border-box",
           }}
         >
-          {Array.from({ length: Math.ceil(seatCount / 2) }).map((_, i) => (
+          {Array.from({ length: Math.ceil(actualSeatCount / 2) }).map((_, i) => (
             <div
               key={`seat-top-${i}`}
               className="seat seat-top"
@@ -235,7 +276,7 @@ const TableCard = ({
             <span>{getStatusIcon(status)}</span>
           </div>
           <div className="w-100 d-flex justify-content-center pb-2">
-            <span>T{tableId}</span>
+            <span>T{tableNumber}</span>
           </div>
         </div>
 
@@ -251,7 +292,7 @@ const TableCard = ({
             boxSizing: "border-box",
           }}
         >
-          {Array.from({ length: Math.floor(seatCount / 2) }).map((_, i) => (
+          {Array.from({ length: Math.floor(actualSeatCount / 2) }).map((_, i) => (
             <div
               key={`seat-bottom-${i}`}
               className="seat seat-bottom"
@@ -262,8 +303,12 @@ const TableCard = ({
       </div>
 
       <div className="text-center">
-        <small className="text-muted">{seatCount} ghế</small>
+        <small className="text-muted">{seatCount}</small>
       </div>
+
+      <Alert color="success" isOpen={show} toggle={toggle} timeout={0}>
+        {/* ... */}
+      </Alert>
     </div>
   );
 };

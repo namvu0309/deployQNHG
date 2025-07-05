@@ -62,7 +62,8 @@ const OrderCard = ({ order, onEdit }) => {
     }).format(amount || 0);
   };
 
-  const customerName = order.customer?.full_name || "Guest";
+  // Hiển thị tên người đặt ưu tiên contact_name, sau đó đến customer.full_name, cuối cùng là Guest
+  const customerName = order.contact_name || order.customer?.full_name || "Guest";
 
   // Đếm tổng số lượng items (tổng quantity)
   const totalQuantity = Array.isArray(order.items)

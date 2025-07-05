@@ -34,6 +34,7 @@ const ReservationGrid = ({
     onPageChange,
     onUpdate,
     tableAreas = [],
+    onStatusChangeLocal,
 }) => {
     const [showDelete, setShowDelete] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
@@ -42,7 +43,7 @@ const ReservationGrid = ({
     const [editForm, setEditForm] = useState({});
     const [loadingEdit, setLoadingEdit] = useState(false);
     const [apiErrors, setApiErrors] = useState({});
-    const [localData, setLocalData] = useState(data);
+    const [isConfirmingReservation, setIsConfirmingReservation] = useState(false);
 
     const currentPage = paginate.page || 1;
     const totalPages = paginate.totalPage || 1;
@@ -63,7 +64,7 @@ const ReservationGrid = ({
     const handleStatusChange = async (id, newStatus) => {
         try {
             // Tìm reservation hiện tại trong data
-            const reservation = localData.find(item => item.id === id);
+            const reservation = data.find(item => item.id === id);
             if (!reservation) {
                 toast.error("Không tìm thấy đơn đặt bàn");
                 return;
@@ -104,12 +105,6 @@ const ReservationGrid = ({
             console.error("API Error:", error.response?.data || error.message);
             toast.error(error.response?.data?.message || "Không thể cập nhật trạng thái");
         }
-    };
-
-    const handleStatusChangeLocal = (id, newStatus) => {
-        setLocalData(prevData => prevData.map(item =>
-            item.id === id ? { ...item, status: newStatus } : item
-        ));
     };
 
     const handleEdit = async () => {
@@ -153,11 +148,12 @@ const ReservationGrid = ({
             console.log('Payload gửi lên backend:', payload);
 
             await updateReservation(selectedItem.id, payload);
-            toast.success("Đã cập nhật đơn đặt bàn thành công");
+            toast.success(isConfirmingReservation ? "Đã xác nhận đơn đặt bàn thành công" : "Đã cập nhật đơn đặt bàn thành công");
             if (onUpdate) onUpdate();
             setShowEdit(false);
             setSelectedItem(null);
             setEditForm({});
+            setIsConfirmingReservation(false);
         } catch (error) {
             console.error("API Error:", error.response?.data || error.message);
             if (error.response && error.response.data && error.response.data.errors) {
@@ -200,6 +196,10 @@ const ReservationGrid = ({
     const openEditModal = (item) => {
         setSelectedItem(item);
         setApiErrors({});
+        // Kiểm tra xem có phải đang xác nhận reservation không (trạng thái đã được set thành confirmed)
+        const isConfirming = item.status === "confirmed" && (item.originalStatus === "pending" || !item.originalStatus);
+        setIsConfirmingReservation(isConfirming);
+        
         setEditForm({
             customer_name: item.customer_name || "",
             customer_phone: item.customer_phone || item.phone_number || "",
@@ -236,13 +236,13 @@ const ReservationGrid = ({
         <>
             {/* Grid Layout */}
             <div className="reservation-grid">
-                {localData.length === 0 ? (
+                {data.length === 0 ? (
                     <Alert color="info" className="text-center">
                         Không có đơn đặt bàn nào
                     </Alert>
                 ) : (
                     <Row className="g-4">
-                        {localData.map((reservation) => (
+                        {data.map((reservation) => (
                             <Col key={reservation.id} xs={12} sm={6} md={4} lg={3} xl={3}>
                                 <CardReservation
                                     reservation={reservation}
@@ -250,7 +250,7 @@ const ReservationGrid = ({
                                     onView={openViewModal}
                                     onDelete={handleCardDelete}
                                     onStatusChange={handleStatusChange}
-                                    onStatusChangeLocal={handleStatusChangeLocal}
+                                    onStatusChangeLocal={onStatusChangeLocal}
                                 />
                             </Col>
                         ))}
@@ -316,9 +316,15 @@ const ReservationGrid = ({
             </Modal>
 
             {/* Modal Chỉnh sửa */}
-            <Modal isOpen={showEdit} toggle={() => setShowEdit(false)} size="lg">
-                <ModalHeader toggle={() => setShowEdit(false)}>
-                    Chỉnh sửa đơn đặt bàn
+            <Modal isOpen={showEdit} toggle={() => {
+                setShowEdit(false);
+                setIsConfirmingReservation(false);
+            }} size="lg">
+                <ModalHeader toggle={() => {
+                    setShowEdit(false);
+                    setIsConfirmingReservation(false);
+                }}>
+                    {isConfirmingReservation ? "Xác nhận đơn đặt bàn" : "Chỉnh sửa đơn đặt bàn"}
                 </ModalHeader>
                 <ModalBody>
                     {selectedItem && (
@@ -423,36 +429,7 @@ const ReservationGrid = ({
                                         <Input
                                             id="reservation_time"
                                             type="select"
-                                            value={editForm.reservation_time !== undefined ? editForm.reservation_time : (() => {
-                                                let timeStr = selectedItem.reservation_time || '';
-                                                if (timeStr) {
-                                                    // Nếu là ISO string
-                                                    if (timeStr.includes("T")) {
-                                                        const d = new Date(timeStr);
-                                                        return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false });
-                                                    }
-                                                    // Nếu là dạng "YYYY-MM-DD HH:mm:ss"
-                                                    const match = timeStr.match(/(\d{2}):(\d{2})/);
-                                                    if (match) {
-                                                        return `${match[1]}:${match[2]}`;
-                                                    }
-                                                    // Nếu chỉ là "HH:mm" hoặc "HH:mm:ss"
-                                                    if (/^\d{2}:\d{2}(:\d{2})?$/.test(timeStr)) {
-                                                        return timeStr.slice(0, 5);
-                                                    }
-                                                }
-                                                let dateStr = selectedItem.reservation_date || selectedItem.booking_date || '';
-                                                if (dateStr && dateStr.includes(' ')) {
-                                                    const parts = dateStr.split(' ');
-                                                    if (parts[1]) {
-                                                        const timeMatch = parts[1].match(/(\d{2}):(\d{2})/);
-                                                        if (timeMatch) {
-                                                            return `${timeMatch[1]}:${timeMatch[2]}`;
-                                                        }
-                                                    }
-                                                }
-                                                return '';
-                                            })()}
+                                            value={editForm.reservation_time || ""}
                                             onChange={(e) => {
                                                 setEditForm({
                                                     ...editForm,
@@ -619,11 +596,14 @@ const ReservationGrid = ({
                     )}
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="secondary" onClick={() => setShowEdit(false)}>
+                    <Button color="secondary" onClick={() => {
+                        setShowEdit(false);
+                        setIsConfirmingReservation(false);
+                    }}>
                         Hủy
                     </Button>
                     <Button color="primary" onClick={handleEdit} disabled={loadingEdit}>
-                        {loadingEdit ? <Spinner size="sm" /> : "Cập nhật"}
+                        {loadingEdit ? <Spinner size="sm" /> : (isConfirmingReservation ? "Xác nhận" : "Cập nhật")}
                     </Button>
                 </ModalFooter>
             </Modal>

@@ -13,11 +13,11 @@ const KanbanColumn = ({ status, label, orders, onChangeStatus, onCancel, loading
                 <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className="d-flex flex-row gap-3"
+                    className="d-flex flex-row gap-3 kanban-column-list kanban-column-list--fixed"
                 >
                     {orders.map((order, idx) => (
                         <KanbanCard
-                            key={order.id}
+                            key={`${order.id}-${order.table_number}`}
                             order={order}
                             index={idx}
                             onChangeStatus={onChangeStatus}
