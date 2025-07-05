@@ -286,14 +286,14 @@ const TableDetailModal = ({
         }
     };
 
-    const tableAreaName =
-        (table && table.table_area && table.table_area.name)
-            ? table.table_area.name
-            : (
-                table && tableAreas.length
-                    ? (tableAreas.find(area => String(area.id) === String(table.table_area_id))?.name || "N/A")
-                    : "N/A"
-            );
+    const tableAreaName = (() => {
+        if (table?.table_area?.name) return table.table_area.name;
+        if (tableAreas.length && table?.table_area_id) {
+            const found = tableAreas.find(area => String(area.id) === String(table.table_area_id));
+            if (found) return found.name;
+        }
+        return "N/A";
+    })();
 
     // Nếu không có table thì không render modal
     if (!table) return null;

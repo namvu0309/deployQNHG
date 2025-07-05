@@ -17,7 +17,7 @@ const KanbanColumn = ({ status, label, orders, onChangeStatus, onCancel, loading
                 >
                     {orders.map((order, idx) => (
                         <KanbanCard
-                            key={order.id}
+                            key={`${order.id}-${order.table_number}`}
                             order={order}
                             index={idx}
                             onChangeStatus={onChangeStatus}

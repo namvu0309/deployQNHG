@@ -6,6 +6,7 @@ import {
   DropdownItem,
   Alert,
 } from "reactstrap";
+import { toast } from "react-toastify";
 
 const TableCard = ({
   tableId,
@@ -203,6 +204,10 @@ const TableCard = ({
               </DropdownItem>
               <DropdownItem onClick={(e) => {
                 e.stopPropagation();
+                if (status === "occupied") {
+                  toast.error("Không thể sửa bàn đang sử dụng!");
+                  return;
+                }
                 onClick && onClick(tableId); // Trigger edit action
               }}>
                 Sửa

@@ -82,7 +82,7 @@ const TableIndex = () => {
       setNewTable({
         table_number: table.table_number || "",
         description: table.description || "",
-        table_area_id: table.table_area_id || "",
+        table_area_id: table.table_area_id || table.table_area?.id || "",
         status: table.status || "",
         table_type: table.table_type || "",
         tags: table.tags ? table.tags.join(", ") : "",

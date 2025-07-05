@@ -25,7 +25,7 @@ const KitchenOrderCard = ({ order, onChangeStatus, onCancel, status }) => {
             {nextStatus && (
                 <button onClick={() => onChangeStatus(order.id, nextStatus)} className="btn btn-primary btn-sm">Chuyển trạng thái</button>
             )}
-            {status !== "cancelled" && (
+            {!["preparing", "ready", "cancelled"].includes(status) && (
                 <button onClick={() => onCancel(order.id)} className="btn btn-danger btn-sm ml-2">Hủy đơn</button>
             )}
         </div>
