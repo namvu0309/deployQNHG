@@ -40,3 +40,8 @@ export const getOrderItemHistory = (orderItemId) => {
 export const trackOrder = (orderCode) => {
     return axios.get(`${API_URL}/orders/track/${orderCode}`);
 };
+
+// Lấy đơn hàng theo table ID
+export const getOrderByTableId = (tableId) => {
+    return axios.get(`${API_URL}/orders/table/${tableId}`);
+};

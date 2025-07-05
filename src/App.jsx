@@ -46,9 +46,9 @@ const App = () => {
                         path={route.path}
                         element={
                             <Authmiddleware>
-                                <ProtectedRoute permission={route.permission}>
-                                    <Layout>{route.component}</Layout>
-                                </ProtectedRoute>
+                            <ProtectedRoute permission={route.permission}>
+                                <Layout>{route.component}</Layout>
+                            </ProtectedRoute>
                             </Authmiddleware>
                         }
                     />

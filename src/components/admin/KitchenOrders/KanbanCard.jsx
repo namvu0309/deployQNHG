@@ -39,7 +39,7 @@ const KanbanCard = ({ order, index, onChangeStatus, onCancel, status }) => {
             </div>
           </div>
           <div className="mb-1">
-            <b>Bàn:</b> {order.table_number || "-"}
+            <b>Bàn:</b> {order.table_number ? `Bàn ${order.table_number}` : "Chưa có bàn"}
           </div>
           <div className="mb-1">
             <b>Món:</b> {order.item_name} <span className="badge bg-light text-dark ms-1">x{order.quantity}</span>
@@ -64,7 +64,7 @@ const KanbanCard = ({ order, index, onChangeStatus, onCancel, status }) => {
                 Chuyển trạng thái
               </button>
             )}
-            {order.status !== "cancelled" && (
+            {!["preparing", "ready", "cancelled"].includes(order.status) && (
               <button 
                 className="btn btn-sm btn-outline-danger" 
                 onClick={e => { e.stopPropagation(); onCancel(order.id); }}
