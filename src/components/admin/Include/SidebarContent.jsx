@@ -212,31 +212,32 @@ const SidebarContent = (props) => {
               </ul>
             </li>
             )}
-
-            {hasPermission("dish.view") && (
-            <li>
-              <Link to="/#" className="has-arrow ">
-                <i className="bx bx-dish"></i>
-                <span>{props.t("Quản Lí Món Ăn")}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
+              {hasPermission("dish.view") && (
+                  <li>
+                      <Link to="/#" className="has-arrow ">
+                          <i className="bx bx-dish"></i>
+                          <span>{props.t("Quản Lí Món Ăn")}</span>
+                      </Link>
+                      <ul className="sub-menu" aria-expanded="false">
+                          <li>
+                              <Link to="/dishes">{props.t("Danh Sách Món Ăn")}</Link>
+                          </li>
+                      </ul>
+                  </li>
+              )}
+            {hasPermission("kitchen_order.view") && (
                 <li>
-                  <Link to="/dishes">{props.t("Danh Sách Món Ăn")}</Link>
+                  <Link to="/#" className="has-arrow ">
+                    <i className="bx bx-dish"></i>
+                    <span>{props.t("Quản Lí Đơn Bếp")}</span>
+                  </Link>
+                  <ul className="sub-menu" aria-expanded="false">
+                    <li>
+                      <Link to="/kitchen-orders">{props.t("Quản Lý Đơn Bếp")}</Link>
+                    </li>
+                  </ul>
                 </li>
-              </ul>
-            </li>
             )}
-            <li>
-              <Link to="/#" className="has-arrow ">
-                <i className="bx bx-dish"></i>
-                <span>{props.t("Quản Lí Đơn Bếp")}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
-                <li>
-                  <Link to="/kitchen-orders">{props.t("Quản Lý Đơn Bếp")}</Link>
-                </li>
-              </ul>
-            </li>
 
             {hasPermission("combo.view") && (
             <li>
