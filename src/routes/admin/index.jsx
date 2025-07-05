@@ -48,10 +48,10 @@ const authProtectedRoutes = [
 
   // Role/Permission/User routes
   { path: "/roles", component: <ListRole />, permission: "role.view" },
-  { path: "/permission_groups", component: <ListPermissionGroup />, permission: "permission-group.view" },
+  { path: "/permission_groups", component: <ListPermissionGroup />, permission: "permission_group.view" },
   { path: "/permissions", component: <ListPermission />, permission: "permission.view" },
   { path: "/users", component: <ListUser />, permission: "user.view" },
-  { path: "/user_roles", component: <ListUserRole />, permission: "user-role.view" },
+  { path: "/user_roles", component: <ListUserRole />, permission: "user_role.view" },
 
   // Table routes
   { path: "/table", component: <PageTable />, permission: "table.view" },
@@ -73,10 +73,11 @@ const authProtectedRoutes = [
   { path: "/table-areas/:id/update", component: <PageTableArea />, permission: "table-area.update" },
   { path: "/table-areas/:id/delete", component: <PageTableArea />, permission: "table-area.delete" },
 
-  // Quản lý đơn hàng
-  { path: "/orders/list", component: <PageOrder /> },
-  { path: "/orders/form/create", component: <FormOrderCreate /> },
-  { path: "/orders/form/edit", component: <FormOrderUpdate /> },
+// Quản lý đơn hàng
+  { path: "/orders/list", component: <PageOrder />, permission: "order.view" },
+  { path: "/orders/form/create", component: <FormOrderCreate />, permission: "order.create" },
+  { path: "/orders/form/edit", component: <FormOrderUpdate />, permission: "order.update" },
+
 
   // Đơn hàng
   { path: "/orders", component: <PageOrder />, permission: "order.view" },
@@ -92,7 +93,7 @@ const authProtectedRoutes = [
   // Combo
   { path: "/combos", component: <PageCombo />, permission: "combo.view" },
 
-  { path: "/kitchen-orders", component: <PageKitchenOrders /> },
+  { path: "/kitchen-orders", component: <PageKitchenOrders />, permission: "kitchen-order.view" },
 
   // Hồ sơ
   { path: "/profile", component: <UserProfile /> }, // không cần permission

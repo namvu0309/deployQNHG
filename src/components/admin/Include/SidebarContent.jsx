@@ -226,17 +226,19 @@ const SidebarContent = (props) => {
                       </ul>
                   </li>
               )}
-            <li>
-              <Link to="/#" className="has-arrow ">
-                <i className="bx bx-dish"></i>
-                <span>{props.t("Quản Lí Đơn Bếp")}</span>
-              </Link>
-              <ul className="sub-menu" aria-expanded="false">
+            {hasPermission("kitchen_order.view") && (
                 <li>
-                  <Link to="/kitchen-orders">{props.t("Quản Lý Đơn Bếp")}</Link>
+                  <Link to="/#" className="has-arrow ">
+                    <i className="bx bx-dish"></i>
+                    <span>{props.t("Quản Lí Đơn Bếp")}</span>
+                  </Link>
+                  <ul className="sub-menu" aria-expanded="false">
+                    <li>
+                      <Link to="/kitchen-orders">{props.t("Quản Lý Đơn Bếp")}</Link>
+                    </li>
+                  </ul>
                 </li>
-              </ul>
-            </li>
+            )}
 
             {hasPermission("combo.view") && (
                 <li>
