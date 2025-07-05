@@ -9,6 +9,7 @@ import {
 
 const TableCard = ({
   tableId,
+  tableNumber,
   seatCount = "4 ghế",
   status = "available", // available, occupied, reserved
   onClick,
@@ -270,7 +271,7 @@ const TableCard = ({
             <span>{getStatusIcon(status)}</span>
           </div>
           <div className="w-100 d-flex justify-content-center pb-2">
-            <span>T{tableId}</span>
+            <span>T{tableNumber}</span>
           </div>
         </div>
 

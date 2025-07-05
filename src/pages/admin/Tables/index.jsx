@@ -537,7 +537,8 @@ const TableIndex = () => {
                 {tables.map((table) => (
                   <TableCard
                     key={table.id}
-                    tableId={table.table_number}
+                    tableId={table.id}
+                    tableNumber={table.table_number}
                     seatCount={table.table_type_label}
                     status={table.status}
                     onViewDetail={handleViewDetail}
