@@ -100,10 +100,10 @@ const authProtectedRoutes = [
 
 
 const publicRoutes = [
-  // { path: "/logout", component: <Logout /> },
-  // { path: "/admin/login", component: <AdminLogin /> },
+  { path: "/logout", component: <Logout /> },
+  { path: "/admin/login", component: <AdminLogin /> },
 
-  // { path: "/403", component: <Forbidden403 /> },
+  { path: "/403", component: <Forbidden403 /> },
   { path: "/pages-forgot-pwd", component: <ForgetPwd1 /> },
   { path: "/pages-forgot-pwd-2", component: <ForgetPwd2 /> },
   { path: "/page-confirm-mail", component: <ConfirmMail /> },

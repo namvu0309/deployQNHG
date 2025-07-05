@@ -20,7 +20,7 @@ const TableDetailModal = ({
 }) => {
     useEffect(() => {
         if (isOpen && table) {
-            // Không cần fetch data riêng nữa vì đã có trong table prop
+            console.log('Chi tiết bàn:', table);
         }
     }, [isOpen, table]);
 
@@ -100,8 +100,8 @@ const TableDetailModal = ({
                                         <div className="mb-1">
                                             <strong>Tên khách:</strong>
                                             <div className="text-muted">
-                                                {orderData.contact_name || 
-                                                 (orderData.customer && orderData.customer.full_name) || 
+                                                {orderData.contact_name ||
+                                                 (orderData.customer && (orderData.customer.full_name || orderData.customer.name)) ||
                                                  "Guest"}
                                             </div>
                                         </div>
@@ -110,8 +110,8 @@ const TableDetailModal = ({
                                         <div className="mb-1">
                                             <strong>Số điện thoại:</strong>
                                             <div className="text-muted">
-                                                {orderData.contact_phone || 
-                                                 (orderData.customer && orderData.customer.phone) || 
+                                                {orderData.contact_phone ||
+                                                 (orderData.customer && (orderData.customer.phone_number || orderData.customer.phone)) ||
                                                  "N/A"}
                                             </div>
                                         </div>
@@ -154,7 +154,7 @@ const TableDetailModal = ({
                 </Row>
 
                 {/* Danh sách món ăn */}
-                {orderData.order_items && orderData.order_items.length > 0 && (
+                {orderData.order_items && orderData.order_items.length > 0 ? (
                     <div className="mb-3">
                         <strong>Danh sách món ăn đã đặt:</strong>
                         <div className="mt-2 border rounded order-items-list">
@@ -163,7 +163,7 @@ const TableDetailModal = ({
                                     <div className="flex-grow-1">
                                         <div className="fw-bold text-primary">{item.dish_name || item.name}</div>
                                         <small className="text-muted">
-                                            Số lượng: {item.quantity} x {item.price ? `${item.price.toLocaleString('vi-VN')} VNĐ` : "N/A"}
+                                            Số lượng: {item.quantity} x {item.unit_price ? `${item.unit_price.toLocaleString('vi-VN')} VNĐ` : "N/A"}
                                         </small>
                                         {item.notes && (
                                             <div className="mt-1">
@@ -175,19 +175,21 @@ const TableDetailModal = ({
                                     </div>
                                     <div className="text-end ms-3">
                                         <div className="fw-bold text-success">
-                                            {item.total_price ? `${item.total_price.toLocaleString('vi-VN')} VNĐ` : "N/A"}
+                                            {(item.unit_price && item.quantity) ? `${(item.unit_price * item.quantity).toLocaleString('vi-VN')} VNĐ` : "N/A"}
                                         </div>
                                         <small className="text-muted">
-                                            {item.status === 'pending' ? 'Chờ xử lý' :
-                                             item.status === 'preparing' ? 'Đang chế biến' :
-                                             item.status === 'ready' ? 'Sẵn sàng' :
-                                             item.status === 'served' ? 'Đã phục vụ' : 'N/A'}
+                                            {item.kitchen_status === 'pending' ? 'Chờ xử lý' :
+                                             item.kitchen_status === 'preparing' ? 'Đang chế biến' :
+                                             item.kitchen_status === 'ready' ? 'Sẵn sàng' :
+                                             item.kitchen_status === 'served' ? 'Đã phục vụ' : 'N/A'}
                                         </small>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
+                ) : (
+                    <div className="text-muted">Chưa có món ăn nào.</div>
                 )}
 
                 {orderData.notes && (
