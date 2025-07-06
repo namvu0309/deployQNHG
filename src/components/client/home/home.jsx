@@ -7,6 +7,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import DishDetailPopsup from "../dishDetail/DishDetailPopsup";
 import BookingPopup from "../include/header/BookingPopup";
+import OrderModal from "../order/order";
 import { getFeaturedDishes } from "@services/client/dishDetailService";
 import dishDefault from "@assets/admin/images/dish/dish-default.webp";
 
@@ -18,6 +19,8 @@ export default function Home() {
   const [showDetail, setShowDetail] = useState(false);
   const [selectedDish, setSelectedDish] = useState(null);
   const [showBooking, setShowBooking] = useState(false);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
   const [dishes, setDishes] = useState([]);
   const fullUrl = `http://localhost:8000/storage/`;
   const settings = {
@@ -47,6 +50,26 @@ export default function Home() {
     };
     fetchDishes();
   }, []);
+
+  // Hàm xử lý khi click nút đặt món
+  const handleOrderClick = (dish) => {
+    // Tạo item cho giỏ hàng
+    const cartItem = {
+      id: dish.id,
+      name: dish.name,
+      price: dish.selling_price,
+      quantity: 1,
+      image: dish.image_url && dish.image_url.trim() !== "" 
+        ? `${fullUrl}${dish.image_url}` 
+        : dishDefault
+    };
+    
+    // Thêm vào giỏ hàng
+    setCartItems([cartItem]);
+    
+    // Mở modal thanh toán
+    setShowOrderModal(true);
+  };
 
   return (
     <>
@@ -119,7 +142,7 @@ export default function Home() {
                         className="btn-order"
                         onClick={(e) => {
                           e.stopPropagation();
-                          // Thêm logic đặt món ở đây nếu cần
+                          handleOrderClick(d);
                         }}
                       >
                         + Đặt
@@ -264,6 +287,11 @@ export default function Home() {
       <BookingPopup
         isOpen={showBooking}
         onClose={() => setShowBooking(false)}
+      />
+      <OrderModal
+        isOpen={showOrderModal}
+        onClose={() => setShowOrderModal(false)}
+        cartItems={cartItems}
       />
     </>
   );
