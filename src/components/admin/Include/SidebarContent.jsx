@@ -225,6 +225,7 @@ const SidebarContent = (props) => {
                       </ul>
                   </li>
               )}
+
             {hasPermission("kitchen-order.view") && (
                 <li>
                   <Link to="/#" className="has-arrow ">
@@ -237,7 +238,7 @@ const SidebarContent = (props) => {
                     </li>
                   </ul>
                 </li>
-            )}
+             )} 
 
             {hasPermission("combo.view") && (
             <li>

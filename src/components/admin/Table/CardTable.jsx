@@ -68,21 +68,6 @@ const TableCard = ({
     return parseInt(seatType) || 4;
   };
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "occupied":
-        return "✔️";
-      case "reserved":
-        return "🔔";
-      case "cleaning":
-        return "🧹";
-      case "out_of_service":
-        return "⛔";
-      default: // available
-        return "☕";
-    }
-  };
-
   const getStatusColor = (status) => {
     switch (status) {
       case "occupied":
@@ -272,11 +257,21 @@ const TableCard = ({
             alignItems: "center",
           }}
         >
-          <div className="w-100 d-flex justify-content-end pt-1">
-            <span>{getStatusIcon(status)}</span>
-          </div>
-          <div className="w-100 d-flex justify-content-center pb-2">
-            <span>T{tableNumber}</span>
+          <div className="w-100 d-flex justify-content-center align-items-center pb-2 h-100">
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transform: 'translateY(4px)',
+                backgroundColor: getTableColor(status),
+                fontWeight: 600,
+                color: getStatusColor(status),
+                fontSize: 14,
+              }}
+            >
+              {tableNumber}
+            </div>
           </div>
         </div>
 
