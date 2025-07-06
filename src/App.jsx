@@ -46,13 +46,16 @@ const App = () => {
                         path={route.path}
                         element={
                             <Authmiddleware>
-                            <ProtectedRoute permission={route.permission}>
-                                <Layout>{route.component}</Layout>
-                            </ProtectedRoute>
+                                <Layout>
+                                    <ProtectedRoute permission={route.permission}>
+                                        {route.component}
+                                    </ProtectedRoute>
+                                </Layout>
                             </Authmiddleware>
                         }
                     />
                 ))}
+
 
                 {/* ✅ Client Routes */}
                 {clientRoutes.map((route, idx) => (
