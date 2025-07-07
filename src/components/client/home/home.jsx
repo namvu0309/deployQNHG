@@ -9,16 +9,22 @@ import DishDetailPopsup from "../dishDetail/DishDetailPopsup";
 import BookingPopup from "../include/header/BookingPopup";
 import { getFeaturedDishes } from "@services/client/dishDetailService";
 import dishDefault from "@assets/admin/images/dish/dish-default.webp";
-
 import BlurText from "../ui/BlurText";
 import ClickSpark from "../ui/ClickSpark";
 import HeroBanner from "./HeroBanner";
+import { useCart } from "../cart/cartContext";
+import CartSummary from "../cart/cart";
+import CartModal from "../cart/cartModal";
 
 export default function Home() {
   const [showDetail, setShowDetail] = useState(false);
   const [selectedDish, setSelectedDish] = useState(null);
   const [showBooking, setShowBooking] = useState(false);
   const [dishes, setDishes] = useState([]);
+  const [showCart, setShowCart] = useState(false);
+
+  const { addToCart } = useCart();
+
   const fullUrl = `http://localhost:8000/storage/`;
   const settings = {
     dots: true,
@@ -38,7 +44,6 @@ export default function Home() {
     const fetchDishes = async () => {
       try {
         const res = await getFeaturedDishes();
-        console.log(res);
         setDishes(Array.isArray(res.data) ? res.data : []);
       } catch (e) {
         console.error(e);
@@ -60,6 +65,7 @@ export default function Home() {
         <section className="hero-banner-section">
           <HeroBanner />
         </section>
+
         <section className="home-section">
           <div className="home-content">
             <BlurText
@@ -72,14 +78,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 2: Món mới ra lò */}
         <section className="new-menu-section">
           <h2 className="section-title">Món mới ra lò</h2>
-
           <div className="slider-wrapper">
             <div className="slider-inner">
               <Slider {...settings}>
-                {/* {console.log(dishes.map(d => d.id))} */}
                 {dishes.map((d) => (
                   <div
                     key={d.id}
@@ -119,7 +122,7 @@ export default function Home() {
                         className="btn-order"
                         onClick={(e) => {
                           e.stopPropagation();
-                          // Thêm logic đặt món ở đây nếu cần
+                          addToCart(d);
                         }}
                       >
                         + Đặt
@@ -130,7 +133,6 @@ export default function Home() {
               </Slider>
             </div>
           </div>
-
           <div className="btn-wrap">
             <Link to="/menu-page" className="btn-view-menu">
               Xem thực đơn
@@ -138,19 +140,16 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 3: chữ chạy */}
         <section className="promotion-section">
           <div className="marquee">
             <div className="marquee-track">
               <div className="marquee-content">
-                ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU
-                ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖
+                ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖 ƯU ĐÃI HOÀNG GIA 🔖
               </div>
             </div>
           </div>
         </section>
 
-        {/* Section 4: Khuyến mãi & Tin tức */}
         <section className="promo-cards-section">
           <div className="slider-wrapper promo">
             <Slider {...settings}>
@@ -172,7 +171,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 5: Giới thiệu thương hiệu */}
         <section className="intro-section">
           <div className="intro-container">
             <div className="intro-text">
@@ -191,7 +189,6 @@ export default function Home() {
 
         <div className="section-divider"></div>
 
-        {/* Section 6: Tiệc tùng */}
         <section className="party-section">
           <div className="party-container">
             <div className="party-image">
@@ -208,7 +205,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 7: Club */}
         <section className="club-section">
           <div className="club-container">
             <h3 className="club-subtitle">HOÀNG GIA CLUB</h3>
@@ -228,7 +224,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 8: Slider khuyến mãi nhiều cột */}
         <section className="promo-slider-section">
           <div className="promo-slider-container">
             <Slider
@@ -253,6 +248,10 @@ export default function Home() {
             </Slider>
           </div>
         </section>
+
+        <CartSummary onClick={() => setShowCart(true)} />
+        {showCart && <CartModal onClose={() => setShowCart(false)} />}
+
       </ClickSpark>
 
       <DishDetailPopsup
@@ -260,7 +259,7 @@ export default function Home() {
         onClose={() => setShowDetail(false)}
         dish={selectedDish}
       />
-      {/* <Footer onOpenBooking={() => setShowBooking(true)} /> */}
+
       <BookingPopup
         isOpen={showBooking}
         onClose={() => setShowBooking(false)}

@@ -9,57 +9,6 @@
       box-sizing: border-box;
       position: relative;
 
-     .order-summary {
-  background: #11452e; // Nền xanh đậm
-  border: 1px solid #11452e;
-  border-radius: 10px 0 0 10px;
-  padding: 5px 10px;
-  position: fixed;
-  right: 0;
-  top: 45%;
-  z-index: 9999;
-  cursor: pointer;
-  transition: 0.3s ease;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-
-  .summary-line {
-    font-size: 14px;
-    line-height: 10px;
-    font-weight: 400;
-
-    .count {
-      color: #0a2d18; // Xanh lá
-      text-transform: uppercase;
-      margin-right: 4px;
-    }
-
-    .tt {
-      color: #0a2f1b; // Gần trắng/xám sáng
-      text-transform: uppercase;
-    }
-  }
-
-  .total {
-    display: flex;
-    align-items: center;
-    font-size: 18px;
-    line-height: 24px;
-    font-weight: bold;
-    color: #ffa827; // Cam
-
-    i {
-      margin-right: 6px;
-      color: #ffa827;
-      font-size: 16px;
-    }
-  }
-}
-
-
       .menuBox {
         padding: 40px 0;
 
@@ -241,65 +190,6 @@
             }
           }
         }
-      }
-    }
-  }
-}
-
-.cart-modal {
-  position: fixed;
-  top: 50%;
-  right: 36%;
-  width: 550px;
-  background: #fff;
-  border: 1px solid #ccc;
-  padding: 20px;
-  z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-
-  .cart-header {
-    background: #FFA827;
-    border-radius: 5px 5px 0 0;
-    padding: 25px 22px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    h2 {
-      font-size: 38px;
-      color: #222;
-      font-weight: bold;
-    }
-  }
-
-  .cart-footer {
-    margin-top: 20px;
-
-    .total {
-      display: flex;
-      justify-content: space-between;
-      font-size: 22px;
-      color: #1B4E30;
-      margin-bottom: 10px;
-    }
-
-    .clear {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #EBEBEB;
-
-      .text-clear {
-        font-size: 11px;
-        color: #666;
-      }
-
-      .clear-cart {
-        font-size: 13px;
-        color: #222;
-        cursor: pointer;
       }
     }
   }
