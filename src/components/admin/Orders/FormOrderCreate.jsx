@@ -266,7 +266,7 @@ const FormOrderCreate = () => {
   useEffect(() => {
     if (showTableModal && selectedArea) {
       setLoadingTables(true);
-      getTables({ status: "available", table_area_id: selectedArea })
+      getTables({ table_area_id: selectedArea })
         .then((res) => {
           setTableList(res.data?.data?.items || []);
         })
@@ -601,44 +601,60 @@ const FormOrderCreate = () => {
                           </div>
                         ))}
                       </div>
-                      <div
-                        className="table-modal-list"
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          justifyContent: "flex-start",
-                          gap: "16px",
-                          minHeight: "200px",
-                          padding: "8px 0",
-                        }}
-                      >
-                        {tableList.length === 0 && !loadingTables && (
-                          <div className="text-muted text-center w-100">
-                            Không có bàn nào khả dụng.
-                          </div>
-                        )}
-                        {tableList.map((table) => {
-                          const isSelected = selectedTables.some((t) => String(t.id) === String(table.id));
-                          return (
-                            <div
-                              key={table.id}
-                              className={`table-card-wrapper ${isSelected ? "selected" : ""}`}
-                              onClick={() => handleTableToggle(String(table.id))}
-                              style={{ margin: 8 }}
-                            >
-                              <CardTable
-                                tableId={table.table_number}
-                                seatCount={table.capacity}
-                                status={table.status}
-                                hideMenu={true}
-                              />
-                            </div>
-                          );
-                        })}
-                        {loadingTables && (
+                      <div className="table-modal-list-by-status">
+                        {loadingTables ? (
                           <div className="text-center w-100 py-4">
                             <Spinner color="primary" />
                           </div>
+                        ) : tableList.length === 0 ? (
+                          <div className="text-muted text-center w-100">
+                            Không có bàn nào trong khu vực này.
+                          </div>
+                        ) : (
+                          [
+                            { key: 'available', label: 'Trống' },
+                            { key: 'reserved', label: 'Đã đặt' },
+                            { key: 'occupied', label: 'Đang sử dụng' },
+                            { key: 'cleaning', label: 'Đang dọn dẹp' },
+                            { key: 'out_of_service', label: 'Ngưng phục vụ' },
+                          ].map(statusObj => {
+                            const tables = tableList.filter(t => t.status === statusObj.key);
+                            return (
+                              <div className="table-status-row mb-2 d-flex align-items-center" key={statusObj.key}>
+                                <span className="table-status-label me-3" style={{ minWidth: 110, fontWeight: 600 }}>{statusObj.label}:</span>
+                                <div className="d-flex flex-wrap align-items-center" style={{ gap: 12, minHeight: 48 }}>
+                                  {tables.length === 0 ? (
+                                    <span className="text-muted" style={{fontSize: '0.97rem'}}>Không có bàn</span>
+                                  ) : (
+                                    tables.map(table => {
+                                      const isSelected = selectedTables.some((t) => String(t.id) === String(table.id));
+                                      return (
+                                        <div
+                                          key={table.id}
+                                          className={`table-card-wrapper ${isSelected ? "selected" : ""}`}
+                                          onClick={() => handleTableToggle(String(table.id))}
+                                          style={{ margin: 4 }}
+                                        >
+                                          <CardTable
+                                            tableId={table.id}
+                                            tableNumber={table.table_number}
+                                            seatCount={
+                                              table.table_type === '2_seats' ? 2 :
+                                              table.table_type === '4_seats' ? 4 :
+                                              table.table_type === '8_seats' ? 8 :
+                                              table.capacity || 4
+                                            }
+                                            status={table.status}
+                                            hideMenu={true}
+                                          />
+                                        </div>
+                                      );
+                                    })
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })
                         )}
                       </div>
                     </ModalBody>

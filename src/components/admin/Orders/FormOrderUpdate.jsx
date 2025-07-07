@@ -86,6 +86,7 @@ const FormOrderUpdate = () => {
   const [comboMeta, setComboMeta] = useState({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
   const [comboCurrentPage, setComboCurrentPage] = useState(1);
   const [removedItems, setRemovedItems] = useState([]);
+  const [orderDataState, setOrderDataState] = useState(null);
 
   const statusOptionsMap = {
     "Dine In": [
@@ -121,6 +122,7 @@ const FormOrderUpdate = () => {
       getOrderDetail(orderId)
         .then(async (res) => {
           const orderData = res.data.data.order;
+          setOrderDataState(orderData);
           console.log(orderData.items);
           setOrderItems(
             orderData.items.map((item) => {
@@ -355,7 +357,7 @@ const FormOrderUpdate = () => {
         const areas = res.data?.data?.items || [];
         setTableAreas(areas);
         // Tìm khu vực đầu tiên có bàn trống
-        getTables({ status: "available" })
+        getTables()
           .then((res) => {
             const allTables = res.data?.data?.items || [];
             // Tìm khu vực đầu tiên có bàn trống
@@ -407,7 +409,7 @@ const FormOrderUpdate = () => {
     setSelectedArea(areaId);
     setLoadingTables(true);
     if (areaId === 'all') {
-      getTables({ status: "available" })
+      getTables()
         .then((res) => {
           const allTables = res.data?.data?.items || [];
           const filteredTables = allTables.filter(
@@ -423,7 +425,7 @@ const FormOrderUpdate = () => {
         })
         .finally(() => setLoadingTables(false));
     } else {
-      getTables({ status: "available", table_area_id: areaId })
+      getTables({ table_area_id: areaId })
         .then((res) => {
           const allTables = res.data?.data?.items || [];
           const filteredTables = allTables.filter(
@@ -445,7 +447,7 @@ const FormOrderUpdate = () => {
     if (showTableModal && selectedArea) {
       setLoadingTables(true);
       if (selectedArea === 'all') {
-        getTables({ status: "available" })
+        getTables()
           .then((res) => {
             const allTables = res.data?.data?.items || [];
             setTableList(allTables);
@@ -456,7 +458,7 @@ const FormOrderUpdate = () => {
           })
           .finally(() => setLoadingTables(false));
       } else {
-        getTables({ status: "available", table_area_id: selectedArea })
+        getTables({ table_area_id: selectedArea })
           .then((res) => {
             const allTables = res.data?.data?.items || [];
             const filteredTables = allTables.filter(
@@ -497,14 +499,36 @@ const FormOrderUpdate = () => {
         ...removedItems
       ];
 
+      // Lấy danh sách bàn cũ từ orderData (bàn trước khi chỉnh sửa)
+      const oldTables = Array.isArray(orderDataState?.tables) ? orderDataState.tables : [];
+      const newTableIds = selectedTables.map(t => String(t.id));
+
+      const tablesPayload = [];
+
+      // 1. Add tables that were in the old order but are now deselected (removed tables)
+      oldTables.forEach(oldTable => {
+        if (!newTableIds.includes(String(oldTable.id))) {
+          // This table was in the old order but is now removed
+          tablesPayload.push({
+            old_id_table: Number(oldTable.id),
+            status: oldTable.status // Get its last known status from orderDataState
+          });
+        }
+      });
+
+      // 2. Add all currently selected tables (these will be the final set of tables for the order)
+      selectedTables.forEach(currentTable => {
+        tablesPayload.push({
+          new_id_table: Number(currentTable.id),
+          status: currentTable.status // Get its current status (e.g., 'available' if just selected)
+        });
+      });
+
       const payload = {
         order_type: getOrderType(orderMethod),
         status: orderStatus,
         notes: orderNotes || "",
-        tables:
-          orderMethod === "Dine In"
-            ? selectedTables.map((t) => ({ table_id: Number(t.id) }))
-            : [],
+        tables: orderMethod === "Dine In" ? tablesPayload : [], // Use the new tablesPayload array
         delivery_address: orderMethod === "Delivery" ? deliveryAddress || "" : "",
         contact_name: contactName || "",
         contact_email: contactEmail || "",
@@ -836,48 +860,60 @@ const FormOrderUpdate = () => {
                             );
                           })}
                         </div>
-                        <div
-                          className="table-modal-list table-modal-list--grid"
-                          style={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            justifyContent: "flex-start",
-                            gap: "16px",
-                            minHeight: "200px",
-                            padding: "8px 0",
-                          }}
-                        >
-                          {tableList.length === 0 && !loadingTables && (
-                            <div className="text-muted text-center w-100">
-                              Không có bàn nào khả dụng.
-                            </div>
-                          )}
-                          {tableList.map((table) => {
-                            const isSelected = selectedTables.some((t) => String(t.id) === String(table.id));
-                            return (
-                              <div
-                                key={table.id}
-                                className={`table-card-wrapper ${isSelected ? "selected" : ""}`}
-                                onClick={() => handleTableToggle(String(table.id))}
-                                style={{ margin: 8 }}
-                              >
-                                <CardTable
-                                  tableId={table.table_number}
-                                  seatCount={
-                                    table.table_type === '2_seats' ? 2 :
-                                    table.table_type === '4_seats' ? 4 :
-                                    table.table_type === '8_seats' ? 8 : 4
-                                  }
-                                  status={table.status}
-                                  hideMenu={true}
-                                />
-                              </div>
-                            );
-                          })}
-                          {loadingTables && (
+                        <div className="table-modal-list-by-status">
+                          {loadingTables ? (
                             <div className="text-center w-100 py-4">
                               <Spinner color="primary" />
                             </div>
+                          ) : tableList.length === 0 ? (
+                            <div className="text-muted text-center w-100">
+                              Không có bàn nào trong khu vực này.
+                            </div>
+                          ) : (
+                            [
+                              { key: 'available', label: 'Trống' },
+                              { key: 'occupied', label: 'Đang sử dụng' },
+                              { key: 'cleaning', label: 'Đang dọn dẹp' },
+                              { key: 'out_of_service', label: 'Ngưng phục vụ' },
+                            ].map(statusObj => {
+                              const tables = tableList.filter(t => t.status === statusObj.key);
+                              if (tables.length === 0) return null;
+                              return (
+                                <div className="table-status-row mb-3" key={statusObj.key}>
+                                  <div className="table-status-label mb-1" style={{ fontWeight: 600 }}>{statusObj.label}</div>
+                                  <div className="table-status-cards-row d-flex flex-row flex-nowrap align-items-center" style={{ gap: 12, overflowX: 'auto', minHeight: 48 }}>
+                                    {tables.length === 0 ? (
+                                      <span className="text-muted" style={{fontSize: '0.97rem'}}>Không có bàn</span>
+                                    ) : (
+                                      tables.map(table => {
+                                        const isSelected = selectedTables.some((t) => String(t.id) === String(table.id));
+                                        return (
+                                          <div
+                                            key={table.id}
+                                            className={`table-card-wrapper ${isSelected ? "selected" : ""}`}
+                                            onClick={() => handleTableToggle(String(table.id))}
+                                            style={{ margin: 4, flex: '0 0 auto' }}
+                                          >
+                                            <CardTable
+                                              tableId={table.id}
+                                              tableNumber={table.table_number}
+                                              seatCount={
+                                                table.table_type === '2_seats' ? 2 :
+                                                table.table_type === '4_seats' ? 4 :
+                                                table.table_type === '8_seats' ? 8 :
+                                                table.capacity || 4
+                                              }
+                                              status={table.status}
+                                              hideMenu={true}
+                                            />
+                                          </div>
+                                        );
+                                      })
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })
                           )}
                         </div>
                       </ModalBody>
