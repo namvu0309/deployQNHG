@@ -37,7 +37,8 @@ import FormOrderUpdate from "@components/admin/Orders/FormOrderUpdate";
 import PageCombo from "@pages/admin/Combos/index";
 import PageCategory from "@pages/admin/Categories/index";
 import PageKitchenOrders from "@pages/admin/KitchenOrders/index";
-
+import AdminForgotPassword from "@pages/admin/Users/AdminForgotpassword.jsx";
+import AdminResetPassword from "@pages/admin/Users/ AdminResetPassword.jsx";
 import Forbidden403 from "@pages/admin/Users/403.jsx";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard />, permission: "dashboard.view" },
@@ -103,7 +104,8 @@ const authProtectedRoutes = [
 const publicRoutes = [
   { path: "/logout", component: <Logout /> },
   { path: "/admin/login", component: <AdminLogin /> },
-
+  { path: "/admin/forgot-password", component: <AdminForgotPassword /> },
+  { path: "/admin/reset-password/:id", component: <AdminResetPassword /> },
   { path: "/403", component: <Forbidden403 /> },
   { path: "/pages-forgot-pwd", component: <ForgetPwd1 /> },
   { path: "/pages-forgot-pwd-2", component: <ForgetPwd2 /> },

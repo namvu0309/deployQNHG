@@ -19,3 +19,19 @@ export const logout = () => {
         },
     });
 };
+
+export const forgotPassword = (email) => {
+    return axios.post(`http://localhost:8000/api/admin/forgot-password`, { email }, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+};
+
+export const resetPassword = (id, data) => {
+    return axios.post(`http://localhost:8000/api/admin/reset-password/${id}`, data, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+};

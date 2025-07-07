@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { useNavigate, useSearchParams, Link } from "react-router-dom"
 import Swal from "sweetalert2"
 import { login as adminLogin } from "@services/admin/authService"
-import { Coffee, Utensils, Wine, ChefHat } from "lucide-react"
+import { Coffee, Utensils, Wine, ChefHat, Eye, EyeOff } from "lucide-react"
 import "./AdminLogin.css"
 
 export default function AdminLogin() {
@@ -19,6 +19,7 @@ export default function AdminLogin() {
 
     const [errors, setErrors] = useState({})
     const [generalError, setGeneralError] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -44,19 +45,17 @@ export default function AdminLogin() {
                 navigate("/dashboard")
             })
         } catch (err) {
-            const response = err.response;
-            const validationErrors = response?.data?.errors || {};
-            const message = response?.data?.message || "Đăng nhập thất bại!";
+            const response = err.response
+            const validationErrors = response?.data?.errors || {}
+            const message = response?.data?.message || "Đăng nhập thất bại!"
 
-            // Nếu có lỗi dạng errors.{field}
             if (Object.keys(validationErrors).length > 0) {
-                setErrors(validationErrors);
-                return;
+                setErrors(validationErrors)
+                return
             }
 
-            Swal.fire("Lỗi", message, "error");
+            Swal.fire("Lỗi", message, "error")
         }
-
     }
 
     return (
@@ -112,10 +111,10 @@ export default function AdminLogin() {
                             {errors.email && <div className="error-message">{errors.email}</div>}
                         </div>
 
-                        <div className="form-group">
+                        <div className="form-group" style={{ position: "relative" }}>
                             <label htmlFor="password" className="form-label">Mật khẩu</label>
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 name="password"
                                 id="password"
                                 placeholder="••••••••••"
@@ -123,7 +122,29 @@ export default function AdminLogin() {
                                 onChange={handleChange}
                                 className={`form-input ${errors.password ? "error" : ""}`}
                             />
+                            {/* Icon hiện/ẩn mật khẩu */}
+                            <div
+                                className="password-toggle-icon"
+                                onClick={() => setShowPassword(!showPassword)}
+                                style={{
+                                    position: "absolute",
+                                    right: "12px",
+                                    top: "50%", // Căn giữa theo chiều dọc
+                                    transform: "translateY(-50%)",
+                                    cursor: "pointer",
+                                    color: "#888"
+                                }}
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </div>
+
+
                             {errors.password && <div className="error-message">{errors.password}</div>}
+
+                            {/* Link "Quên mật khẩu?" */}
+                            <div className="forgot-password-link mt-2">
+                                <Link to="/admin/forgot-password">Quên mật khẩu?</Link>
+                            </div>
                         </div>
 
                         <button type="submit" className="login-button">
