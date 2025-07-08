@@ -2,7 +2,7 @@ import Menu from "../../components/client/menu/menu";
 import Endow from "../../components/client/endow-blog/endow";
 import Detail from "../../components/client/detail-blog/detail";
 import Header from "../../components/client/include/header/header";
-// import Footer from "../../components/client/include/footer/footer";
+import Footer from "../../components/client/include/footer/footer";
 import RegisterUserPage from "../../pages/client/auth/register";
 import LoginUserPage from "../../pages/client/auth/login";
 import BranchDetail from "../../components/client/branchDetail/BranchDetail";
