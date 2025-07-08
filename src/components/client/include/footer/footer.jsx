@@ -1,5 +1,5 @@
 import React from "react";
-import "./Footer.scss";
+import "./footer.scss";
 import logo from "@assets/client/images/header/logo.png";
 const Footer = ({ onOpenBooking }) => {
   return (
