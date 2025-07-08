@@ -33,7 +33,7 @@ import "./Table.scss";
 import { getTables, createTable, updateTable, deleteTable, getTable } from "../../../services/admin/tableService";
 import { getTableAreas } from "../../../services/admin/tableAreaService";
 import DeleteModal from "@components/admin/ui/DeleteModal";
-import PaginateUi from "@components/admin/ui/PaginateUi";
+import PaginateUi from "@components/admin/ui/paginateUi";
 
 const TableIndex = () => {
   const [tables, setTables] = useState([]);
