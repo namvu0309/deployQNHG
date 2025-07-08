@@ -5,7 +5,7 @@ import Header from "../../components/client/include/header/header";
 // import Footer from "../../components/client/include/footer/footer";
 import RegisterUserPage from "../../pages/client/auth/register";
 import LoginUserPage from "../../pages/client/auth/login";
-import BranchDetail from "../../components/client/BranchDetail/BranchDetail";
+import BranchDetail from "../../components/client/branchDetail/BranchDetail";
 import Contact from "../../components/client/contact/Contact";
 import Home from "../../components/client/home/home";
 import SuccessfulReservation from "../../components/client/include/header/successful_reservation";
