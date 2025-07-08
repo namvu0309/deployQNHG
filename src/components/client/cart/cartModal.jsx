@@ -4,7 +4,7 @@ import { useCart } from "./cartContext";
 import "./cart.scss";
 
 const CartModal = ({ onClose }) => {
-  const { cart, changeQuantity, removeAll } = useCart();
+  const { cart, changeQuantity, removeAll,  removeItem } = useCart();
 
   const totalPrice = cart.reduce(
     (sum, item) => sum + ((item.quantity || 0) * (item.price || 0)),
@@ -38,13 +38,14 @@ const CartModal = ({ onClose }) => {
             <li key={item.id} className="cart-item">
               <div className="name">{item.name || item.title}</div>
               <div className="quantity-control">
-                <button className="button" onClick={() => changeQuantity(item.id, -1)}>-</button>
-                <span>{item.quantity}</span>
-                <button className="button"  onClick={() => changeQuantity(item.id, 1)}>+</button>
-              </div>
-              <div className="price">
-                {(item.quantity * item.price || 0).toLocaleString()}₫
-              </div>
+  <button className="button-n" onClick={() => changeQuantity(item.id, -1)}>-</button>
+  <span>{item.quantity}</span>
+  <button className="button-n" onClick={() => changeQuantity(item.id, 1)}>+</button>
+</div>
+<div className="price">
+  {(item.quantity * item.price || 0).toLocaleString()}₫
+  <button className="remove-btn" onClick={() => removeItem(item.id)}>×</button>
+</div>
             </li>
           ))}
         </ul>

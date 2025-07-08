@@ -49,17 +49,13 @@
 
       .label {
         display: flex;
+        justify-content: space-between;
         align-items: center;
         gap: 8px;
 
-        strong {
-          font-size: 18px;
-          font-weight: 800;
-          color: #1a3d2d;
-        }
-
+        strong,
         span {
-          font-size: 18px;
+          font-size: 22px;
           font-weight: 800;
           color: #1a3d2d;
         }
@@ -95,33 +91,36 @@
         .quantity-control {
           display: flex;
           align-items: center;
-          gap: 4px;
+          justify-content: center;
+          gap: 6px;
+          min-width: 10px;
 
-          button {
-            width: 10px;
-            height: 10px;
-            font-size: 17px;
-            font-weight: 400;
-            border: 1px solid #cca38c;
-            border-radius: 10px;
-            background: #ffffff7d;
-            color: #3d1313;
+          .button-n {
+            width: 28px;
+            height: 28px;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 6px;
+            color: #333;
+            font-size: 19px;
+            font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.8s;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.2s;
 
             &:hover {
-              background: #163c21;
+              background-color: #cfcfcf;
             }
           }
 
           span {
-            width: 20px;
+            display: inline-block;
+            width: 24px;
             text-align: center;
-            font-weight: 200;
-            font-size: 13px;
+            font-size: 16px;
+            font-weight: 500;
           }
         }
 
@@ -129,9 +128,26 @@
           font-weight: bold;
           color: #1f4f2b;
           font-size: 16px;
-          min-width: 10px;
+          min-width: 100px;
           text-align: right;
           white-space: nowrap;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+
+          .remove-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 18px;
+            margin-left: 6px;
+            cursor: pointer;
+            transition: color 0.3s;
+
+            &:hover {
+              color: #c00;
+            }
+          }
         }
       }
     }
@@ -156,59 +172,55 @@
 
     .remove-all-btn {
       background: none;
-      color: #dc736b;
+      color: #e05454;
       border: none;
-      font-size: 12px;
+      font-size: 14px;
       cursor: pointer;
-      margin-bottom: 24px;
-      text-decoration: underline;
+      text-decoration: none;
       font-weight: 600;
+      float: right;
+      margin-bottom: 10px;
     }
 
- .submit-btn {
-  background-color: #215732;
-  color: white;
-  padding: 4px 10px;           
-  border: none;
-  border-radius: 6px;         
- font-size: 12px !important;          
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  margin: 6px;
-  min-width: 70px;           
-  text-align: center;
-  display: inline-block;
-}
-
-.submit-btn:hover {
-  background-color: #1a472a;
-  transform: translateY(-1px);
-}
-
-
-
-
+   .submit-btn {
+   background-color: #ffa726;
+    color: #000;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    min-width: 160px; 
+    text-align: center;
+    margin: 8px 12px;
+      &:hover {
+        background-color: #fb8c00;
+        transform: translateY(-1px);
+      }
+    }
 
     p {
       margin-top: 16px;
       font-size: 14px;
 
       strong {
-  color: inherit;       
-  font-weight: normal;
-    all: unset;  
-}
+        color: #1a3d2d;
+        font-weight: normal;
+        all: unset;
+      }
     }
   }
 }
+
 .order-summary-n {
   position: fixed;
   top: 50%;
   right: 0;
   transform: translateY(-50%);
-  background: linear-gradient(90deg, #205435 0%, #0F361F 70.05%);
-  color: #ffce3d; 
+  background: linear-gradient(90deg, #205435 0%, #0f361f 70.05%);
+  color: #ffce3d;
   padding: 14px 22px;
   border-radius: 12px 0 0 12px;
   cursor: pointer;
@@ -217,9 +229,9 @@
   z-index: 9999;
   text-align: center;
   min-width: 140px;
+  max-width: 100%;
   font-family: "Inter", sans-serif;
   transition: background 0.3s ease;
-  
 
   &:hover {
     background: #24513a;
@@ -229,11 +241,11 @@
     font-size: 15px;
     font-weight: 600;
     margin-bottom: 4px;
-    color: #66CD90
+    color: #66cd90;
   }
-  
-  .tt{
-      color: #b2b0ac; 
+
+  .tt {
+    color: #b2b0ac;
   }
 
   .icon-money {
@@ -243,16 +255,12 @@
 
     .total {
       font-weight: bold;
-      color: #FFA827;
+      color: #ffa827;
     }
   }
-  
-  
 }
 
 
-
-
-
-
-  
+html, body {
+  overflow-x: hidden;
+}
