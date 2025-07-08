@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import "./Detail.scss";
-import anhBadinh from "@assets/client/images/Branch/anh-badinh.jpg";
+import anhBadinh from "@assets/client/images/branch/anh-badinh.jpg";
 import BookingPopup from "../include/header/BookingPopup";
 import {
   FaPhoneAlt,

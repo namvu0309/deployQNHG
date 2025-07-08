@@ -25,12 +25,12 @@ import ModalDish from "@components/admin/Dishes/ModalDish";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Dishes.scss";
+import DeleteModal from "@components/admin/ui/DeleteModal";
+import PaginateUi from "@components/admin/ui/paginateUi";
+import { convertTagsToString } from "@helpers/admin/api_helper";
 import { getDishes, createDish, updateDish, deleteSoftDish, getDish } from "@services/admin/dishService";
 import { getCategories } from "@services/admin/categoryService";
-import DeleteModal from "@components/admin/ui/DeleteModal";
 import Swal from "sweetalert2";
-import PaginateUi from "@components/admin/ui/PaginateUi";
-import { convertTagsToString } from "@helpers/admin/api_helper";
 
 const DishIndex = () => {
   const [dishes, setDishes] = useState([]);

@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 
 // ✅ Import video từ trong src
-import beerVideo from "@assets/client/images/Branch/video-beer.mp4";
+import beerVideo from "@assets/client/images/branch/video-beer.mp4";
 
 const Contact = () => {
   return (
