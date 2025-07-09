@@ -16,7 +16,7 @@ const CartModal = ({ onClose }) => {
   return (
     <div className="cart-modal">
       <div className="cart-header">
-        <h2>Tạm tính</h2>
+        <h2>TẠM TÍNH</h2>
         <button className="close-btn" onClick={onClose}>
           ×
         </button>
@@ -25,12 +25,19 @@ const CartModal = ({ onClose }) => {
       <div className="cart-body">
       <div className="total-price">
   <div className="label">
-    <strong>Tổng tiền:</strong>
+    <strong>TỔNG TIỀN:</strong>
     <span>{totalPrice.toLocaleString()} ₫</span>
   </div>
+   
+ <div className="note-with-remove">
   <p className="note">
     Đơn giá tạm tính chỉ mang tính chất tham khảo. Liên hệ hotline để Hoàng Gia có thể tư vấn cho bạn chu đáo nhất.
   </p>
+  <button className="remove-all-btn" onClick={removeAll}>
+    ⟳ Xoá hết tạm tính
+  </button>
+</div>
+   
 </div>
 
         <ul className="cart-list">
@@ -57,10 +64,8 @@ const CartModal = ({ onClose }) => {
           <button className="submit-btn">ĐẶT BÀN ONLINE </button>
            
           <p>
-            <button className="remove-all-btn" onClick={removeAll}>
-            ⟳ Xoá hết tạm tính
-          </button>
-            Hoặc gọi <strong>*2025</strong> để đặt bàn
+          
+            Gọi <strong>*2025</strong> để đặt bàn
           </p>
          
         </div>
