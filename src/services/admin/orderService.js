@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000/api/admin";
+export const BASE_URL = "http://127.0.0.1:8000";
+const API_URL = `${BASE_URL}/api/admin`;
 
 // Lấy danh sách đơn hàng
 export const getListOrders = (params) => {
@@ -44,4 +45,14 @@ export const trackOrder = (orderCode) => {
 // Lấy đơn hàng theo table ID
 export const getOrderByTableId = (tableId) => {
     return axios.get(`${API_URL}/orders/table/${tableId}`);
+};
+
+export const paymentOrder = (id, data) => {
+    return axios.post(`${API_URL}/orders/${id}/pay`, data, {
+        headers: { "Content-Type": "application/json" },
+    });
+};
+
+export const getBillDetails = (id) => {
+    return axios.get(`${API_URL}/bills/${id}/detail`);
 };

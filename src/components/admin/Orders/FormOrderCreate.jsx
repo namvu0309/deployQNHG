@@ -151,7 +151,7 @@ const FormOrderCreate = () => {
         setComboMeta({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
         toast.error("Cấu trúc dữ liệu API combo không đúng!");
       }
-    } catch (error) {
+    } catch {
       setCombos([]);
       setComboMeta({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
       toast.error("Lỗi khi tải danh sách combo!");
@@ -321,10 +321,13 @@ const FormOrderCreate = () => {
       console.error("Error creating order:", error.response || error);
       const apiErrors = error.response?.data?.errors;
       if (apiErrors) {
-        const errorMessages = Object.values(apiErrors)
-          .map((e) => (Array.isArray(e) ? e.join(", ") : e))
-          .join("; ");
-        toast.error(errorMessages || "Lỗi khi tạo đơn hàng!");
+        Object.values(apiErrors).forEach((messages) => {
+          if (Array.isArray(messages)) {
+            messages.forEach((msg) => toast.error(msg));
+          } else {
+            toast.error(messages);
+          }
+        });
       } else {
         toast.error(error.response?.data?.message || "Lỗi khi tạo đơn hàng!");
       }
@@ -544,6 +547,48 @@ const FormOrderCreate = () => {
                 Tạo đơn hàng mới
               </div>
             </div>
+            {/* Thông tin khách hàng */}
+            <div className="order-sidebar-section mb-3">
+              <Label className="order-sidebar-label mb-2">Thông tin khách hàng</Label>
+              <Row className="mb-2">
+                <Col md={6}>
+                  <Input
+                    type="text"
+                    placeholder="Tên khách hàng"
+                    value={contactName}
+                    onChange={(e) => setContactName(e.target.value)}
+                  />
+                </Col>
+                <Col md={6}>
+                  <Input
+                    type="tel"
+                    placeholder="Số điện thoại"
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
+                  />
+                </Col>
+              </Row>
+              <Row className="mb-2">
+                <Col md={12}>
+                  <Input
+                    type="email"
+                    placeholder="Email liên hệ"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                  />
+                </Col>
+              </Row>
+              {orderMethod === "Delivery" && (
+                <div className="mt-2">
+                  <Input
+                    type="textarea"
+                    placeholder="Địa chỉ giao hàng"
+                    value={deliveryAddress}
+                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                  />
+                </div>
+              )}
+            </div>
             {/* Chọn bàn, ghi chú, hình thức phục vụ */}
             <div className="order-sidebar-section mb-3">
               {/* Order Method */}
@@ -613,16 +658,15 @@ const FormOrderCreate = () => {
                         ) : (
                           [
                             { key: 'available', label: 'Trống' },
-                            { key: 'reserved', label: 'Đã đặt' },
                             { key: 'occupied', label: 'Đang sử dụng' },
                             { key: 'cleaning', label: 'Đang dọn dẹp' },
                             { key: 'out_of_service', label: 'Ngưng phục vụ' },
                           ].map(statusObj => {
                             const tables = tableList.filter(t => t.status === statusObj.key);
                             return (
-                              <div className="table-status-row mb-2 d-flex align-items-center" key={statusObj.key}>
-                                <span className="table-status-label me-3" style={{ minWidth: 110, fontWeight: 600 }}>{statusObj.label}:</span>
-                                <div className="d-flex flex-wrap align-items-center" style={{ gap: 12, minHeight: 48 }}>
+                              <div className="table-status-row mb-3" key={statusObj.key}>
+                                <div className="table-status-label mb-1" style={{ fontWeight: 600 }}>{statusObj.label}</div>
+                                <div className="table-status-cards-row d-flex flex-row flex-nowrap align-items-center" style={{ gap: 12, overflowX: 'auto', minHeight: 48 }}>
                                   {tables.length === 0 ? (
                                     <span className="text-muted" style={{fontSize: '0.97rem'}}>Không có bàn</span>
                                   ) : (
@@ -633,7 +677,7 @@ const FormOrderCreate = () => {
                                           key={table.id}
                                           className={`table-card-wrapper ${isSelected ? "selected" : ""}`}
                                           onClick={() => handleTableToggle(String(table.id))}
-                                          style={{ margin: 4 }}
+                                          style={{ margin: 4, flex: '0 0 auto' }}
                                         >
                                           <CardTable
                                             tableId={table.id}
@@ -715,39 +759,6 @@ const FormOrderCreate = () => {
                   <option value="Delivery">Giao hàng</option>
                 </Input>
               </div>
-              {/* Delivery/Contact Info */}
-              {orderMethod === "Delivery" && (
-                <div className="delivery-info py-2 mb-2">
-                  <Label className="order-sidebar-label mb-1">Thông tin giao hàng</Label>
-                  <Input
-                    type="text"
-                    placeholder="Địa chỉ giao hàng"
-                    value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                    className="mb-2"
-                  />
-                  <Input
-                    type="text"
-                    placeholder="Tên người nhận"
-                    value={contactName}
-                    onChange={(e) => setContactName(e.target.value)}
-                    className="mb-2"
-                  />
-                  <Input
-                    type="email"
-                    placeholder="Email liên hệ"
-                    value={contactEmail}
-                    onChange={(e) => setContactEmail(e.target.value)}
-                    className="mb-2"
-                  />
-                  <Input
-                    type="tel"
-                    placeholder="Số điện thoại liên hệ"
-                    value={contactPhone}
-                    onChange={(e) => setContactPhone(e.target.value)}
-                  />
-                </div>
-              )}
             </div>
             {/* Danh sách món ăn */}
             <div className="order-items-detail-box mb-3">

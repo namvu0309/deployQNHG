@@ -8,10 +8,6 @@ import {
   Spinner,
   Input,
   Button,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Alert,
 } from "reactstrap";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import TableCard from "@components/admin/Table/CardTable";

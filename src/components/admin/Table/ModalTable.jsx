@@ -17,7 +17,6 @@ import {
 const statusOptions = [
   { value: "available", label: "Trống" },
   { value: "occupied", label: "Đang sử dụng" },
-  { value: "reserved", label: "Đã đặt" },
   { value: "cleaning", label: "Đang dọn dẹp" },
   { value: "out_of_service", label: "Ngưng phục vụ" },
 ];
@@ -25,6 +24,7 @@ const statusOptions = [
 const tableTypeOptions = [
   { value: "2_seats", label: "2 ghế" },
   { value: "4_seats", label: "4 ghế" },
+  { value: "6_seats", label: "6 ghế" },
   { value: "8_seats", label: "8 ghế" },
 ];
 
@@ -68,81 +68,6 @@ const TableModal = ({
                 </FormFeedback>
               )}
             </FormGroup>
-            <FormGroup>
-              <Label for="description">Mô tả</Label>
-              <Input
-                id="description"
-                value={newTable.description}
-                onChange={(e) =>
-                  setNewTable({ ...newTable, description: e.target.value })
-                }
-                placeholder="Mô tả ngắn về bàn"
-                invalid={!!errors.description}
-              />
-              {errors.description && (
-                <FormFeedback>
-                  {Array.isArray(errors.description)
-                    ? errors.description.join(", ")
-                    : errors.description}
-                </FormFeedback>
-              )}
-            </FormGroup>
-            <FormGroup>
-              <Label for="table_area_id">
-                Khu vực <span className="text-danger">*</span>
-              </Label>
-              <Input
-                id="table_area_id"
-                type="select"
-                value={newTable.table_area_id}
-                onChange={(e) =>
-                  setNewTable({ ...newTable, table_area_id: e.target.value })
-                }
-                invalid={!!errors.table_area_id}
-              >
-                <option value="">Chọn khu vực</option>
-                {tableAreas.map((area) => (
-                  <option key={area.id} value={area.id}>
-                    {area.name}
-                  </option>
-                ))}
-              </Input>
-              {errors.table_area_id && (
-                <FormFeedback>
-                  {Array.isArray(errors.table_area_id)
-                    ? errors.table_area_id.join(", ")
-                    : errors.table_area_id}
-                </FormFeedback>
-              )}
-            </FormGroup>
-            {isEdit && (
-              <FormGroup>
-                <Label for="statuses">Trạng thái</Label>
-                <Input
-                  id="statuses"
-                  type="select"
-                  value={newTable.status || ""}
-                  onChange={(e) =>
-                    setNewTable({ ...newTable, status: e.target.value })
-                  }
-                  invalid={!!errors.status}
-                >
-                  <option value="">Chọn trạng thái</option>
-                  {statusOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </Input>
-                {errors.status && (
-                  <FormFeedback>
-                    {Array.isArray(errors.status)
-                      ? errors.status.join(", ")
-                      : errors.status}
-                  </FormFeedback>
-                )}
-              </FormGroup>
-            )}
           </Col>
           <Col md={6}>
             <FormGroup>
@@ -173,6 +98,38 @@ const TableModal = ({
                 </FormFeedback>
               )}
             </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup>
+              <Label for="table_area_id">
+                Khu vực <span className="text-danger">*</span>
+              </Label>
+              <Input
+                id="table_area_id"
+                type="select"
+                value={newTable.table_area_id}
+                onChange={(e) =>
+                  setNewTable({ ...newTable, table_area_id: e.target.value })
+                }
+                invalid={!!errors.table_area_id}
+              >
+                <option value="">Chọn khu vực</option>
+                {tableAreas.map((area) => (
+                  <option key={area.id} value={area.id}>
+                    {area.name}
+                  </option>
+                ))}
+              </Input>
+              {errors.table_area_id && (
+                <FormFeedback>
+                  {Array.isArray(errors.table_area_id)
+                    ? errors.table_area_id.join(", ")
+                    : errors.table_area_id}
+                </FormFeedback>
+              )}
+            </FormGroup>
+          </Col>
+          <Col md={6}>
             <FormGroup>
               <Label for="tags">Tags</Label>
               <Input
@@ -193,6 +150,60 @@ const TableModal = ({
               )}
             </FormGroup>
           </Col>
+          <Col md={12}>
+            <FormGroup>
+              <Label for="description">Mô tả</Label>
+              <Input
+                id="description"
+                type="textarea"
+                rows="3"
+                value={newTable.description}
+                onChange={(e) =>
+                  setNewTable({ ...newTable, description: e.target.value })
+                }
+                placeholder="Mô tả ngắn về bàn"
+                invalid={!!errors.description}
+              />
+              {errors.description && (
+                <FormFeedback>
+                  {Array.isArray(errors.description)
+                    ? errors.description.join(", ")
+                    : errors.description}
+                </FormFeedback>
+              )}
+            </FormGroup>
+          </Col>
+          {isEdit && (
+            <Col md={12}>
+              <FormGroup>
+                <Label for="statuses">Trạng thái</Label>
+                <Input
+                  id="statuses"
+                  type="select"
+                  value={newTable.status || ""}
+                  onChange={(e) =>
+                    setNewTable({ ...newTable, status: e.target.value })
+                  }
+                  invalid={!!errors.status}
+                >
+                  <option value="">Chọn trạng thái</option>
+                  {statusOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </Input>
+                {errors.status && (
+                  <FormFeedback>
+                    {Array.isArray(errors.status)
+                      ? errors.status.join(", ")
+                      : errors.status}
+                  </FormFeedback>
+                )}
+              </FormGroup>
+            </Col>
+          )}
+         
         </Row>
       </Form>
     </ModalBody>
