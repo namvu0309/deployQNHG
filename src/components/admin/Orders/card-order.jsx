@@ -11,15 +11,23 @@ import {
   ModalBody,
   ModalFooter,
 } from "reactstrap";
-import { MdVisibility, MdModeEdit } from "react-icons/md";
+import { MdVisibility, MdModeEdit, MdDelete } from "react-icons/md";
 import { FaCheck } from "react-icons/fa";
 import { FiClock } from "react-icons/fi";
 import { BsBoxSeam } from "react-icons/bs";
 import "./card-order.css";
 import OrderDetailModal from "./OrderDetailModal";
+import BillDetailModal from "./BillDetailModal";
+// import { getBillDetails } from "@services/admin/orderService"; // No longer needed here
+import { toast } from "react-toastify";
+import { BASE_URL } from "@services/admin/orderService"; // Import BASE_URL
 
-const OrderCard = ({ order, onEdit }) => {
+const OrderCard = ({ order, onEdit, onDelete }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showBillDetailModal, setShowBillDetailModal] = useState(false);
+  // const [currentBillData, setCurrentBillData] = useState(null);
+  // const [currentPaymentData, setCurrentPaymentData] = useState(null);
+  // const [currentOrderData, setCurrentOrderData] = useState(null);
 
   const getStatusBadge = (status) => {
     const statusConfig = {
@@ -62,6 +70,37 @@ const OrderCard = ({ order, onEdit }) => {
     }).format(amount || 0);
   };
 
+  const handleViewBill = async (orderId) => {
+    console.log("Viewing bill for order ID:", orderId);
+    try {
+      // const response = await getBillDetails(orderId); // No longer needed here
+      // console.log("API Response data:", response.data.data);
+
+      // if (response.data.code === "SUCCESS") {
+      //   const bill = response.data.data.bill;
+      //   const payment = response.data.data.bill.bill_payments?.[0]; // Use optional chaining
+      //   const order = response.data.data.order;
+
+      //   console.log("Extracted Bill Data:", bill);
+      //   console.log("Extracted Payment Data:", payment);
+      //   console.log("Extracted Order Data:", order);
+
+      //   if (!bill || !payment || !order) {
+      //     console.error("Missing data in API response for bill modal:", { bill, payment, order });
+      //     toast.error("Dữ liệu hóa đơn không đầy đủ.");
+      //     return; // Stop execution if data is incomplete
+      //   }
+
+      //   setCurrentBillData(bill);
+      //   setCurrentPaymentData(payment);
+      //   setCurrentOrderData(order);
+      setShowBillDetailModal(true);
+    } catch (error) {
+      console.error("Error fetching bill details:", error.response || error);
+      toast.error("Lỗi khi tải chi tiết hóa đơn.");
+    }
+  };
+
   // Hiển thị tên người đặt ưu tiên contact_name, sau đó đến customer.full_name, cuối cùng là Guest
   const customerName = order.contact_name || order.customer?.full_name || "Guest";
 
@@ -81,6 +120,7 @@ const OrderCard = ({ order, onEdit }) => {
               <small className="text-muted">{`#${
                 order.order_code || "N/A"
               }`}</small>
+              {getOrderTypeBadge(order.order_type)}
             </div>
             {getStatusBadge(order.status)}
           </div>
@@ -128,14 +168,25 @@ const OrderCard = ({ order, onEdit }) => {
             </div>
 
             <div className="d-flex mt-3 gap-2">
-              <Button
-                color="light"
-                className="w-100 border"
-                onClick={() => setIsOpen(true)}
-              >
-                <MdVisibility className="me-1" /> View Details
-              </Button>
-              {onEdit && (
+              {order.status === 'completed' ? (
+                <Button
+                  color="primary"
+                  className="w-100 border"
+                  onClick={() => handleViewBill(order.id)}
+                >
+                  <MdVisibility className="me-1" /> Xem Bill
+                </Button>
+              ) : (
+                <Button
+                  color="light"
+                  className="w-100 border"
+                  onClick={() => setIsOpen(true)}
+                >
+                  <MdVisibility className="me-1" /> Xem chi tiết
+                </Button>
+              )}
+
+              {onEdit && order.status !== 'completed' && (
                 <Button
                   color="secondary"
                   className="w-100 border"
@@ -144,9 +195,18 @@ const OrderCard = ({ order, onEdit }) => {
                   <MdModeEdit className="me-1" /> Sửa
                 </Button>
               )}
+              {order.status === 'completed' && onDelete && (
+                <Button
+                  color="danger"
+                  className="w-100 border"
+                  onClick={() => onDelete(order)}
+                >
+                  <MdDelete className="me-1" /> Xóa
+                </Button>
+              )}
             </div>
-            {/* Nút thanh toán nếu trạng thái là completed */}
-            {order.status === 'completed' && (
+            {/* Nút thanh toán nếu trạng thái là ready */}
+            {order.status === 'ready' && (
               <Button color="success" className="w-100 mt-2">
                 Thanh toán
               </Button>
@@ -158,6 +218,15 @@ const OrderCard = ({ order, onEdit }) => {
       {/* Modal xem chi tiết đơn hàng */}
       <OrderDetailModal isOpen={isOpen} toggle={() => setIsOpen(false)} order={order} />
 
+      {/* Modal xem chi tiết Bill */}
+      {showBillDetailModal && (
+        <BillDetailModal
+          isOpen={showBillDetailModal}
+          toggle={() => setShowBillDetailModal(false)}
+          orderId={order.id} // Pass the order ID to BillDetailModal
+          fullUrl={BASE_URL} // Pass BASE_URL as fullUrl
+        />
+      )}
     </>
   );
 };
