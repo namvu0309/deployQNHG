@@ -20,8 +20,10 @@ const NotificationDropdown = (props) => {
       encrypted: true,
     });
 
-    // Subscribe to public channel
+    // Subscribe to public channel reservations
     const channel = pusher.subscribe('reservations');
+    // Subscribe to public channel orders
+    const orderChannel = pusher.subscribe('orders');
     
     // Listen for new reservation events
     channel.bind('reservation.created', (data) => {
@@ -57,10 +59,42 @@ const NotificationDropdown = (props) => {
       });
     });
 
+    // Listen for new order events
+    orderChannel.bind('order.created', (data) => {
+      console.log('New order created:', data);
+      addNotification({
+        id: Date.now(),
+        type: 'order_created',
+        title: 'Đơn hàng mới',
+        message: `Đơn hàng #${data.order_code} vừa được tạo từ xác nhận đặt bàn.`,
+        order_code: data.order_code,
+        timestamp: new Date(data.created_at),
+        unread: true,
+      });
+    });
+
+    // Listen for order update events
+    orderChannel.bind('order.updated', (data) => {
+      console.log('Order updated:', data);
+      addNotification({
+        id: Date.now(),
+        type: 'order_updated',
+        title: 'Cập nhật đơn hàng',
+        message: `Đơn hàng #${data.order_code} đã được cập nhật trạng thái: ${data.new_status_label || data.new_status || ''}.`,
+        order_code: data.order_code,
+        new_status: data.new_status,
+        new_status_label: data.new_status_label,
+        timestamp: new Date(data.updated_at || Date.now()),
+        unread: true,
+      });
+    });
+
     // Cleanup function
     return () => {
       channel.unbind_all();
       pusher.unsubscribe('reservations');
+      orderChannel.unbind_all();
+      pusher.unsubscribe('orders');
       pusher.disconnect();
     };
   }, []);
@@ -86,6 +120,10 @@ const NotificationDropdown = (props) => {
         return 'bx bx-calendar-plus';
       case 'reservation_status_updated':
         return 'bx bx-refresh';
+      case 'order_created':
+        return 'bx bx-receipt';
+      case 'order_updated':
+        return 'bx bx-edit';
       default:
         return 'bx bx-bell';
     }
@@ -97,6 +135,10 @@ const NotificationDropdown = (props) => {
         return 'primary';
       case 'reservation_status_updated':
         return 'success';
+      case 'order_created':
+        return 'warning';
+      case 'order_updated':
+        return 'info';
       default:
         return 'info';
     }

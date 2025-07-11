@@ -21,7 +21,7 @@ const RealtimeReservationUpdater = ({ onRefreshData }) => {
             // Hiển thị toast notification
             toast.success(`Đơn đặt bàn mới từ ${data.customer_name}`, {
                 position: "top-right",
-                autoClose: 5000,
+                autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -41,7 +41,7 @@ const RealtimeReservationUpdater = ({ onRefreshData }) => {
             // Hiển thị toast notification
             toast.info(`Trạng thái đơn đặt bàn của ${data.customer_name} đã được cập nhật`, {
                 position: "top-right",
-                autoClose: 5000,
+                autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
