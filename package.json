@@ -64,6 +64,7 @@
     "react-apexcharts": "^1.4.1",
     "react-chartjs-2": "^5.2.0",
     "react-color": "^2.19.3",
+    "react-confetti": "^6.4.0",
     "react-countdown": "^2.3.6",
     "react-data-table-component": "^7.6.2",
     "react-dom": "^18.3.1",

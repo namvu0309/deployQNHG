@@ -26,7 +26,7 @@ import { getTables } from "@services/admin/tableService";
 import { getTableAreas } from "@services/admin/tableAreaService";
 import { createOrder } from "@services/admin/orderService";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import dishDefaultImg from "@assets/admin/images/dish/dish-default.webp";
 import { formatPriceToVND } from "@helpers/formatPriceToVND";
@@ -72,6 +72,7 @@ const FormOrderCreate = () => {
   const [comboCategoryFilter, setComboCategoryFilter] = useState("");
   const [comboMeta, setComboMeta] = useState({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
   const [comboCurrentPage, setComboCurrentPage] = useState(1);
+  const [selectedAreaIdFromTables, setSelectedAreaIdFromTables] = useState(null);
 
   const navigate = useNavigate();
 
@@ -248,17 +249,32 @@ const FormOrderCreate = () => {
   const handleCloseTableModal = () => setShowTableModal(false);
 
   const handleTableToggle = (tableId) => {
+    const clickedTable = tableList.find((t) => String(t.id) === String(tableId));
+    if (!clickedTable || clickedTable.status !== 'available') {
+      toast.error("Chỉ có thể chọn bàn ở trạng thái Trống.");
+      return;
+    }
+
     setSelectedTables((prev) => {
-      const exists = prev.find((t) => String(t.id) === String(tableId));
-      if (exists) {
-        return prev.filter((t) => String(t.id) !== String(tableId));
-      } else {
-        // tìm object trong tableList
-        const found = tableList.find((t) => String(t.id) === String(tableId));
-        if (found) {
-          return [...prev, found];
+      const existingIndex = prev.findIndex((t) => String(t.id) === String(tableId));
+
+      if (prev.length > 0 && String(prev[0].table_area_id) !== String(clickedTable.table_area_id)) {
+        // If a table from a different area is selected, clear previous selections and select new one
+        toast.info("Bạn chỉ có thể chọn bàn trong cùng một khu vực.");
+        return [clickedTable];
+      }
+
+      if (existingIndex !== -1) {
+        // Deselect if already selected
+        const updatedTables = prev.filter((t) => String(t.id) !== String(tableId));
+        if (updatedTables.length === 0) {
+          setSelectedAreaIdFromTables(null); // Clear selected area if no tables are selected
         }
-        return prev;
+        return updatedTables;
+      } else {
+        // Select if not selected and within the same area
+        setSelectedAreaIdFromTables(String(clickedTable.table_area_id)); // Set selected area
+        return [...prev, clickedTable];
       }
     });
   };
@@ -336,7 +352,6 @@ const FormOrderCreate = () => {
 
   return (
     <div className="page-content">
-      <ToastContainer />
       <div className="mb-3">
         <Breadcrumbs title="Quản lý đơn hàng" breadcrumbItem="Tạo đơn hàng mới" />
       </div>
@@ -626,25 +641,29 @@ const FormOrderCreate = () => {
                         className="table-area-carousel d-flex align-items-center mb-3"
                         style={{ overflowX: "auto" }}
                       >
-                        {tableAreas.map((area) => (
-                          <div
-                            key={area.id}
-                            className={`table-area-item py-2 me-2 rounded ${selectedArea === area.id ? "active" : ""}`}
-                            style={{
-                              background: selectedArea === area.id ? "#556ee6" : "#f4f4f6",
-                              color: selectedArea === area.id ? "#fff" : "#222",
-                              cursor: "pointer",
-                              minWidth: 120,
-                              textAlign: "center",
-                              fontWeight: 500,
-                              border: selectedArea === area.id ? "2px solid #556ee6" : "2px solid transparent",
-                              transition: "all 0.2s",
-                            }}
-                            onClick={() => setSelectedArea(area.id)}
-                          >
-                            {area.name}
-                          </div>
-                        ))}
+                        {tableAreas.map((area) => {
+                          const isDisabled = selectedAreaIdFromTables && String(selectedAreaIdFromTables) !== String(area.id);
+                          return (
+                            <div
+                              key={area.id}
+                              className={`table-area-item py-2 me-2 rounded ${selectedArea === area.id ? "active" : ""} ${isDisabled ? "disabled-area" : ""}`}
+                              style={{
+                                background: selectedArea === area.id ? "#556ee6" : "#f4f4f6",
+                                color: selectedArea === area.id ? "#fff" : "#222",
+                                cursor: isDisabled ? "not-allowed" : "pointer",
+                                opacity: isDisabled ? 0.6 : 1,
+                                minWidth: 120,
+                                textAlign: "center",
+                                fontWeight: 500,
+                                border: selectedArea === area.id ? "2px solid #556ee6" : "2px solid transparent",
+                                transition: "all 0.2s",
+                              }}
+                              onClick={isDisabled ? null : () => setSelectedArea(area.id)}
+                            >
+                              {area.name}
+                            </div>
+                          );
+                        })}
                       </div>
                       <div className="table-modal-list-by-status">
                         {loadingTables ? (
@@ -675,9 +694,9 @@ const FormOrderCreate = () => {
                                       return (
                                         <div
                                           key={table.id}
-                                          className={`table-card-wrapper ${isSelected ? "selected" : ""}`}
+                                          className={`table-card-wrapper ${isSelected ? "selected" : ""} ${table.status !== 'available' ? "disabled-table" : ""}`}
                                           onClick={() => handleTableToggle(String(table.id))}
-                                          style={{ margin: 4, flex: '0 0 auto' }}
+                                          style={{ margin: 4, flex: '0 0 auto', cursor: table.status !== 'available' ? 'not-allowed' : 'pointer', opacity: table.status !== 'available' ? 0.6 : 1 }}
                                         >
                                           <CardTable
                                             tableId={table.id}

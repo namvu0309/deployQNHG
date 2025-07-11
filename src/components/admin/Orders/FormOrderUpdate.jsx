@@ -26,7 +26,7 @@ import { getOrderDetail, updateOrder, paymentOrder } from "@services/admin/order
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaEdit, FaShoppingCart } from "react-icons/fa";
 import "./FormOrder.scss";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import dishDefaultImg from "@assets/admin/images/dish/dish-default.webp";
 import { formatPriceToVND } from "@helpers/formatPriceToVND";
@@ -90,6 +90,8 @@ const FormOrderUpdate = () => {
   const [removedItems, setRemovedItems] = useState([]);
   const [orderDataState, setOrderDataState] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('cash');
+
+  const selectedAreaIdFromTables = selectedTables.length > 0 ? selectedTables[0].table_area_id : null;
 
   const statusOptionsMap = {
     "Dine In": [
@@ -376,23 +378,34 @@ const FormOrderUpdate = () => {
   const handleCloseTableModal = () => setShowTableModal(false);
 
   const handleTableToggle = (tableId) => {
+    const clickedTable = tableList.find((t) => String(t.id) === String(tableId));
+    if (!clickedTable || clickedTable.status !== 'available') {
+      toast.error("Chỉ có thể chọn bàn ở trạng thái Trống.");
+      return;
+    }
+
     setSelectedTables((prev) => {
-      const exists = prev.find((t) => String(t.id) === String(tableId));
-      if (exists) {
+      const existingIndex = prev.findIndex((t) => String(t.id) === String(tableId));
+
+      if (prev.length > 0 && String(prev[0].table_area_id) !== String(clickedTable.table_area_id)) {
+        // If a table from a different area is selected, clear previous selections and select new one
+        toast.info("Bạn chỉ có thể chọn bàn trong cùng một khu vực.");
+        return [clickedTable];
+      }
+
+      if (existingIndex !== -1) {
+        // Deselect if already selected
         return prev.filter((t) => String(t.id) !== String(tableId));
       } else {
-        // tìm object trong tableList
-        const found = tableList.find((t) => String(t.id) === String(tableId));
-        if (found) {
-          return [...prev, found];
-        }
-        return prev;
+        // Select if not selected and within the same area
+        return [...prev, clickedTable];
       }
     });
   };
 
   const handleAreaSelect = (areaId) => {
     setSelectedArea(areaId);
+    setSelectedTables([]); // Clear selected tables when area changes
     setLoadingTables(true);
     if (areaId === 'all') {
       getTables()
@@ -536,7 +549,6 @@ const FormOrderUpdate = () => {
 
   return (
     <div className="page-content">
-      <ToastContainer />
       <div className="mb-3">
         <Breadcrumbs title="Quản lý đơn hàng" breadcrumbItem="Chỉnh sửa đơn hàng" />
       </div>
@@ -791,23 +803,22 @@ const FormOrderUpdate = () => {
                             return (
                               <div
                                 key={area.id}
-                                className={`table-area-item py-2 me-2 rounded ${selectedArea === area.id ? "active" : ""}`}
+                                className={`table-area-item py-2 me-2 rounded ${
+                                  selectedArea === area.id ? "active" : ""
+                                }`}
                                 style={{
-                                  background:
-                                    selectedArea === area.id ? "#556ee6" : "#f4f4f6",
+                                  background: selectedArea === area.id ? "#556ee6" : "#f4f4f6",
                                   color: selectedArea === area.id ? "#fff" : "#222",
-                                  cursor: "pointer",
+                                  cursor: (selectedAreaIdFromTables && selectedAreaIdFromTables !== area.id) ? "not-allowed" : "pointer",
+                                  opacity: (selectedAreaIdFromTables && selectedAreaIdFromTables !== area.id) ? 0.6 : 1,
                                   minWidth: 120,
                                   textAlign: "center",
                                   fontWeight: 500,
-                                  border:
-                                    selectedArea === area.id
-                                      ? "2px solid #556ee6"
-                                      : "2px solid transparent",
+                                  border: selectedArea === area.id ? "2px solid #556ee6" : "2px solid transparent",
                                   transition: "all 0.2s",
                                   position: 'relative',
                                 }}
-                                onClick={() => handleAreaSelect(area.id)}
+                                onClick={selectedAreaIdFromTables && selectedAreaIdFromTables !== area.id ? null : () => handleAreaSelect(area.id)}
                               >
                                 {area.name}
                                 {hasAvailable && (
@@ -857,9 +868,14 @@ const FormOrderUpdate = () => {
                                         return (
                                           <div
                                             key={table.id}
-                                            className={`table-card-wrapper ${isSelected ? "selected" : ""}`}
+                                            className={`table-card-wrapper ${isSelected ? "selected" : ""} ${table.status !== 'available' ? "disabled-table" : ""}`}
                                             onClick={() => handleTableToggle(String(table.id))}
-                                            style={{ margin: 4, flex: '0 0 auto' }}
+                                            style={{
+                                              margin: 4,
+                                              flex: '0 0 auto',
+                                              cursor: table.status !== 'available' ? 'not-allowed' : 'pointer',
+                                              opacity: table.status !== 'available' ? 0.6 : 1,
+                                            }}
                                           >
                                             <CardTable
                                               tableId={table.id}
