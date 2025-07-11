@@ -24,6 +24,10 @@ const NotificationDropdown = (props) => {
     const channel = pusher.subscribe('reservations');
     // Subscribe to public channel orders
     const orderChannel = pusher.subscribe('orders');
+    // Subscribe to kitchen-orders
+    const kitchenOrderChannel = pusher.subscribe('kitchen-orders');
+    // Subscribe to tables
+    const tableChannel = pusher.subscribe('tables');
     
     // Listen for new reservation events
     channel.bind('reservation.created', (data) => {
@@ -75,15 +79,42 @@ const NotificationDropdown = (props) => {
 
     // Listen for order update events
     orderChannel.bind('order.updated', (data) => {
-      console.log('Order updated:', data);
       addNotification({
         id: Date.now(),
         type: 'order_updated',
         title: 'Cập nhật đơn hàng',
-        message: `Đơn hàng #${data.order_code} đã được cập nhật trạng thái: ${data.new_status_label || data.new_status || ''}.`,
+        message: `Đơn hàng #${data.order_code} đã cập nhật trạng thái: ${data.status}.`,
         order_code: data.order_code,
-        new_status: data.new_status,
-        new_status_label: data.new_status_label,
+        new_status: data.status,
+        timestamp: new Date(data.updated_at || Date.now()),
+        unread: true,
+      });
+    });
+
+    // Listen for kitchen order item update events
+    kitchenOrderChannel.bind('orderitem.updated', (data) => {
+      addNotification({
+        id: Date.now(),
+        type: 'orderitem_updated',
+        title: 'Cập nhật món ăn',
+        message: `Món "${data.item_name}" trong đơn #${data.order_id} vừa cập nhật trạng thái: ${data.status}.`,
+        order_id: data.order_id,
+        item_name: data.item_name,
+        new_status: data.status,
+        timestamp: new Date(data.updated_at || Date.now()),
+        unread: true,
+      });
+    });
+
+    // Listen for table status update events
+    tableChannel.bind('table.status.updated', (data) => {
+      addNotification({
+        id: Date.now(),
+        type: 'table_status_updated',
+        title: 'Cập nhật trạng thái bàn',
+        message: `Bàn số ${data.table_number} vừa cập nhật trạng thái: ${data.status}.`,
+        table_number: data.table_number,
+        new_status: data.status,
         timestamp: new Date(data.updated_at || Date.now()),
         unread: true,
       });
@@ -95,6 +126,10 @@ const NotificationDropdown = (props) => {
       pusher.unsubscribe('reservations');
       orderChannel.unbind_all();
       pusher.unsubscribe('orders');
+      kitchenOrderChannel.unbind_all();
+      pusher.unsubscribe('kitchen-orders');
+      tableChannel.unbind_all();
+      pusher.unsubscribe('tables');
       pusher.disconnect();
     };
   }, []);
@@ -124,6 +159,10 @@ const NotificationDropdown = (props) => {
         return 'bx bx-receipt';
       case 'order_updated':
         return 'bx bx-edit';
+      case 'orderitem_updated':
+        return 'bx bx-food-menu';
+      case 'table_status_updated':
+        return 'bx bx-table';
       default:
         return 'bx bx-bell';
     }
@@ -139,6 +178,10 @@ const NotificationDropdown = (props) => {
         return 'warning';
       case 'order_updated':
         return 'info';
+      case 'orderitem_updated':
+        return 'warning';
+      case 'table_status_updated':
+        return 'primary';
       default:
         return 'info';
     }
