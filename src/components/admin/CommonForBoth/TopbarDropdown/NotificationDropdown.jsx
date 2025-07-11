@@ -1,24 +1,130 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { Dropdown, DropdownToggle, DropdownMenu, Row, Col } from "reactstrap";
+import { Dropdown, DropdownToggle, DropdownMenu, Row, Col, Badge } from "reactstrap";
 import SimpleBar from "simplebar-react";
-
-//Import images
-import avatar3 from "@assets/admin/images/users/avatar-3.jpg";
-import avatar4 from "@assets/admin/images/users/avatar-4.jpg";
+import Pusher from "pusher-js";
 
 import { withTranslation } from "react-i18next";
 
 const NotificationDropdown = (props) => {
   // Declare a new state variable, which we'll call "menu"
   const [menu, setMenu] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    // Khởi tạo Pusher
+    const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
+      cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+      encrypted: true,
+    });
+
+    // Subscribe to public channel
+    const channel = pusher.subscribe('reservations');
+    
+    // Listen for new reservation events
+    channel.bind('reservation.created', (data) => {
+      console.log('New reservation received:', data);
+      addNotification({
+        id: Date.now(),
+        type: 'reservation_created',
+        title: 'Đơn đặt bàn mới',
+        message: data.message,
+        customer_name: data.customer_name,
+        customer_phone: data.customer_phone,
+        reservation_date: data.reservation_date,
+        reservation_time: data.reservation_time,
+        number_of_guests: data.number_of_guests,
+        timestamp: new Date(data.created_at),
+        unread: true,
+      });
+    });
+
+    // Listen for status update events
+    channel.bind('reservation.status.updated', (data) => {
+      console.log('Reservation status updated:', data);
+      addNotification({
+        id: Date.now(),
+        type: 'reservation_status_updated',
+        title: 'Cập nhật trạng thái đơn đặt bàn',
+        message: data.message,
+        customer_name: data.customer_name,
+        old_status: data.old_status_label,
+        new_status: data.new_status_label,
+        timestamp: new Date(data.updated_at),
+        unread: true,
+      });
+    });
+
+    // Cleanup function
+    return () => {
+      channel.unbind_all();
+      pusher.unsubscribe('reservations');
+      pusher.disconnect();
+    };
+  }, []);
+
+  const addNotification = (notification) => {
+    setNotifications(prev => {
+      const newNotifications = [notification, ...prev.slice(0, 9)]; // Giữ tối đa 10 notifications
+      return newNotifications;
+    });
+    setUnreadCount(prev => prev + 1);
+  };
+
+  const markAsRead = () => {
+    setNotifications(prev => 
+      prev.map(notif => ({ ...notif, unread: false }))
+    );
+    setUnreadCount(0);
+  };
+
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case 'reservation_created':
+        return 'bx bx-calendar-plus';
+      case 'reservation_status_updated':
+        return 'bx bx-refresh';
+      default:
+        return 'bx bx-bell';
+    }
+  };
+
+  const getNotificationColor = (type) => {
+    switch (type) {
+      case 'reservation_created':
+        return 'primary';
+      case 'reservation_status_updated':
+        return 'success';
+      default:
+        return 'info';
+    }
+  };
+
+  const formatTimeAgo = (timestamp) => {
+    const now = new Date();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (minutes < 1) return 'Vừa xong';
+    if (minutes < 60) return `${minutes} phút trước`;
+    if (hours < 24) return `${hours} giờ trước`;
+    return `${days} ngày trước`;
+  };
 
   return (
     <React.Fragment>
       <Dropdown
         isOpen={menu}
-        toggle={() => setMenu(!menu)}
+        toggle={() => {
+          setMenu(!menu);
+          if (!menu) {
+            markAsRead();
+          }
+        }}
         className="dropdown d-inline-block"
         tag="li"
       >
@@ -28,7 +134,9 @@ const NotificationDropdown = (props) => {
           id="page-header-notifications-dropdown"
         >
           <i className="bx bx-bell bx-tada" />
-          <span className="badge bg-danger rounded-pill">3</span>
+          {unreadCount > 0 && (
+            <span className="badge bg-danger rounded-pill">{unreadCount}</span>
+          )}
         </DropdownToggle>
 
         <DropdownMenu className="dropdown-menu dropdown-menu-lg p-0 dropdown-menu-end">
@@ -47,102 +155,66 @@ const NotificationDropdown = (props) => {
           </div>
 
           <SimpleBar style={{ height: "230px" }}>
-            <Link to="" className="text-reset notification-item">
-              <div className="d-flex">
-                <div className="avatar-xs me-3">
-                  <span className="avatar-title bg-primary rounded-circle font-size-16">
-                    <i className="bx bx-cart" />
-                  </span>
-                </div>
-                <div className="flex-grow-1">
-                  <h6 className="mt-0 mb-1">
-                    {props.t("Your order is placed")}
-                  </h6>
-                  <div className="font-size-12 text-muted">
-                    <p className="mb-1">
-                      {props.t("If several languages coalesce the grammar")}
-                    </p>
-                    <p className="mb-0">
-                      <i className="mdi mdi-clock-outline" />{" "}
-                      {props.t("3 min ago")}{" "}
-                    </p>
-                  </div>
-                </div>
+            {notifications.length === 0 ? (
+              <div className="text-center py-4">
+                <i className="bx bx-bell font-size-24 text-muted"></i>
+                <p className="text-muted mt-2 mb-0">Không có thông báo mới</p>
               </div>
-            </Link>
-            <Link to="" className="text-reset notification-item">
-              <div className="d-flex">
-                <img
-                  src={avatar3}
-                  className="me-3 rounded-circle avatar-xs"
-                  alt="user-pic"
-                />
-                <div className="flex-grow-1">
-                  <h6 className="mt-0 mb-1">James Lemire</h6>
-                  <div className="font-size-12 text-muted">
-                    <p className="mb-1">
-                      {props.t("It will seem like simplified English") + "."}
-                    </p>
-                    <p className="mb-0">
-                      <i className="mdi mdi-clock-outline" />
-                      {props.t("1 hours ago")}{" "}
-                    </p>
+            ) : (
+              notifications.map((notification) => (
+                <Link to="/admin/reservations" className="text-reset notification-item" key={notification.id}>
+                  <div className="d-flex">
+                    <div className="avatar-xs me-3">
+                      <span className={`avatar-title bg-${getNotificationColor(notification.type)} rounded-circle font-size-16`}>
+                        <i className={getNotificationIcon(notification.type)} />
+                      </span>
+                    </div>
+                    <div className="flex-grow-1">
+                      <h6 className="mt-0 mb-1">
+                        {notification.title}
+                        {notification.unread && (
+                          <Badge color="danger" size="sm" className="ms-2">Mới</Badge>
+                        )}
+                      </h6>
+                      <div className="font-size-12 text-muted">
+                        <p className="mb-1">{notification.message}</p>
+                        {notification.customer_name && (
+                          <p className="mb-1">
+                            <strong>Khách hàng:</strong> {notification.customer_name}
+                            {notification.customer_phone && ` (${notification.customer_phone})`}
+                          </p>
+                        )}
+                        {notification.reservation_date && (
+                          <p className="mb-1">
+                            <strong>Ngày đặt:</strong> {new Date(notification.reservation_date).toLocaleDateString('vi-VN')}
+                            {notification.reservation_time && ` - ${notification.reservation_time}`}
+                          </p>
+                        )}
+                        {notification.number_of_guests && (
+                          <p className="mb-1">
+                            <strong>Số khách:</strong> {notification.number_of_guests} người
+                          </p>
+                        )}
+                        {notification.old_status && notification.new_status && (
+                          <p className="mb-1">
+                            <strong>Trạng thái:</strong> {notification.old_status} → {notification.new_status}
+                          </p>
+                        )}
+                        <p className="mb-0">
+                          <i className="mdi mdi-clock-outline" />
+                          {formatTimeAgo(notification.timestamp)}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </Link>
-            <Link to="" className="text-reset notification-item">
-              <div className="d-flex">
-                <div className="avatar-xs me-3">
-                  <span className="avatar-title bg-success rounded-circle font-size-16">
-                    <i className="bx bx-badge-check" />
-                  </span>
-                </div>
-                <div className="flex-grow-1">
-                  <h6 className="mt-0 mb-1">
-                    {props.t("Your item is shipped")}
-                  </h6>
-                  <div className="font-size-12 text-muted">
-                    <p className="mb-1">
-                      {props.t("If several languages coalesce the grammar")}
-                    </p>
-                    <p className="mb-0">
-                      <i className="mdi mdi-clock-outline" />{" "}
-                      {props.t("3 min ago")}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Link>
-
-            <Link to="" className="text-reset notification-item">
-              <div className="d-flex">
-                <img
-                  src={avatar4}
-                  className="me-3 rounded-circle avatar-xs"
-                  alt="user-pic"
-                />
-                <div className="flex-grow-1">
-                  <h6 className="mt-0 mb-1">Salena Layfield</h6>
-                  <div className="font-size-12 text-muted">
-                    <p className="mb-1">
-                      {props.t(
-                        "As a skeptical Cambridge friend of mine occidental"
-                      ) + "."}
-                    </p>
-                    <p className="mb-0">
-                      <i className="mdi mdi-clock-outline" />
-                      {props.t("1 hours ago")}{" "}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Link>
+                </Link>
+              ))
+            )}
           </SimpleBar>
           <div className="p-2 border-top d-grid">
             <Link
               className="btn btn-sm btn-link font-size-14 btn-block text-center"
-              to="#"
+              to="/admin/reservations"
             >
               <i className="mdi mdi-arrow-right-circle me-1"></i>{" "}
               {props.t("View all")}{" "}
