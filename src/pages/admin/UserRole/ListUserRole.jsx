@@ -8,7 +8,7 @@ import {
 import Swal from "sweetalert2";
 import { getUserRoleList, deleteUserRole } from "@services/admin/userRoleService";
 import CreateUserRole from "./CreateUserRole";
-import Breadcrumbs from "@components/admin/ui/Breadcrumb.jsx";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 
 export default function ListUserRole() {
     const [userRoles, setUserRoles] = useState([]);

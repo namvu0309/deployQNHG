@@ -1,76 +1,95 @@
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000/api/admin";
+export const BASE_URL = "http://127.0.0.1:8000";
+const API_URL = `${BASE_URL}/api/admin`;
+
+// Lấy token từ localStorage
+const getToken = () => {
+    const adminToken = localStorage.getItem("admin_token");
+    return adminToken || null;
+};
+
+// Tạo axios instance dùng chung
+const apiClient = axios.create({
+    baseURL: API_URL,
+    headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    },
+});
+
+// Interceptor thêm Authorization header trước khi gửi request
+apiClient.interceptors.request.use((config) => {
+    const token = getToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
 
 // Lấy danh sách đơn đặt bàn
 export const getReservations = (params) => {
-    return axios.get(`${API_URL}/reservations/list`, { params });
+    return apiClient.get(`/reservations/list`, { params });
 };
 
 // Lấy danh sách khu vực bàn
 export const getTableAreas = (params) => {
-    return axios.get(`${API_URL}/table-areas/list`, { params });
+    return apiClient.get(`/table-areas/list`, { params });
 };
 
 // Lấy chi tiết 1 đơn đặt bàn
 export const getReservationDetail = (id) => {
-    return axios.get(`${API_URL}/reservations/${id}/detail`);
+    return apiClient.get(`/reservations/${id}/detail`);
 };
 
 // Lấy thông tin reservation theo ID
 export const getReservationById = (id) => {
-    return axios.get(`${API_URL}/reservations/${id}`);
+    return apiClient.get(`/reservations/${id}`);
 };
 
 // Tạo đơn đặt bàn mới
 export const createReservation = (data) => {
-    return axios.post(`${API_URL}/reservations/create`, data, {
-        headers: { "Content-Type": "application/json" },
-    });
+    return apiClient.post(`/reservations/create`, data);
 };
 
 // Cập nhật đơn đặt bàn
 export const updateReservation = (id, data) => {
-    return axios.post(`${API_URL}/reservations/${id}/update`, data, {
-        headers: { "Content-Type": "application/json" },
-    });
+    return apiClient.post(`/reservations/${id}/update`, data);
 };
 
 // Xóa đơn đặt bàn (soft delete)
 export const deleteReservation = (id) => {
-    return axios.delete(`${API_URL}/reservations/${id}/soft/delete`);
+    return apiClient.delete(`/reservations/${id}/soft/delete`);
 };
 
 // Xóa vĩnh viễn đơn đặt bàn (force delete)
 export const forceDeleteReservation = (id) => {
-    return axios.delete(`${API_URL}/reservations/${id}/force/delete`);
+    return apiClient.delete(`/reservations/${id}/force/delete`);
 };
 
 // Khôi phục đơn đặt bàn từ thùng rác
 export const restoreReservation = (id) => {
-    return axios.post(`${API_URL}/reservations/${id}/restore`);
+    return apiClient.post(`/reservations/${id}/restore`);
 };
 
 // Lấy danh sách đơn đặt bàn trong thùng rác
 export const getTrashedReservations = (params) => {
-    return axios.get(`${API_URL}/reservations/trash`, { params });
+    return apiClient.get(`/reservations/trash`, { params });
 };
 
 // Thay đổi trạng thái đơn đặt bàn
 export const changeReservationStatus = (id, status) => {
-    return axios.post(`${API_URL}/reservations/${id}/change-status`, {
-        status,
-    });
+    return apiClient.post(`/reservations/${id}/change-status`, { status });
 };
 
 // Xác nhận đơn đặt bàn
 export const confirmReservation = (id) => {
-    return axios.post(`${API_URL}/reservations/${id}/confirm`);
+    return apiClient.post(`/reservations/${id}/confirm`);
 };
 
 // Khu vực bàn
-export const getListTableArea = () => axios.get("/api/admin/table-areas/list");
-export const getTableAreaDetail = (id) => axios.get(`/api/admin/table-areas/${id}/detail`);
-export const createTableArea = (data) => axios.post("/api/admin/table-areas/create", data);
-export const updateTableArea = (id, data) => axios.post(`/api/admin/table-areas/${id}/update`, data);
-export const deleteTableArea = (id) => axios.delete(`/api/admin/table-areas/${id}/delete`); 
+export const getListTableArea = () => apiClient.get("/table-areas/list");
+export const getTableAreaDetail = (id) => apiClient.get(`/table-areas/${id}/detail`);
+export const createTableArea = (data) => apiClient.post("/table-areas/create", data);
+export const updateTableArea = (id, data) => apiClient.post(`/table-areas/${id}/update`, data);
+export const deleteTableArea = (id) => apiClient.delete(`/table-areas/${id}/delete`); 

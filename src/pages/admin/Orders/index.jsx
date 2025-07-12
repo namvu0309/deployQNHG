@@ -30,6 +30,7 @@ import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import OrderGrid from "@components/admin/Orders/grid-order";
 import { getListOrders, createOrder, trackOrder } from "@services/admin/orderService";
 import Swal from "sweetalert2";
+import RealtimeOrderUpdater from '@components/admin/Orders/RealtimeOrderUpdater';
 
 // Danh sách trạng thái đơn hàng
 const orderStatusOptions = [
@@ -285,6 +286,9 @@ const OrderIndex = () => {
           </Row>
         </CardHeader>
       </Card>
+
+      {/* Realtime updater component */}
+      <RealtimeOrderUpdater onRefreshData={() => fetchOrders(currentPage)} />
 
       <TabContent activeTab={activeTab}>
         <TabPane tabId="1">

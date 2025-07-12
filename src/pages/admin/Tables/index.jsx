@@ -8,10 +8,6 @@ import {
   Spinner,
   Input,
   Button,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Alert,
 } from "reactstrap";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import TableCard from "@components/admin/Table/CardTable";
@@ -33,7 +29,8 @@ import "./Table.scss";
 import { getTables, createTable, updateTable, deleteTable, getTable } from "../../../services/admin/tableService";
 import { getTableAreas } from "../../../services/admin/tableAreaService";
 import DeleteModal from "@components/admin/ui/DeleteModal";
-import PaginateUi from "@components/admin/ui/PaginateUi";
+import PaginateUi from "@components/admin/ui/paginateUi";
+import RealtimeTableUpdater from '@components/admin/Table/RealtimeTableUpdater';
 
 const TableIndex = () => {
   const [tables, setTables] = useState([]);
@@ -275,6 +272,7 @@ const TableIndex = () => {
 
   return (
     <div className="page-content">
+      <RealtimeTableUpdater onRefreshData={fetchTables} />
       <Breadcrumbs title="Quản Lý Bàn Nhà Hàng" breadcrumbItem="Danh sách bàn" />
 
       {/* Area Cards section with Swiper Carousel */}

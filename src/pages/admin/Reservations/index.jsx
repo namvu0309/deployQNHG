@@ -29,6 +29,7 @@ import {
 import { MdSearch, MdFilterList, MdDelete, MdRestore } from "react-icons/md";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import GridReservation from "@components/admin/Reservations/grid-reservation";
+import RealtimeReservationUpdater from "@components/admin/Reservations/RealtimeReservationUpdater";
 import { 
     getReservations, 
     getTableAreas, 
@@ -89,10 +90,11 @@ const TableBookingIndex = () => {
         return matchesSearch && matchesStatus;
     });
 
+    // Hàm này luôn đảm bảo lấy dữ liệu mới nhất từ API bằng cách thêm tham số random để tránh cache
     const fetchReservations = async (page = 1, search = "", status = "all") => {
         setLoading(true);
         try {
-            const params = { page };
+            const params = { page, _t: Date.now() }; // Thêm _t để luôn lấy data mới nhất
             if (search) params.query = search;
             if (status && status !== "all") params.status = status;
             const res = await getReservations(params);
@@ -140,6 +142,41 @@ const TableBookingIndex = () => {
             fetchTrashedReservations();
         }
     }, [activeTab]);
+
+    // Callback cho realtime updates (KHÔNG CẦN NỮA)
+    // const handleNewReservation = (data) => {
+    //     console.log('Handling new reservation:', data);
+    //     // Có thể thêm logic để cập nhật UI ngay lập tức
+    //     // Ví dụ: thêm vào đầu danh sách
+    //     setBookingData(prev => ({
+    //         ...prev,
+    //         items: [{
+    //             id: data.id || Date.now().toString(),
+    //             customer_name: data.customer_name,
+    //             customer_phone: data.customer_phone,
+    //             customer_email: data.customer_email,
+    //             reservation_date: data.reservation_date,
+    //             reservation_time: data.reservation_time,
+    //             number_of_guests: data.number_of_guests,
+    //             status: data.status,
+    //             created_at: data.created_at,
+    //             updated_at: data.created_at,
+    //         }, ...prev.items]
+    //     }));
+    // };
+
+    // const handleStatusUpdate = (data) => {
+    //     console.log('Handling status update:', data);
+    //     // Cập nhật trạng thái trong danh sách
+    //     setBookingData(prev => ({
+    //         ...prev,
+    //         items: prev.items.map(item => 
+    //             item.id === data.id 
+    //                 ? { ...item, status: data.new_status }
+    //                 : item
+    //         )
+    //     }));
+    // };
 
     const handleDelete = async (id) => {
         try {
@@ -270,6 +307,11 @@ const TableBookingIndex = () => {
 
     return (
         <div className="page-content">
+            {/* Realtime updater component */}
+            <RealtimeReservationUpdater
+                onRefreshData={() => fetchReservations(1, searchTerm, statusFilter)}
+            />
+
             <Breadcrumbs
                 title="Danh sách đơn đặt bàn"
                 breadcrumbItem="Quản lí đơn đặt bàn"

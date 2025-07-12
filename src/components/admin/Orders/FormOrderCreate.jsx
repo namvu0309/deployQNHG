@@ -26,7 +26,7 @@ import { getTables } from "@services/admin/tableService";
 import { getTableAreas } from "@services/admin/tableAreaService";
 import { createOrder } from "@services/admin/orderService";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import dishDefaultImg from "@assets/admin/images/dish/dish-default.webp";
 import { formatPriceToVND } from "@helpers/formatPriceToVND";
@@ -72,6 +72,7 @@ const FormOrderCreate = () => {
   const [comboCategoryFilter, setComboCategoryFilter] = useState("");
   const [comboMeta, setComboMeta] = useState({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
   const [comboCurrentPage, setComboCurrentPage] = useState(1);
+  const [selectedAreaIdFromTables, setSelectedAreaIdFromTables] = useState(null);
 
   const navigate = useNavigate();
 
@@ -151,7 +152,7 @@ const FormOrderCreate = () => {
         setComboMeta({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
         toast.error("Cấu trúc dữ liệu API combo không đúng!");
       }
-    } catch (error) {
+    } catch {
       setCombos([]);
       setComboMeta({ current_page: 1, per_page: 10, total: 0, last_page: 1 });
       toast.error("Lỗi khi tải danh sách combo!");
@@ -248,17 +249,32 @@ const FormOrderCreate = () => {
   const handleCloseTableModal = () => setShowTableModal(false);
 
   const handleTableToggle = (tableId) => {
+    const clickedTable = tableList.find((t) => String(t.id) === String(tableId));
+    if (!clickedTable || clickedTable.status !== 'available') {
+      toast.error("Chỉ có thể chọn bàn ở trạng thái Trống.");
+      return;
+    }
+
     setSelectedTables((prev) => {
-      const exists = prev.find((t) => String(t.id) === String(tableId));
-      if (exists) {
-        return prev.filter((t) => String(t.id) !== String(tableId));
-      } else {
-        // tìm object trong tableList
-        const found = tableList.find((t) => String(t.id) === String(tableId));
-        if (found) {
-          return [...prev, found];
+      const existingIndex = prev.findIndex((t) => String(t.id) === String(tableId));
+
+      if (prev.length > 0 && String(prev[0].table_area_id) !== String(clickedTable.table_area_id)) {
+        // If a table from a different area is selected, clear previous selections and select new one
+        toast.info("Bạn chỉ có thể chọn bàn trong cùng một khu vực.");
+        return [clickedTable];
+      }
+
+      if (existingIndex !== -1) {
+        // Deselect if already selected
+        const updatedTables = prev.filter((t) => String(t.id) !== String(tableId));
+        if (updatedTables.length === 0) {
+          setSelectedAreaIdFromTables(null); // Clear selected area if no tables are selected
         }
-        return prev;
+        return updatedTables;
+      } else {
+        // Select if not selected and within the same area
+        setSelectedAreaIdFromTables(String(clickedTable.table_area_id)); // Set selected area
+        return [...prev, clickedTable];
       }
     });
   };
@@ -321,10 +337,13 @@ const FormOrderCreate = () => {
       console.error("Error creating order:", error.response || error);
       const apiErrors = error.response?.data?.errors;
       if (apiErrors) {
-        const errorMessages = Object.values(apiErrors)
-          .map((e) => (Array.isArray(e) ? e.join(", ") : e))
-          .join("; ");
-        toast.error(errorMessages || "Lỗi khi tạo đơn hàng!");
+        Object.values(apiErrors).forEach((messages) => {
+          if (Array.isArray(messages)) {
+            messages.forEach((msg) => toast.error(msg));
+          } else {
+            toast.error(messages);
+          }
+        });
       } else {
         toast.error(error.response?.data?.message || "Lỗi khi tạo đơn hàng!");
       }
@@ -333,7 +352,6 @@ const FormOrderCreate = () => {
 
   return (
     <div className="page-content">
-      <ToastContainer />
       <div className="mb-3">
         <Breadcrumbs title="Quản lý đơn hàng" breadcrumbItem="Tạo đơn hàng mới" />
       </div>
@@ -544,6 +562,48 @@ const FormOrderCreate = () => {
                 Tạo đơn hàng mới
               </div>
             </div>
+            {/* Thông tin khách hàng */}
+            <div className="order-sidebar-section mb-3">
+              <Label className="order-sidebar-label mb-2">Thông tin khách hàng</Label>
+              <Row className="mb-2">
+                <Col md={6}>
+                  <Input
+                    type="text"
+                    placeholder="Tên khách hàng"
+                    value={contactName}
+                    onChange={(e) => setContactName(e.target.value)}
+                  />
+                </Col>
+                <Col md={6}>
+                  <Input
+                    type="tel"
+                    placeholder="Số điện thoại"
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
+                  />
+                </Col>
+              </Row>
+              <Row className="mb-2">
+                <Col md={12}>
+                  <Input
+                    type="email"
+                    placeholder="Email liên hệ"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                  />
+                </Col>
+              </Row>
+              {orderMethod === "Delivery" && (
+                <div className="mt-2">
+                  <Input
+                    type="textarea"
+                    placeholder="Địa chỉ giao hàng"
+                    value={deliveryAddress}
+                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                  />
+                </div>
+              )}
+            </div>
             {/* Chọn bàn, ghi chú, hình thức phục vụ */}
             <div className="order-sidebar-section mb-3">
               {/* Order Method */}
@@ -581,25 +641,29 @@ const FormOrderCreate = () => {
                         className="table-area-carousel d-flex align-items-center mb-3"
                         style={{ overflowX: "auto" }}
                       >
-                        {tableAreas.map((area) => (
-                          <div
-                            key={area.id}
-                            className={`table-area-item py-2 me-2 rounded ${selectedArea === area.id ? "active" : ""}`}
-                            style={{
-                              background: selectedArea === area.id ? "#556ee6" : "#f4f4f6",
-                              color: selectedArea === area.id ? "#fff" : "#222",
-                              cursor: "pointer",
-                              minWidth: 120,
-                              textAlign: "center",
-                              fontWeight: 500,
-                              border: selectedArea === area.id ? "2px solid #556ee6" : "2px solid transparent",
-                              transition: "all 0.2s",
-                            }}
-                            onClick={() => setSelectedArea(area.id)}
-                          >
-                            {area.name}
-                          </div>
-                        ))}
+                        {tableAreas.map((area) => {
+                          const isDisabled = selectedAreaIdFromTables && String(selectedAreaIdFromTables) !== String(area.id);
+                          return (
+                            <div
+                              key={area.id}
+                              className={`table-area-item py-2 me-2 rounded ${selectedArea === area.id ? "active" : ""} ${isDisabled ? "disabled-area" : ""}`}
+                              style={{
+                                background: selectedArea === area.id ? "#556ee6" : "#f4f4f6",
+                                color: selectedArea === area.id ? "#fff" : "#222",
+                                cursor: isDisabled ? "not-allowed" : "pointer",
+                                opacity: isDisabled ? 0.6 : 1,
+                                minWidth: 120,
+                                textAlign: "center",
+                                fontWeight: 500,
+                                border: selectedArea === area.id ? "2px solid #556ee6" : "2px solid transparent",
+                                transition: "all 0.2s",
+                              }}
+                              onClick={isDisabled ? null : () => setSelectedArea(area.id)}
+                            >
+                              {area.name}
+                            </div>
+                          );
+                        })}
                       </div>
                       <div className="table-modal-list-by-status">
                         {loadingTables ? (
@@ -613,16 +677,15 @@ const FormOrderCreate = () => {
                         ) : (
                           [
                             { key: 'available', label: 'Trống' },
-                            { key: 'reserved', label: 'Đã đặt' },
                             { key: 'occupied', label: 'Đang sử dụng' },
                             { key: 'cleaning', label: 'Đang dọn dẹp' },
                             { key: 'out_of_service', label: 'Ngưng phục vụ' },
                           ].map(statusObj => {
                             const tables = tableList.filter(t => t.status === statusObj.key);
                             return (
-                              <div className="table-status-row mb-2 d-flex align-items-center" key={statusObj.key}>
-                                <span className="table-status-label me-3" style={{ minWidth: 110, fontWeight: 600 }}>{statusObj.label}:</span>
-                                <div className="d-flex flex-wrap align-items-center" style={{ gap: 12, minHeight: 48 }}>
+                              <div className="table-status-row mb-3" key={statusObj.key}>
+                                <div className="table-status-label mb-1" style={{ fontWeight: 600 }}>{statusObj.label}</div>
+                                <div className="table-status-cards-row d-flex flex-row flex-nowrap align-items-center" style={{ gap: 12, overflowX: 'auto', minHeight: 48 }}>
                                   {tables.length === 0 ? (
                                     <span className="text-muted" style={{fontSize: '0.97rem'}}>Không có bàn</span>
                                   ) : (
@@ -631,9 +694,9 @@ const FormOrderCreate = () => {
                                       return (
                                         <div
                                           key={table.id}
-                                          className={`table-card-wrapper ${isSelected ? "selected" : ""}`}
+                                          className={`table-card-wrapper ${isSelected ? "selected" : ""} ${table.status !== 'available' ? "disabled-table" : ""}`}
                                           onClick={() => handleTableToggle(String(table.id))}
-                                          style={{ margin: 4 }}
+                                          style={{ margin: 4, flex: '0 0 auto', cursor: table.status !== 'available' ? 'not-allowed' : 'pointer', opacity: table.status !== 'available' ? 0.6 : 1 }}
                                         >
                                           <CardTable
                                             tableId={table.id}
@@ -715,39 +778,6 @@ const FormOrderCreate = () => {
                   <option value="Delivery">Giao hàng</option>
                 </Input>
               </div>
-              {/* Delivery/Contact Info */}
-              {orderMethod === "Delivery" && (
-                <div className="delivery-info py-2 mb-2">
-                  <Label className="order-sidebar-label mb-1">Thông tin giao hàng</Label>
-                  <Input
-                    type="text"
-                    placeholder="Địa chỉ giao hàng"
-                    value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                    className="mb-2"
-                  />
-                  <Input
-                    type="text"
-                    placeholder="Tên người nhận"
-                    value={contactName}
-                    onChange={(e) => setContactName(e.target.value)}
-                    className="mb-2"
-                  />
-                  <Input
-                    type="email"
-                    placeholder="Email liên hệ"
-                    value={contactEmail}
-                    onChange={(e) => setContactEmail(e.target.value)}
-                    className="mb-2"
-                  />
-                  <Input
-                    type="tel"
-                    placeholder="Số điện thoại liên hệ"
-                    value={contactPhone}
-                    onChange={(e) => setContactPhone(e.target.value)}
-                  />
-                </div>
-              )}
             </div>
             {/* Danh sách món ăn */}
             <div className="order-items-detail-box mb-3">
