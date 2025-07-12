@@ -10,6 +10,7 @@ import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import '@pages/admin/KitchenOrders/KitchenOrdersKanban.css';
 import KanbanCard from "@components/admin/KitchenOrders/KanbanCard";
 import 'react-toastify/dist/ReactToastify.css';
+import RealtimeKitchenOrderUpdater from '@components/admin/KitchenOrders/RealtimeKitchenOrderUpdater';
 
 const STATUS_LIST = [
     { key: "pending", label: "Pending", badgeColor: "warning" },
@@ -244,6 +245,7 @@ const KitchenOrdersPage = () => {
 
     return (
         <div className="page-content">
+            <RealtimeKitchenOrderUpdater onRefreshData={() => fetchOrders(filter, filterDate)} />
             <Breadcrumbs title="Danh sách đơn bếp" breadcrumbItem="Quản lí đơn bếp" />
             {/* Tabs */}
             <Card className="mb-4">
