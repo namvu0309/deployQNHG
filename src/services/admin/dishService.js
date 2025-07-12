@@ -1,15 +1,38 @@
 import axios from 'axios';
 
-const API_URL = "http://localhost:8000/api/admin/dishes";
+export const BASE_URL = "http://localhost:8000";
+const API_URL = `${BASE_URL}/api/admin/dishes`;
+
+// Lấy token từ localStorage
+const getToken = () => {
+    const adminToken = localStorage.getItem("admin_token");
+    return adminToken || null;
+};
+
+// Tạo axios instance dùng chung
+const apiClient = axios.create({
+    baseURL: API_URL,
+    headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    },
+});
+
+// Interceptor thêm Authorization header trước khi gửi request
+apiClient.interceptors.request.use((config) => {
+    const token = getToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
 
 // ===== CRUD MÓN ĂN =====
-export const getDishes = (params) => axios.get(`${API_URL}/list`, { params });
-export const getTrashedDish = (params) => axios.get(`${API_URL}/trash`, { params });
-export const getDish = (id) => axios.get(`${API_URL}/${id}/detail`);
-export const createDish = (data) => axios.post(`${API_URL}/create`, data);
-export const updateDish = (id, data) => axios.post(`${API_URL}/${id}/update`, data, {
-    headers: { "Content-Type": "multipart/json" },
-});
-export const deleteSoftDish = (id) => axios.delete(`${API_URL}/${id}/soft/delete`);
-export const deleteForceDish = (id) => axios.delete(`${API_URL}/${id}/force/delete`);
-export const restoreDish = (id) => axios.post(`${API_URL}/${id}/restore`);
+export const getDishes = (params) => apiClient.get(`/list`, { params });
+export const getTrashedDish = (params) => apiClient.get(`/trash`, { params });
+export const getDish = (id) => apiClient.get(`/${id}/detail`);
+export const createDish = (data) => apiClient.post(`/create`, data);
+export const updateDish = (id, data) => apiClient.post(`/${id}/update`, data);
+export const deleteSoftDish = (id) => apiClient.delete(`/${id}/soft/delete`);
+export const deleteForceDish = (id) => apiClient.delete(`/${id}/force/delete`);
+export const restoreDish = (id) => apiClient.post(`/${id}/restore`);
