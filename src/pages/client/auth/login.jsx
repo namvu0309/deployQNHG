@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import './auth.scss';
 import { loginUser } from '@services/client/auth/loginService';
 import { toast } from 'react-toastify';
+import thumb1 from "@assets/client/images/auth/thumb1.webp";
+import thumb2 from "@assets/client/images/auth/thumb2.webp";
+import thumb3 from "@assets/client/images/auth/thumb3.webp";
+import thumb4 from "@assets/client/images/auth/thumb4.webp";
 
 export default function LoginUserPage() {
   const navigate = useNavigate();
@@ -25,8 +29,13 @@ export default function LoginUserPage() {
       if (res?.data?.token) {
         localStorage.setItem('token', res.data.token);
         if (res.data.user) {
-          const { id, email, full_name } = res.data.user;
-          localStorage.setItem('clientUser', JSON.stringify({ id, email, full_name }));
+          const { id, email, full_name, phone_number } = res.data.user;
+          localStorage.setItem('clientUser', JSON.stringify({
+            id,
+            email,
+            full_name,
+            phone: phone_number // Lưu số điện thoại
+          }));
         }
         window.dispatchEvent(new Event('storage'));
       }
@@ -50,10 +59,10 @@ export default function LoginUserPage() {
       <div className="auth-content">
         <div className="auth-left">
           <div className="auth-images-grid">
-            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb1.webp" alt="" /></div>
-            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb2.webp" alt="" /></div>
-            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb3.webp" alt="" /></div>
-            <div className="auth-image-item"><img src="/src/assets/client/images/auth/thumb4.webp" alt="" /></div>
+            <div className="auth-image-item"><img src={thumb1} alt="" /></div>
+            <div className="auth-image-item"><img src={thumb2} alt="" /></div>
+            <div className="auth-image-item"><img src={thumb3} alt="" /></div>
+            <div className="auth-image-item"><img src={thumb4} alt="" /></div>
           </div>
         </div>
         <div className="auth-right">

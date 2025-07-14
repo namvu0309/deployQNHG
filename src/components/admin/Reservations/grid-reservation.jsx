@@ -26,6 +26,7 @@ import {
     updateReservation,
 } from "@services/admin/reservationService";
 import "./grid-reservation.css";
+import TableSelectModal from "@components/admin/Table/TableSelectModal";
 
 const ReservationGrid = ({
     paginate = {},
@@ -44,6 +45,9 @@ const ReservationGrid = ({
     const [loadingEdit, setLoadingEdit] = useState(false);
     const [apiErrors, setApiErrors] = useState({});
     const [isConfirmingReservation, setIsConfirmingReservation] = useState(false);
+    const [showTableSelect, setShowTableSelect] = useState(false);
+    const [selectedTables, setSelectedTables] = useState([]);
+    const [reservationToConfirm, setReservationToConfirm] = useState(null);
 
     const currentPage = paginate.page || 1;
     const totalPages = paginate.totalPage || 1;
@@ -232,6 +236,44 @@ const ReservationGrid = ({
         ) : null;
     };
 
+    // Thay vì gọi handleStatusChange trực tiếp khi xác nhận, ta mở modal chọn bàn
+    const handleConfirmReservation = (reservation) => {
+      setReservationToConfirm(reservation);
+      // Nếu reservation đã có bàn, truyền vào initialSelectedTables
+      setSelectedTables(reservation.tables || []);
+      setShowTableSelect(true);
+    };
+
+    // Callback khi chọn bàn xong
+    const handleTableSelectConfirm = async (tables) => {
+      setShowTableSelect(false);
+      if (!reservationToConfirm) return;
+      try {
+        // Tạo payload cập nhật trạng thái và gán bàn
+        const payload = {
+          customer_id: reservationToConfirm.customer_id || reservationToConfirm.customer?.id || 1,
+          customer_name: reservationToConfirm.customer_name,
+          customer_phone: reservationToConfirm.customer_phone || reservationToConfirm.phone_number,
+          customer_email: reservationToConfirm.customer_email || reservationToConfirm.email,
+          reservation_time: reservationToConfirm.reservation_time || reservationToConfirm.booking_time,
+          reservation_date: reservationToConfirm.reservation_date || reservationToConfirm.booking_date,
+          number_of_guests: reservationToConfirm.number_of_guests,
+          table_ids: tables.map(t => t.id), // tuỳ backend, có thể là table_id hoặc table_ids
+          notes: reservationToConfirm.notes || reservationToConfirm.special_requests || '',
+          status: "confirmed",
+          user_id: reservationToConfirm.user_id || 2,
+        };
+        await updateReservation(reservationToConfirm.id, payload);
+        toast.success("Đã xác nhận và gán bàn thành công");
+        if (onUpdate) onUpdate();
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Lỗi khi xác nhận và gán bàn");
+      } finally {
+        setReservationToConfirm(null);
+        setSelectedTables([]);
+      }
+    };
+
     return (
         <>
             {/* Grid Layout */}
@@ -251,6 +293,7 @@ const ReservationGrid = ({
                                     onDelete={handleCardDelete}
                                     onStatusChange={handleStatusChange}
                                     onStatusChangeLocal={onStatusChangeLocal}
+                                    onConfirmReservation={handleConfirmReservation} // thêm dòng này nếu CardReservation hỗ trợ
                                 />
                             </Col>
                         ))}
@@ -724,6 +767,14 @@ const ReservationGrid = ({
                     </Button>
                 </ModalFooter>
             </Modal>
+
+            {/* TableSelectModal cho xác nhận đặt bàn */}
+            <TableSelectModal
+              isOpen={showTableSelect}
+              onClose={() => setShowTableSelect(false)}
+              onConfirm={handleTableSelectConfirm}
+              initialSelectedTables={selectedTables}
+            />
         </>
     );
 };

@@ -12,7 +12,7 @@ import {
     Label,
 } from "reactstrap";
 import Swal from "sweetalert2";
-import Breadcrumbs from "@components/admin/ui/Breadcrumb.jsx";
+import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import CreatePermission from "./CreatePermission";
 import { getPermissions, deletePermission } from "@services/admin/permissionService.js";
 

@@ -22,17 +22,19 @@ import {
 import { getDishes } from "@services/admin/dishService";
 import { getTables } from "@services/admin/tableService";
 import { getTableAreas } from "@services/admin/tableAreaService";
-import { getOrderDetail, updateOrder } from "@services/admin/orderService";
+import { getOrderDetail, updateOrder, paymentOrder } from "@services/admin/orderService";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaEdit, FaShoppingCart } from "react-icons/fa";
 import "./FormOrder.scss";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import dishDefaultImg from "@assets/admin/images/dish/dish-default.webp";
 import { formatPriceToVND } from "@helpers/formatPriceToVND";
 import Breadcrumbs from "@components/admin/ui/Breadcrumb";
 import CardTable from "../Table/CardTable";
 import { getCombos } from "@services/admin/comboService";
+import { Wallet, CreditCard, Scan } from 'lucide-react';
+import PaymentModal from "./PaymentModal";
 
 const kitchenStatusBadge = {
   pending: { label: "Chờ bếp", color: "#007bff", bg: "#e3f0ff" },
@@ -87,6 +89,9 @@ const FormOrderUpdate = () => {
   const [comboCurrentPage, setComboCurrentPage] = useState(1);
   const [removedItems, setRemovedItems] = useState([]);
   const [orderDataState, setOrderDataState] = useState(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('cash');
+
+  const selectedAreaIdFromTables = selectedTables.length > 0 ? selectedTables[0].table_area_id : null;
 
   const statusOptionsMap = {
     "Dine In": [
@@ -356,29 +361,12 @@ const FormOrderUpdate = () => {
       .then((res) => {
         const areas = res.data?.data?.items || [];
         setTableAreas(areas);
-        // Tìm khu vực đầu tiên có bàn trống
-        getTables()
-          .then((res) => {
-            const allTables = res.data?.data?.items || [];
-            // Tìm khu vực đầu tiên có bàn trống
-            const firstAreaWithTable = areas.find(area =>
-              allTables.some(table => table.table_area_id === area.id)
-            );
-            if (firstAreaWithTable) {
-              setSelectedArea(firstAreaWithTable.id);
-              // Lọc bàn thuộc khu vực đó
-              const filteredTables = allTables.filter(table => table.table_area_id === firstAreaWithTable.id);
-              setTableList(filteredTables);
-            } else {
-              setSelectedArea(null);
-              setTableList([]);
-            }
-          })
-          .catch(() => {
-            setTableList([]);
-            toast.error("Lỗi khi tải danh sách bàn!");
-          })
-          .finally(() => setLoadingTables(false));
+        if (areas.length > 0) {
+          setSelectedArea(areas[0].id);
+        } else {
+          setSelectedArea(null);
+        }
+        setLoadingTables(false);
       })
       .catch(() => {
         setTableAreas([]);
@@ -390,34 +378,39 @@ const FormOrderUpdate = () => {
   const handleCloseTableModal = () => setShowTableModal(false);
 
   const handleTableToggle = (tableId) => {
+    const clickedTable = tableList.find((t) => String(t.id) === String(tableId));
+    if (!clickedTable || clickedTable.status !== 'available') {
+      toast.error("Chỉ có thể chọn bàn ở trạng thái Trống.");
+      return;
+    }
+
     setSelectedTables((prev) => {
-      const exists = prev.find((t) => String(t.id) === String(tableId));
-      if (exists) {
+      const existingIndex = prev.findIndex((t) => String(t.id) === String(tableId));
+
+      if (prev.length > 0 && String(prev[0].table_area_id) !== String(clickedTable.table_area_id)) {
+        // If a table from a different area is selected, clear previous selections and select new one
+        toast.info("Bạn chỉ có thể chọn bàn trong cùng một khu vực.");
+        return [clickedTable];
+      }
+
+      if (existingIndex !== -1) {
+        // Deselect if already selected
         return prev.filter((t) => String(t.id) !== String(tableId));
       } else {
-        // tìm object trong tableList
-        const found = tableList.find((t) => String(t.id) === String(tableId));
-        if (found) {
-          return [...prev, found];
-        }
-        return prev;
+        // Select if not selected and within the same area
+        return [...prev, clickedTable];
       }
     });
   };
 
   const handleAreaSelect = (areaId) => {
     setSelectedArea(areaId);
+    setSelectedTables([]); // Clear selected tables when area changes
     setLoadingTables(true);
     if (areaId === 'all') {
       getTables()
         .then((res) => {
-          const allTables = res.data?.data?.items || [];
-          const filteredTables = allTables.filter(
-            (table) =>
-              table.status === "available" ||
-              selectedTables.some((t) => String(t.id) === String(table.id))
-          );
-          setTableList(filteredTables);
+          setTableList(res.data?.data?.items || []);
         })
         .catch(() => {
           setTableList([]);
@@ -427,13 +420,7 @@ const FormOrderUpdate = () => {
     } else {
       getTables({ table_area_id: areaId })
         .then((res) => {
-          const allTables = res.data?.data?.items || [];
-          const filteredTables = allTables.filter(
-            (table) =>
-              table.status === "available" ||
-              selectedTables.some((t) => String(t.id) === String(table.id))
-          );
-          setTableList(filteredTables);
+          setTableList(res.data?.data?.items || []);
         })
         .catch(() => {
           setTableList([]);
@@ -449,8 +436,7 @@ const FormOrderUpdate = () => {
       if (selectedArea === 'all') {
         getTables()
           .then((res) => {
-            const allTables = res.data?.data?.items || [];
-            setTableList(allTables);
+            setTableList(res.data?.data?.items || []);
           })
           .catch(() => {
             setTableList([]);
@@ -460,13 +446,7 @@ const FormOrderUpdate = () => {
       } else {
         getTables({ table_area_id: selectedArea })
           .then((res) => {
-            const allTables = res.data?.data?.items || [];
-            const filteredTables = allTables.filter(
-              (table) =>
-                table.status === "available" ||
-                selectedTables.some((t) => String(t.id) === String(table.id))
-            );
-            setTableList(filteredTables);
+            setTableList(res.data?.data?.items || []);
           })
           .catch(() => {
             setTableList([]);
@@ -569,7 +549,6 @@ const FormOrderUpdate = () => {
 
   return (
     <div className="page-content">
-      <ToastContainer />
       <div className="mb-3">
         <Breadcrumbs title="Quản lý đơn hàng" breadcrumbItem="Chỉnh sửa đơn hàng" />
       </div>
@@ -824,23 +803,22 @@ const FormOrderUpdate = () => {
                             return (
                               <div
                                 key={area.id}
-                                className={`table-area-item py-2 me-2 rounded ${selectedArea === area.id ? "active" : ""}`}
+                                className={`table-area-item py-2 me-2 rounded ${
+                                  selectedArea === area.id ? "active" : ""
+                                }`}
                                 style={{
-                                  background:
-                                    selectedArea === area.id ? "#556ee6" : "#f4f4f6",
+                                  background: selectedArea === area.id ? "#556ee6" : "#f4f4f6",
                                   color: selectedArea === area.id ? "#fff" : "#222",
-                                  cursor: "pointer",
+                                  cursor: (selectedAreaIdFromTables && selectedAreaIdFromTables !== area.id) ? "not-allowed" : "pointer",
+                                  opacity: (selectedAreaIdFromTables && selectedAreaIdFromTables !== area.id) ? 0.6 : 1,
                                   minWidth: 120,
                                   textAlign: "center",
                                   fontWeight: 500,
-                                  border:
-                                    selectedArea === area.id
-                                      ? "2px solid #556ee6"
-                                      : "2px solid transparent",
+                                  border: selectedArea === area.id ? "2px solid #556ee6" : "2px solid transparent",
                                   transition: "all 0.2s",
                                   position: 'relative',
                                 }}
-                                onClick={() => handleAreaSelect(area.id)}
+                                onClick={selectedAreaIdFromTables && selectedAreaIdFromTables !== area.id ? null : () => handleAreaSelect(area.id)}
                               >
                                 {area.name}
                                 {hasAvailable && (
@@ -890,9 +868,14 @@ const FormOrderUpdate = () => {
                                         return (
                                           <div
                                             key={table.id}
-                                            className={`table-card-wrapper ${isSelected ? "selected" : ""}`}
+                                            className={`table-card-wrapper ${isSelected ? "selected" : ""} ${table.status !== 'available' ? "disabled-table" : ""}`}
                                             onClick={() => handleTableToggle(String(table.id))}
-                                            style={{ margin: 4, flex: '0 0 auto' }}
+                                            style={{
+                                              margin: 4,
+                                              flex: '0 0 auto',
+                                              cursor: table.status !== 'available' ? 'not-allowed' : 'pointer',
+                                              opacity: table.status !== 'available' ? 0.6 : 1,
+                                            }}
                                           >
                                             <CardTable
                                               tableId={table.id}
@@ -1019,11 +1002,30 @@ const FormOrderUpdate = () => {
                       const currentIdx = arr.findIndex(o => o.value === orderStatus);
                       const isNext = idx === currentIdx + 1;
                       const isCurrent = idx === currentIdx;
+
+                      let shouldBeDisabled = false;
+
+                      // Rule 1: Always disable 'ready' or 'completed' for 'Dine In'
+                      if (orderMethod === "Dine In" && (opt.value === "ready" || opt.value === "completed")) {
+                          shouldBeDisabled = true;
+                      }
+                      // Rule 2: Handle 'cancelled' based on current status
+                      else if (opt.value === "cancelled") {
+                          if (orderStatus !== "pending") {
+                              shouldBeDisabled = true;
+                          }
+                      }
+                      // Rule 3: For all other statuses (not 'cancelled', not 'ready/completed' for 'Dine In'),
+                      // follow the sequential progression (only current or next are enabled)
+                      else {
+                          shouldBeDisabled = !(isCurrent || isNext);
+                      }
+
                       return (
                         <option
                           key={opt.value}
                           value={opt.value}
-                          disabled={!(isCurrent || isNext)}
+                          disabled={shouldBeDisabled}
                         >
                           {opt.label}
                         </option>
@@ -1162,42 +1164,31 @@ const FormOrderUpdate = () => {
                   Lưu & Thanh toán
                 </button>
               </div>
-              <Modal
+              <PaymentModal
                 isOpen={showPaymentModal}
                 toggle={() => setShowPaymentModal(false)}
-              >
-                <ModalHeader toggle={() => setShowPaymentModal(false)}>
-                  Chọn phương thức thanh toán
-                </ModalHeader>
-                <ModalBody>
-                  <div className="d-flex flex-column gap-3">
-                    <Button
-                      color="primary"
-                      onClick={() => {
-                        setShowPaymentModal(false);
-                        handleUpdateOrder();
-                      }}
-                    >
-                      Tiền mặt
-                    </Button>
-                    <Button
-                      color="info"
-                      onClick={() => {
-                        setShowPaymentModal(false);
-                        handleUpdateOrder();
-                      }}
-                    >
-                      Chuyển khoản
-                    </Button>
-                    <Button
-                      color="secondary"
-                      onClick={() => setShowPaymentModal(false)}
-                    >
-                      Hủy
-                    </Button>
-                  </div>
-                </ModalBody>
-              </Modal>
+                orderItems={orderItems}
+                subtotal={subtotal}
+                vat={vat}
+                total={total}
+                isSubmitting={isSubmitting}
+                setIsSubmitting={setIsSubmitting}
+                orderMethod={orderMethod}
+                selectedTables={selectedTables}
+                tableAreas={tableAreas}
+                contactName={contactName}
+                contactPhone={contactPhone}
+                contactEmail={contactEmail}
+                selectedPaymentMethod={selectedPaymentMethod}
+                setSelectedPaymentMethod={setSelectedPaymentMethod}
+                fullUrl={fullUrl}
+                orderId={orderId}
+                paymentOrder={paymentOrder}
+                navigate={navigate}
+                toast={toast}
+                orderNotes={orderNotes}
+                orderData={orderDataState}
+              />
             </div>
           </Col>
         </Row>

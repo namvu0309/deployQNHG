@@ -1,47 +1,70 @@
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000/api/admin";
+export const BASE_URL = "http://127.0.0.1:8000";
+const API_URL = `${BASE_URL}/api/admin`;
 
-// Lấy danh sách đơn hàng
+// Lấy token từ localStorage
+const getToken = () => {
+    const adminToken = localStorage.getItem("admin_token");
+    return adminToken || null;
+};
+
+// Tạo axios instance dùng chung
+const apiClient = axios.create({
+    baseURL: API_URL,
+    headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    },
+});
+
+// Interceptor thêm Authorization header trước khi gửi request
+apiClient.interceptors.request.use((config) => {
+    const token = getToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+// Các hàm gọi API
+
 export const getListOrders = (params) => {
-    return axios.get(`${API_URL}/orders/list`, { params });
+    return apiClient.get("/orders/list", { params });
 };
 
-// Lấy chi tiết đơn hàng
 export const getOrderDetail = (id) => {
-    return axios.get(`${API_URL}/orders/${id}/detail`);
+    return apiClient.get(`/orders/${id}/detail`);
 };
 
-// Tạo đơn hàng mới
 export const createOrder = (data) => {
-    return axios.post(`${API_URL}/orders/create`, data, {
-        headers: { "Content-Type": "application/json" },
-    });
+    return apiClient.post("/orders/create", data);
 };
 
-// Cập nhật đơn hàng
 export const updateOrder = (id, data) => {
-    return axios.post(`${API_URL}/orders/${id}/update`, data, {
-        headers: { "Content-Type": "application/json" },
-    });
+    return apiClient.post(`/orders/${id}/update`, data);
 };
 
-// Cập nhật trạng thái item trong đơn hàng
 export const updateItemStatus = (orderItemId, status) => {
-    return axios.post(`${API_URL}/orders/items/${orderItemId}/status`, { status });
+    return apiClient.post(`/orders/items/${orderItemId}/status`, { status });
 };
 
-// Lấy lịch sử item đơn hàng
 export const getOrderItemHistory = (orderItemId) => {
-    return axios.get(`${API_URL}/orders/items/${orderItemId}/history`);
+    return apiClient.get(`/orders/items/${orderItemId}/history`);
 };
 
-// Theo dõi đơn hàng
 export const trackOrder = (orderCode) => {
-    return axios.get(`${API_URL}/orders/track/${orderCode}`);
+    return apiClient.get(`/orders/track/${orderCode}`);
 };
 
-// Lấy đơn hàng theo table ID
 export const getOrderByTableId = (tableId) => {
-    return axios.get(`${API_URL}/orders/table/${tableId}`);
+    return apiClient.get(`/orders/table/${tableId}`);
+};
+
+export const paymentOrder = (id, data) => {
+    return apiClient.post(`/orders/${id}/pay`, data);
+};
+
+export const getBillDetails = (id) => {
+    return apiClient.get(`/bills/${id}/detail`);
 };

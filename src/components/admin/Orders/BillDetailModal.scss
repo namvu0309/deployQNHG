@@ -1,0 +1,98 @@
+.bill-detail-modal .modal-header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.bill-detail-modal .modal-body {
+  padding-top: 0;
+}
+
+.bill-detail-modal .modal-header .btn-close {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.bill-detail-modal .section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.bill-detail-modal .section-title i {
+  font-size: 1.5rem;
+  margin-right: 0.75rem;
+  color: #007bff; /* Example color */
+}
+
+.bill-detail-modal p {
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.bill-detail-modal strong {
+  color: #555;
+}
+
+.bill-detail-modal hr {
+  border-top: 1px dashed #dee2e6;
+  margin: 1.5rem 0;
+}
+
+.bill-detail-modal .table th,
+.bill-detail-modal .table td {
+  vertical-align: middle;
+  padding: 0.75rem;
+}
+
+.bill-detail-modal .table thead th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  color: #495057;
+}
+
+.bill-detail-modal .order-item-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.bill-detail-modal .bill-item-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.bill-detail-modal .item-qty-price {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.bill-detail-modal .item-total-price {
+  font-weight: 600;
+  color: #000;
+}
+
+.bill-detail-modal .bill-total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-top: 1px solid #eee;
+}
+
+.bill-detail-modal .bill-total-row:last-child {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #000;
+  border-top: 2px solid #ccc;
+  margin-top: 1rem;
+  padding-top: 1rem;
+} 

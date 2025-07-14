@@ -16,6 +16,7 @@ import EmailVerification2 from "@pages/admin/AuthenticationInner/auth-email-veri
 import TwostepVerification from "@pages/admin/AuthenticationInner/auth-two-step-verification";
 import TwostepVerification2 from "@pages/admin/AuthenticationInner/auth-two-step-verification-2";
 import AdminLogin from "@pages/admin/Users/AdminLogin.jsx";
+import PaymentResult from "@components/admin/Orders/PaymentResult";
 
 // Dashboard
 import Dashboard from "@pages/admin/Dashboard/index";
@@ -37,7 +38,8 @@ import FormOrderUpdate from "@components/admin/Orders/FormOrderUpdate";
 import PageCombo from "@pages/admin/Combos/index";
 import PageCategory from "@pages/admin/Categories/index";
 import PageKitchenOrders from "@pages/admin/KitchenOrders/index";
-
+import AdminForgotPassword from "@pages/admin/Users/AdminForgotpassword.jsx";
+import AdminResetPassword from "@pages/admin/Users/ AdminResetPassword.jsx";
 import Forbidden403 from "@pages/admin/Users/403.jsx";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard />, permission: "dashboard.view" },
@@ -103,7 +105,8 @@ const authProtectedRoutes = [
 const publicRoutes = [
   { path: "/logout", component: <Logout /> },
   { path: "/admin/login", component: <AdminLogin /> },
-
+  { path: "/admin/forgot-password", component: <AdminForgotPassword /> },
+  { path: "/admin/reset-password/:id", component: <AdminResetPassword /> },
   { path: "/403", component: <Forbidden403 /> },
   { path: "/pages-forgot-pwd", component: <ForgetPwd1 /> },
   { path: "/pages-forgot-pwd-2", component: <ForgetPwd2 /> },
@@ -113,6 +116,7 @@ const publicRoutes = [
   { path: "/auth-email-verification-2", component: <EmailVerification2 /> },
   { path: "/auth-two-step-verification", component: <TwostepVerification /> },
   { path: "/auth-two-step-verification-2", component: <TwostepVerification2 /> },
+  { path: "/payment-result", component: <PaymentResult /> },
 ];
 
 export { authProtectedRoutes, publicRoutes };

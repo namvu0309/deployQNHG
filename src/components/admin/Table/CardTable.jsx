@@ -36,6 +36,7 @@ const TableCard = ({
     if (typeof seatType === 'string') {
       if (seatType.includes('2')) return 140;
       if (seatType.includes('4')) return 200;
+      if (seatType.includes('6')) return 280;
       if (seatType.includes('8')) return 360;
     }
     
